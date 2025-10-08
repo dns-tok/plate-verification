@@ -6,6 +6,7 @@ import InfoSection from './components/InfoSection'
 import FaqSection from './components/FaqSection'
 import ContactSection from './components/ContactSection'
 import TestimonialSection from './components/TestimonialSection'
+import MultiConsultant from './components/MultiConsultant'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
       <Navbar />
       <HeroSection />
       <PriceSection />
+      <MultiConsultant />
       <InfoSection />
       <FaqSection />
       <ContactSection />

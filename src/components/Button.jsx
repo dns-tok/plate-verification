@@ -1,10 +1,14 @@
 import React from 'react'
 
-const Button = ({ text = 'Entrar' }) => {
+const Button = ({ text, bgColor, textColor }) => {
   return (
     <div>
         <button 
-          className={`bg-[#1AABFE] rounded-full px-7 py-3 cursor-pointer text-white font-bold`}
+          className={`rounded-full px-7 py-3 cursor-pointer font-bold`}
+          style={{
+            backgroundColor: bgColor,
+            color: textColor
+          }}
         >
           {text}
         </button>

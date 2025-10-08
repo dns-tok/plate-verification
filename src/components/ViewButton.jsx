@@ -1,9 +1,20 @@
 import React from 'react'
 
-const ViewButton = () => {
+const ViewButton = ({ bgColor = 'transparent', textColor = 'white', borderColor = '#1AABFE', text = 'View More', icon = '/Group.png', onClick }) => {
   return (
     <div>
-        <button className='border border-[#1AABFE] rounded flex items-center gap-3 py-1 px-3'>View More <img src="/Group.png" alt="" /></button>
+        <button 
+          className='border rounded-lg flex items-center gap-3 py-2 px-4'
+          style={{
+            backgroundColor: bgColor,
+            color: textColor,
+            borderColor: borderColor
+          }}
+          onClick={onClick}
+        >
+          <span className='text-lg font-semibold'>{text}</span> 
+          <img className='py-2' src={icon} alt="" width={20} height={20} />
+        </button>
     </div>
   )
 }
