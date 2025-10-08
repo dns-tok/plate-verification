@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+body {
+    overflow-x: hidden;
+}
+
+/* h1{
+    color: white;
+    font-size: 4.5rem;
+    font-weight: bold;
+}
+
+h2{
+    color: white;
+    font-size: 3rem;
+    font-weight: bold;
+} */
+
+/* p{
+    color: white;
+    font-size: 1.5rem;
+    font-weight: semibold;
+} */
