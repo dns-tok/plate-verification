@@ -5,14 +5,13 @@ import ViewButton from './ViewButton'
 const MultiConsultant = ({  id, 
     isSelected, 
     onClick, 
-    planName = "Plan", 
-    planNumber = "", 
-    priceDescription = "Price", 
-    discount = "", 
-    description = "Consultation", 
-    features = [], 
-    buttonText = "Choose Plan",
-    viewButtonProps }) => {
+    planName , 
+    planNumber , 
+    priceDescription, 
+    discount, 
+    description, 
+    buttonText,
+    }) => {
   return (
     <div 
     className={`backdrop-blur-md rounded-2xl p-6 border w-[22rem] cursor-pointer transition-all duration-300 ${
@@ -32,17 +31,6 @@ const MultiConsultant = ({  id,
         textColor={isSelected ? 'white' : 'black'}
       />
       </div>
-      {features && features.length > 0 && (
-        <div className='my-5'>
-          {features.map((feature, index) => (
-            <div key={index} className='flex items-center gap-2'>
-                <img src="/dashicons_yes.png" alt="" />
-                <p>{feature}</p>
-            </div>
-          ))}
-        </div>
-      )}
-      {viewButtonProps && <ViewButton {...viewButtonProps} />}   
   </div>
   )
 }

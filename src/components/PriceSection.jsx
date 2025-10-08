@@ -32,17 +32,24 @@ const PriceSection = () => {
             description="Single consultation"
             features={[
               "Vehicle registration details",
-              "License plate status ",
-              "Vehicle restrictions ",
-              "Vehicle debts ",
-              "Traffic fines ",
-              "IPVA (Motor Vehicle Property Tax) value ",
-              "Licensing value ",
-              "DPVAT (Mandatory Insurance) value ",
-              "Owner information ",
+              "License plate status ",
+              "Vehicle restrictions ",
+              "Vehicle debts ",
+              "Traffic fines ",
+              "IPVA (Motor Vehicle Property Tax) value ",
+              "Licensing value ",
+              "DPVAT (Mandatory Insurance) value ",
+              "Owner information ",
               "Number of previous owners"
             ]}
             buttonText="Choose Plan"
+            viewButtonProps={{
+              bgColor: "transparent",
+              textColor: "white",
+              borderColor: "#1AABFE",
+              text: "View More",
+              icon: "/Group.png"
+            }}
           />
           <PriceCard
             id={2}
@@ -65,6 +72,13 @@ const PriceSection = () => {
               "Auction history "
             ]}
             buttonText="Choose Plan"
+            viewButtonProps={{
+              bgColor: "transparent",
+              textColor: "white",
+              borderColor: "#1AABFE",
+              text: "View More",
+              icon: "/Group.png"
+            }}
           />
           <PriceCard
             id={3}
@@ -84,9 +98,16 @@ const PriceSection = () => {
               "Legal representative details ",
               "Vehicle theft records ",
               "Vehicle recovery status ",
-              "Auction history "
+              "Auction history "
             ]}
             buttonText="Choose Plan"
+            viewButtonProps={{
+              bgColor: "transparent",
+              textColor: "white",
+              borderColor: "#1AABFE",
+              text: "View More",
+              icon: "/Group.png"
+            }}
           />
           <PriceCard
             id={4}
@@ -106,9 +127,16 @@ const PriceSection = () => {
               "Vehicle model and version ",
               "Manufacturing year ",
               "Fuel type ",
-              "Chassis number verification "
+              "Chassis number verification "
             ]}
             buttonText="Choose Plan"
+            viewButtonProps={{
+              bgColor: "transparent",
+              textColor: "white",
+              borderColor: "#1AABFE",
+              text: "View More",
+              icon: "/Group.png"
+            }}
           />
           <div className='text-center bg-white rounded-full p-2 w-[10rem] absolute -top-5 left-[34rem]'>
             <p className='text-red-500 font-bold'>User's Choice</p>
@@ -185,16 +213,16 @@ const PriceSection = () => {
 
       <div className='flex gap-10 mt-[5rem] justify-center'>
         <ViewButton
-          bgColor={!showMultiConsultant ? "#1AABFE" : "white"}
-          textColor={!showMultiConsultant ? "white" : "#1AABFE"}
+          bgColor={!showMultiConsultant ? "#1AABFE" : "#1AABFE"}
+          textColor={!showMultiConsultant ? "white" : "white"}
           borderColor="#1AABFE"
           text="Single Consultation"
           icon="/white-arrow.png"
           onClick={() => setShowMultiConsultant(false)}
         />
         <ViewButton
-          bgColor={showMultiConsultant ? "#1AABFE" : "white"}
-          textColor={showMultiConsultant ? "white" : "#1AABFE"}
+          bgColor={showMultiConsultant ? "#1AABFE" : "#1AABFE"}
+          textColor={showMultiConsultant ? "white" : "white"}
           borderColor="#1AABFE"
           text="Multi Consultation"
           icon="/white-arrow.png"

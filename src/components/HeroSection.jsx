@@ -18,12 +18,19 @@ const HeroSection = () => {
           <textarea name="" placeholder='Type here is the vehicle license....' id="" className="resize-none border-none outline-none w-[70%] h-auto"></textarea>
           <Button
             text="Consult Now"
+            bgColor="#1AABFE"
+            textColor="white"
           />
         </div>
         <p className='text-white text-[1.5rem] font-semibold w-[65%] pt-[1rem]'>
           Consult everything you need , ultimately want buy a car
           and not one story to tell , report complete
         </p>
+        <div className='flex gap-10 mt-[2rem]'>
+          <img src="/reclame-aqui.png" alt="" />
+          <img src="/olcsorjrgwawyjjyl301.png" alt="" />
+          <img src="/1e90ea_e08a095cca5746a5bf7d585a8fd4afea~mv2.png" alt="" />
+        </div>
       </div>
       <div className='absolute top-6 -right-22 overflow-x-hidden'>
         <img src="/f1f7ce1808d508da6aff4f4eebe244d81220b1f2.png" alt="" width={1200} height={1200} />

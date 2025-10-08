@@ -13,7 +13,7 @@ const ViewButton = ({ bgColor = 'transparent', textColor = 'white', borderColor 
           onClick={onClick}
         >
           <span className='text-lg font-semibold'>{text}</span> 
-          <img className='py-2' src={icon} alt="" width={20} height={20} />
+          <img className='' src={icon} alt="" width={20} height={20} />
         </button>
     </div>
   )
