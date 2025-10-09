@@ -34,7 +34,12 @@ const InfoSection = () => {
                 <InfoSectionCard/>
                 <InfoSectionCard/>
             </div>
-            <ViewButton/>
+            <ViewButton 
+                bgColor="#1BABFE"
+                textColor="white"
+                text="View More"
+                icon="/white-arrow.png"
+            />
         </div>
     )
 }

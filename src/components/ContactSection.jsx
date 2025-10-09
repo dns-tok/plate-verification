@@ -36,7 +36,7 @@ const ContactSection = () => {
                         <label htmlFor="message">Message</label>
                         <input type="text" className='bg-white rounded-md py-5 px-4'/>
                     </div>
-                    <button type='submit' className='bg-white rounded-full w-[8rem] h-[2rem] text-[#1AABFE] my-5'>Submit</button>
+                    <button type='submit' className='bg-white rounded-full w-[8rem] h-[2rem] font-medium px-2 py-1 text-[#1AABFE] my-5'>Submit contact</button>
                 </form>
             </div>
         </div>
