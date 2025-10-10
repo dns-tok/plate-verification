@@ -1,42 +1,77 @@
-import React from 'react'
-import Button from './Button'
+import React from "react";
+import Button from "./Button";
 
 const HeroSection = () => {
   return (
-    <div
-      className='bg bg-cover bg-center bg-no-repeat overflow-hidden relative'
-      style={{
-        backgroundImage: "linear-gradient(to top, rgba(25, 77, 154, 1), rgba(0, 0, 0, 0.7)), url('/PlacaVerificada-removebg-preview 2.png')"
-      }}
-    >
-      <div className='flex flex-col  w-[50%] pb-[5rem] pt-[10rem] ml-[10rem] overflow-x-hidden'>
-        <h1 className='text-white text-[4.5rem] font-bold pb-[3rem]'>
-          Before purchasing,​consult.
-          Protect your dream
+    <div className="min-h-[36rem] bg-[url('/heroBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden relative commonPadding flex flex-col lg:flex-row gap-10 lg:gap-0 items-end py-8">
+      {/* Left Content */}
+      <div className="w-full flex flex-col z-10 text-center md:text-start">
+        <h1 className="text-white text-[2rem] md:text-[3.5rem] font-bold pb-6 md:pb-[3rem]">
+          Before purchasing, consult.
+          <br />
+          <span className="text-[#1AABFE]">Protect your dream</span>
         </h1>
-        <div className='flex items-center justify-between bg-white rounded-full py-2 px-4 w-[70%]'>
-          <textarea name="" placeholder='Type here is the vehicle license....' id="" className="resize-none border-none outline-none w-[70%] h-auto"></textarea>
-          <Button
-            text="Consult Now"
-            bgColor="#1AABFE"
-            textColor="white"
+        <div className="md:hidden w-full  h-[60%]  flex items-end justify-center lg:justify-end z-0 p-6">
+          <img
+            src="/car.svg"
+            alt="Car"
+            className="w-auto h-full object-contain object-bottom transform scale-110 lg:scale-100"
           />
         </div>
-        <p className='text-white text-[1.5rem] font-semibold w-[65%] pt-[1rem]'>
-          Consult everything you need , ultimately want buy a car
-          and not one story to tell , report complete
-        </p>
-        <div className='flex gap-10 mt-[2rem]'>
-          <img src="/reclame-aqui.png" alt="" />
-          <img src="/olcsorjrgwawyjjyl301.png" alt="" />
-          <img src="/1e90ea_e08a095cca5746a5bf7d585a8fd4afea~mv2.png" alt="" />
+
+        <div className="w-full lg:w-[41%] max-w-[40rem]">
+          {/* Search Container */}
+          <div className="flex flex-row items-center justify-between bg-white rounded-full py-1.5 px-1.5 shadow-lg ">
+            <input
+              type="text"
+              placeholder="Type here is the vehicle license..."
+              className="text-[0.9rem] resize-none border-none outline-none w-full h-6 px-2 md:px-4 bg-transparent text-gray-700 placeholder-gray-500"
+            />
+
+            <button
+              className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 py-2 md:py-3 px-3 md:px-5  cursor-pointer rounded-full`}
+            >
+              Consult Now
+            </button>
+          </div>
+
+          {/* Description */}
+          <p className="text-white text-[1rem] md:text-[1.2rem] pt-4 md:pt-[1rem] leading-relaxed">
+            Consult everything you need, ultimately want buy a car and not one
+            story to tell, report complete
+          </p>
+        </div>
+
+        {/* Trust Badges */}
+        <div className="flex flex-wrap gap-4 md:gap-6 mt-6 md:mt-[1.6rem] justify-center md:justify-start">
+          <img
+            src="/reclame-aqui.png"
+            alt="Reclame Aqui"
+            className="h-10 md:h-12 w-auto object-contain"
+          />
+          <img
+            src="/olcsorjrgwawyjjyl301.png"
+            alt="Trust Seal"
+            className="h-10 md:h-12 w-auto object-contain"
+          />
+          <img
+            src="/1e90ea_e08a095cca5746a5bf7d585a8fd4afea~mv2.png"
+            alt="Verification Badge"
+            className="h-10 md:h-12 w-auto object-contain"
+          />
         </div>
       </div>
-      <div className='absolute top-6 -right-22 overflow-x-hidden'>
-        <img src="/f1f7ce1808d508da6aff4f4eebe244d81220b1f2.png" alt="" width={1200} height={1200} />
+
+      {/* Car Image */}
+      <div className="hidden md:flex lg:absolute bottom-0 right-0 w-full lg:w-[55%] h-[60%] lg:h-full  items-end justify-center lg:justify-end z-0 p-8 md:p-0">
+        <img
+          src="/car.svg"
+          alt="Car"
+          className="w-auto h-full object-contain object-bottom transform scale-110 lg:scale-100"
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HeroSection
+export default HeroSection;

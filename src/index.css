@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
+* {
+  font-family: "Poppins", sans-serif;
+}
+
 body {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 /* h1{
@@ -21,3 +25,68 @@ h2{
     font-size: 1.5rem;
     font-weight: semibold;
 } */
+
+.commonPadding {
+  padding: 2rem 5rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+  @media (min-width: 769px) and (max-width: 1280px) {
+    padding: 2rem 3rem;
+  }
+}
+
+/* Swiper container */
+.swiper-custom {
+  position: relative;
+  padding-bottom: 4rem !important; /* equivalent to !pb-16 */
+
+  @media (max-width: 768px) {
+    padding-bottom: 3rem !important;
+  }
+}
+
+/* Pagination container */
+.swiper-custom .swiper-pagination {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* Pagination bullets */
+.swiper-custom .swiper-pagination-bullet {
+  width: 2rem; /* w-8 */
+  height: 2rem; /* h-8 */
+  border-radius: 9999px; /* rounded-full */
+  border: 2px solid white;
+  background-color: transparent;
+  position: relative;
+  opacity: 0.5;
+  transition: all 0.3s;
+
+  @media (max-width: 768px) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+/* Active bullet */
+.swiper-custom .swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+/* Active bullet pseudo-element (dot in center) */
+.swiper-custom .swiper-pagination-bullet-active::before {
+  content: "•";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}

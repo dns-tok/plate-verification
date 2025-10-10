@@ -1,29 +1,14 @@
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import HeroSection from './components/HeroSection'
-import PriceSection from './components/PriceSection'
-import InfoSection from './components/InfoSection'
-import FaqSection from './components/FaqSection'
-import ContactSection from './components/ContactSection'
-import TestimonialSection from './components/TestimonialSection'
-import MultiConsultant from './components/MultiConsultant'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
 
 function App() {
-
-
   return (
-    <div className='overflow-x-hidden overflow-y-hidden'>
-      <Navbar />
-      <HeroSection />
-      <PriceSection />
-      <MultiConsultant />
-      <InfoSection />
-      <FaqSection />
-      <ContactSection />
-      <TestimonialSection />
-      <Footer />
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

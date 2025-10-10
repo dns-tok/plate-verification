@@ -1,20 +1,32 @@
-import React from 'react'
+import React from "react";
 
-const TestimonialCard = () => {
+const TestimonialCard = ({ testimonial }) => {
   return (
-    <div className='bg-white rounded-2xl p-5 w-[30rem] h-[15rem] flex justify-between items-center relative'>
-        <div>
-            <img src="/Ellipse 1.png" alt="" width={100} height={100}/>
+    <div className="bg-white rounded-2xl p-4 md:p-6 md:!py-10  !h-full flex flex-col md:flex-row gap-2 md:gap-4 justify-between items-start relative shadow-lg ">
+      <img
+        src={testimonial.avatar}
+        alt={testimonial.name}
+        className="rounded-full object-cover border-[3.5px] border-[#194D9A] w-[5rem] md:w-auto"
+      />
+      <div className="text-left relative flex-1 flex flex-col gap-1 md:gap-2">
+        <h2 className="font-semibold text-base md:text-2xl text-[#194D9A] ">
+          {testimonial.name}
+        </h2>
+        <img className="w-[7rem]" src="/Frame 10.png" alt="stars" />
+        <div className="flex items-start gap-2">
+          <img src="/Mask group (2).png" alt="" className="size-4" />
+          <p className="text-gray-600 text-xs md:text-[1.2rem] leading-relaxed font-medium ">
+            {testimonial.text}
+          </p>
         </div>
-        <div className='text-left w-[18rem] relative'>
-            <h2>John Doe</h2>
-            <img className='my-2' src="/Frame 10.png" alt="" />
-            <p>Ever since I discovered this service, I never buy a car without checking it first. For something of such high  value, it's not worth taking risks</p>
-            <img src="/Mask group (2).png" alt="" width={10} height={10} className='absolute top-15 -left-3'/>
-        </div>
-        <img src="/Mask group (3).png" alt=""  className='absolute top-8 right-6' width={40} height={40}/>
+      </div>
+      <img
+        src="/Mask group (3).png"
+        alt=""
+        className="absolute top-4 md:top-7 right-4 md:right-10 size-10 md:size-14 "
+      />
     </div>
-  )
-}
+  );
+};
 
-export default TestimonialCard
+export default TestimonialCard;

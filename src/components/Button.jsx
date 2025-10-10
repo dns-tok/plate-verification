@@ -1,19 +1,11 @@
-import React from 'react'
+import React from "react";
 
-const Button = ({ text, bgColor, textColor }) => {
+const Button = ({ text, bgColor, textColor, className }) => {
   return (
-    <div>
-        <button 
-          className={`rounded-full px-7 py-3 cursor-pointer font-bold`}
-          style={{
-            backgroundColor: bgColor,
-            color: textColor
-          }}
-        >
-          {text}
-        </button>
-    </div>
-  )
-}
+    <button className={`rounded-full px-8 py-2 cursor-pointer ${className}`}>
+      {text}
+    </button>
+  );
+};
 
-export default Button
+export default Button;

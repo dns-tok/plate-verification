@@ -1,49 +1,108 @@
-import React from 'react'
-import Faq from './Faq'
+import React from "react";
+import { motion } from "framer-motion";
+import Faq from "./Faq";
 
 const FaqSection = () => {
-  return (
-    <div className='py-[5rem] px-[6rem] text-center'>
-        <h1 className='text-[#194D9A] text-[2rem] font-bold'>Frequently Asked Questions​</h1>
-        <div className='my-[5rem] mx-[10rem] flex justify-between'>
-            <img src="/Rectangle 16.png" alt="" width={500} height={500}/>
-            <div>
-                <Faq 
-                    question="How do I purchase a report?" 
-                    answer="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
-                />
-                <Faq 
-                    question="What information is included in the report?" 
-                    answer="The report includes vehicle registration details, accident history, ownership records, and complete vehicle history."
-                />
-                <Faq 
-                    question="How long does it take to get my report?" 
-                    answer="You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes."
-                />              
-                <Faq 
-                    question="How long does it take to get my report?" 
-                    answer="You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes."
-                />              
-                <Faq 
-                    question="How long does it take to get my report?" 
-                    answer="You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes."
-                />              
-                <Faq 
-                    question="How long does it take to get my report?" 
-                    answer="You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes."
-                />              
-                <Faq 
-                    question="How long does it take to get my report?" 
-                    answer="You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes."
-                />              
-                <Faq 
-                    question="How long does it take to get my report?" 
-                    answer="You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes."
-                />              
-            </div>
-        </div>
-    </div>
-  )
-}
+  const faqs = [
+    {
+      id: 1,
+      question: "How do I purchase a report?",
+      answer:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+    },
+    {
+      id: 2,
+      question: "How do I purchase a plan?",
+      answer:
+        "The report includes vehicle registration details, accident history, ownership records, and complete vehicle history.",
+    },
+    {
+      id: 3,
+      question: "How do I buy credits?",
+      answer:
+        "You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes.",
+    },
+    {
+      id: 4,
+      question: "How do I connect?",
+      answer:
+        "Currently, the report is available in English and Portuguese. More language options are coming soon.",
+    },
+    {
+      id: 5,
+      question: "How do I reset my password?",
+      answer:
+        "Yes, you can access your purchased reports anytime by logging into your account and visiting your order history.",
+    },
+    {
+      id: 6,
+      question: "What types of reports are there?",
+      answer:
+        "Absolutely. All transactions are encrypted and processed through trusted, secure payment gateways.",
+    },
+    {
+      id: 7,
+      question: "What does each report include?",
+      answer:
+        "Refunds are available only in cases where the report could not be generated due to incomplete vehicle information or technical errors.",
+    },
+    {
+      id: 8,
+      question: "How long are reports available?",
+      answer:
+        "Yes, you can purchase and view reports for as many vehicles as you like — each one is handled separately.",
+    },
+  ];
 
-export default FaqSection
+  return (
+    <section className="text-center commonPadding bg-gradient-to-tr from-[#194D9A] via-white to-[#ffffff] ">
+      {/* Title */}
+      <motion.h2
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        className="text-[#194D9A] text-[1.8rem] md:text-[2rem] lg:text-[2.8rem] font-bold mb-3 md:mb-6 lg:mb-10"
+      >
+        Frequently Asked Questions
+      </motion.h2>
+
+      <div className="flex flex-col md:flex-row justify-between gap-6 lg:gap-10 xl:gap-12  mx-auto ">
+        {/* Left Image */}
+        <div className="md:w-[50%]">
+          <motion.img
+            src="/Rectangle 16.png"
+            alt="FAQ Illustration"
+            loading="lazy"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* FAQ List */}
+        <div className="md:w-[50%] text-left md:space-y-5 ">
+          {faqs.map((faq, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Faq
+                question={faq.question}
+                answer={faq.answer}
+                isOpen={index === 0}
+              />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default FaqSection;

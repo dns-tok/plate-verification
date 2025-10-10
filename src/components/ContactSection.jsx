@@ -1,47 +1,72 @@
-import React from 'react'
+import React from "react";
 
 const ContactSection = () => {
-    return (
-        <div className=' py-[5rem] flex justify-center' style={{
-            backgroundImage: "linear-gradient(rgba(25, 77, 154, 0.7), rgba(25, 77, 154, 0.7)), url('/Rectangle 92.png')"
-        }}>
-            <div className='flex gap-10'>
-            <div className='w-[25rem] h-[25rem] bg-white rounded-2xl flex items-end justify-center'>
-                <img src="/Mask group (1).png" alt="" width={400} height={400} />
-            </div>
-            <div>
-                <h1 className='text-white text-[2rem] font-bold'>Contact Us</h1>
-                <form className='flex flex-col gap-2 text-white' action="">
-                    <div className='flex gap-2'>
-                        <div className='flex flex-col gap-2'>
-                            <label htmlFor="name">Name</label>
-                            <input type="text" className='bg-white rounded-md py-2 px-4'/>
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <label htmlFor="email">Email</label>
-                            <input type="email" className='bg-white  rounded-md py-2 px-4'/>
-                        </div>
-                    </div>
-                    <div className='flex gap-2'>
-                        <div className='flex flex-col gap-2'>
-                            <label htmlFor="name">Name</label>
-                            <input type="text" className='bg-white rounded-md py-2 px-4'/>
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <label htmlFor="email">Email</label>
-                            <input type="email" className='bg-white  rounded-md py-2 px-4'/>
-                        </div>
-                    </div>
-                    <div className='flex flex-col gap-2'>
-                        <label htmlFor="message">Message</label>
-                        <input type="text" className='bg-white rounded-md py-5 px-4'/>
-                    </div>
-                    <button type='submit' className='bg-white rounded-full w-[8rem] h-[2rem] font-medium px-2 py-1 text-[#1AABFE] my-5'>Submit contact</button>
-                </form>
-            </div>
+  const labelClass = "text-white text-[0.9rem] md:text-[0.8rem] font-semibold";
+  const inputClass =
+    "bg-white rounded-md py-1.5 px-4 w-full text-black text-[1rem] md:text-[1.1rem]";
+  return (
+    <div className='commonPadding flex justify-center bg-[url("/contactBg.svg")] bg-cover bg-center bg-no-repeat'>
+      <div className="flex flex-col md:flex-row gap-10 my-[4rem]  md:w-[80%] lg:w-[70%] ">
+        <div className="flex justify-center  md:w-[45%] rounded-2xl overflow-hidden">
+          <img
+            src="/contactGuy.svg"
+            alt=""
+            className=" h-full object-cover my-auto"
+          />
         </div>
+        <div className="md:w-[55%]">
+          <form className="flex flex-col gap-2 text-white" action="">
+            <h1 className="text-white text-[2rem] font-bold leading-none">
+              Contact Us
+            </h1>
+            <div className="flex flex-col md:flex-row gap-2 md:gap-6">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="name" className={labelClass}>
+                  Name
+                </label>
+                <input type="text" className={inputClass} />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className={labelClass}>
+                  Email
+                </label>
+                <input type="email" className={inputClass} />
+              </div>
+            </div>
+            <div className="flex flex-col md:flex-row gap-2 md:gap-6">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="name" className={labelClass}>
+                  Name
+                </label>
+                <input type="text" className={inputClass} />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className={labelClass}>
+                  Email
+                </label>
+                <input type="email" className={inputClass} />
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="message" className={labelClass}>
+                Message
+              </label>
+              <textarea
+                type="text"
+                className={`${inputClass} h-[6rem] md:h-[6rem] lg:h-[9rem]`}
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-white rounded-full ms-auto md:ms-0 me-auto font-bold px-6 py-3 text-[1rem] md:text-[0.9rem] mt-4 text-[#1AABFE] whitespace-nowrap"
+            >
+              Submit contact
+            </button>
+          </form>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
-export default ContactSection
+export default ContactSection;
