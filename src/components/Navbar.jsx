@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Button from "./Button";
-import { BiMenu, BiX } from "react-icons/bi";
+import { BiMenu } from "react-icons/bi";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,15 +45,17 @@ const Navbar = () => {
         {navLinks.map((link) => (
           <p
             key={link.name}
-            className="text-sm  xl:text-base cursor-pointer border-b-2 border-transparent hover:border-[#1AABFE] transition-all duration-300 "
+            className="text-sm  xl:text-sm cursor-pointer border-b-2 border-transparent hover:border-[#1AABFE] transition-all duration-300 "
           >
             {link.name}
           </p>
         ))}
-        <Button
-          text="Enlrar"
-          className="text-xl font-semibold ms-[3rem] md:ms-[1rem] xl:ms-[6rem] bg-[#1AABFE] text-white hover:bg-[#1AABFE]/60 hover:shadow-inner transition-all duration-300"
-        />
+
+        <button
+          className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2 cursor-pointer rounded-full ms-[3rem] md:ms-[1rem] xl:ms-[6rem]`}
+        >
+          Enlrar
+        </button>
       </div>
 
       <div className="flex lg:hidden text-4xl text-white cursor-pointer me-2">
@@ -73,16 +74,16 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="flex flex-col gap-8 absolute top-[3.6rem] md:top-[4.2rem] lg:top-[8rem] w-full h-full bg-black p-4 pt-8 z-[1000]">
           {navLinks.map((link) => (
-            <p key={link.name} className="text-white text-xl">
+            <p key={link.name} className="text-white text-lg">
               {link.name}
             </p>
           ))}
-          <Button
-            text="Enlrar"
-            bgColor="#1AABFE"
-            textColor="white"
-            className="text-2xl me-auto bg-[#1AABFE]"
-          />
+
+          <button
+            className={`text-lg bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2  cursor-pointer rounded-full`}
+          >
+            Enlrar
+          </button>
         </div>
       )}
     </div>

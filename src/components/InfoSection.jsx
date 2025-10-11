@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import InfoSectionCard from "./InfoSectionCard";
-import ViewButton from "./ViewButton";
 import { FaArrowRightLong } from "react-icons/fa6";
 
 const infoCards = [

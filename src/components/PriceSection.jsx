@@ -171,11 +171,11 @@ const PriceSection = () => {
 
           {/* Special Test Drive Plan */}
           <div
-            className={` flex flex-col md:flex-row justify-between items-center md:gap-20 backdrop-blur-xl bg-[#1AABFE]/20 border border-[#1AABFE]/30 w-full lg:w-1/2 py-6 md:px-16 px-6 rounded-md ${
+            className={` flex flex-col md:flex-row justify-between items-center gap-0 md:gap-10 backdrop-blur-xl bg-[#1AABFE]/20 border border-[#1AABFE]/30 py-6 w-full md:w-auto  px-6 rounded-md ${
               selectedCard === 9 && "bg-[#1AABFE]/20 border-[#1AABFE] border-2"
             }`}
           >
-            <div className="w-full">
+            <div className="w-full md:w-auto">
               <p className="text-white text-[1rem] md:text-[1.1rem] font-medium">
                 Test Drive
               </p>
@@ -194,10 +194,10 @@ const PriceSection = () => {
                 </p>
               </div>
             </div>
-            <div className="w-[100%] mt-6 text-center">
+            <div className="w-full md:w-auto ms-auto mt-6 text-center">
               <button
                 onClick={() => setSelectedCard(9)}
-                className={`rounded-full w-[90%] mx-auto px-8 py-2 cursor-pointer font-medium md:text-[1.2rem] ${
+                className={`rounded-full w-[90%] mx-auto px-8 py-2 cursor-pointer whitespace-nowrap font-medium md:text-[1.2rem] ${
                   selectedCard === 9
                     ? "bg-[#1AABFE] text-white"
                     : "bg-white text-black"

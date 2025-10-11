@@ -6,7 +6,7 @@ const ContactSection = () => {
     "bg-white rounded-md py-1.5 px-4 w-full text-black text-[1rem] md:text-[1.1rem]";
   return (
     <div className='commonPadding flex justify-center bg-[url("/contactBg.svg")] bg-cover bg-center bg-no-repeat'>
-      <div className="flex flex-col md:flex-row gap-10 my-[4rem]  md:w-[80%] lg:w-[70%] ">
+      <div className="flex flex-col md:flex-row gap-4  md:gap-10 md:my-[4rem] my-[2rem]  md:w-[80%] lg:w-[70%] ">
         <div className="flex justify-center  md:w-[45%] rounded-2xl overflow-hidden">
           <img
             src="/contactGuy.svg"

@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import Faq from "./Faq";
 
 const FaqSection = () => {
@@ -57,27 +56,17 @@ const FaqSection = () => {
   return (
     <section className="text-center commonPadding bg-gradient-to-tr from-[#194D9A] via-white to-[#ffffff] ">
       {/* Title */}
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
-        className="text-[#194D9A] text-[1.8rem] md:text-[2rem] lg:text-[2.8rem] font-bold mb-3 md:mb-6 lg:mb-10"
-      >
+      <h2 className="text-[#194D9A] text-[1.8rem] md:text-[2rem] lg:text-[2.8rem] font-bold mb-3 md:mb-6 lg:mb-10">
         Frequently Asked Questions
-      </motion.h2>
+      </h2>
 
       <div className="flex flex-col md:flex-row justify-between gap-6 lg:gap-10 xl:gap-12  mx-auto ">
         {/* Left Image */}
         <div className="md:w-[50%]">
-          <motion.img
-            src="/Rectangle 16.png"
+          <img
+            src="/faqSideImg.svg"
             alt="FAQ Illustration"
             loading="lazy"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
             className="w-full h-full object-cover"
           />
         </div>
@@ -85,19 +74,13 @@ const FaqSection = () => {
         {/* FAQ List */}
         <div className="md:w-[50%] text-left md:space-y-5 ">
           {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
+            <div key={index}>
               <Faq
                 question={faq.question}
                 answer={faq.answer}
                 isOpen={index === 0}
               />
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

@@ -10,7 +10,6 @@ const PriceCard = ({
   description = "Single consultation",
   features = ["Vehicle registration details"],
   buttonText = "Choose Plan",
-  viewButtonProps,
   isUserChoice = false,
 }) => {
   return (
@@ -39,7 +38,7 @@ const PriceCard = ({
         <div className="my-5">
           {features.map((feature, index) => (
             <div key={index} className="flex items-center gap-2">
-              <img src="/dashicons_yes.png" alt="" />
+              <img src="/yes.svg" alt="" />
               <p className="text-white text-[0.8rem] font-light">{feature}</p>
             </div>
           ))}

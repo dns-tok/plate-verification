@@ -1,5 +1,4 @@
 import React from "react";
-import Button from "./Button";
 
 const HeroSection = () => {
   return (
@@ -45,17 +44,17 @@ const HeroSection = () => {
         {/* Trust Badges */}
         <div className="flex flex-wrap gap-4 md:gap-6 mt-6 md:mt-[1.6rem] justify-center md:justify-start">
           <img
-            src="/reclame-aqui.png"
+            src="/verificationBadge1.svg"
             alt="Reclame Aqui"
             className="h-10 md:h-12 w-auto object-contain"
           />
           <img
-            src="/olcsorjrgwawyjjyl301.png"
+            src="/verificationBadge2.svg"
             alt="Trust Seal"
             className="h-10 md:h-12 w-auto object-contain"
           />
           <img
-            src="/1e90ea_e08a095cca5746a5bf7d585a8fd4afea~mv2.png"
+            src="/verificationBadge3.svg"
             alt="Verification Badge"
             className="h-10 md:h-12 w-auto object-contain"
           />

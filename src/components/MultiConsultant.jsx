@@ -1,6 +1,4 @@
 import React from "react";
-import Button from "./Button";
-import ViewButton from "./ViewButton";
 
 const MultiConsultant = ({
   id,
