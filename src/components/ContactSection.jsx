@@ -3,7 +3,7 @@ import React from "react";
 const ContactSection = () => {
   const labelClass = "text-white text-[0.9rem] md:text-[0.8rem] font-semibold";
   const inputClass =
-    "bg-white rounded-md py-1.5 px-4 w-full text-black text-[1rem] md:text-[1.1rem]";
+    "bg-white rounded-md py-2 px-2 w-full text-black text-[1rem] md:text-[1rem] outline-none ";
   return (
     <div className='commonPadding flex justify-center bg-[url("/contactBg.svg")] bg-cover bg-center bg-no-repeat'>
       <div className="flex flex-col md:flex-row gap-4  md:gap-10 md:my-[4rem] my-[2rem]  md:w-[80%] lg:w-[70%] ">
@@ -20,31 +20,31 @@ const ContactSection = () => {
               Contact Us
             </h1>
             <div className="flex flex-col md:flex-row gap-2 md:gap-6">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="name" className={labelClass}>
                   Name
                 </label>
                 <input type="text" className={inputClass} />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="email" className={labelClass}>
                   Email
                 </label>
-                <input type="email" className={inputClass} />
+                <input type="text" className={inputClass} />
               </div>
             </div>
-            <div className="flex flex-col md:flex-row gap-2 md:gap-6">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="name" className={labelClass}>
-                  Name
+            <div className="flex flex-col md:flex-row gap-2 md:gap-6 w-full">
+              <div className="flex flex-col gap-2 w-full">
+                <label htmlFor="phone" className={labelClass}>
+                  Phone Number
                 </label>
                 <input type="text" className={inputClass} />
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="email" className={labelClass}>
-                  Email
+              <div className="flex flex-col gap-2 w-full">
+                <label htmlFor="city" className={labelClass}>
+                  City
                 </label>
-                <input type="email" className={inputClass} />
+                <input type="text" className={inputClass} />
               </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -53,12 +53,12 @@ const ContactSection = () => {
               </label>
               <textarea
                 type="text"
-                className={`${inputClass} h-[6rem] md:h-[6rem] lg:h-[9rem]`}
+                className={`${inputClass} h-[6rem] md:h-[6rem] lg:h-[9rem] resize-none`}
               />
             </div>
             <button
               type="submit"
-              className="bg-white rounded-full ms-auto md:ms-0 me-auto font-bold px-6 py-3 text-[1rem] md:text-[0.9rem] mt-4 text-[#1AABFE] whitespace-nowrap"
+              className="bg-white rounded-full ms-auto md:ms-0 me-auto font-bold px-6 py-2 text-[1rem] md:text-[0.9rem] mt-4 text-[#1AABFE] whitespace-nowrap"
             >
               Submit contact
             </button>

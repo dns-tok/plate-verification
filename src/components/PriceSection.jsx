@@ -114,6 +114,14 @@ const multiPlans = [
     discount: "-17%",
     desc: "of economy",
   },
+  {
+    id: 9,
+    name: "Test Drive",
+    planNumber: "Plan 150",
+    priceDesc: "Buy 150 and pay R$140.00",
+    discount: "-7%",
+    desc: "of economy",
+  },
 ];
 
 const PriceSection = () => {
@@ -131,7 +139,6 @@ const PriceSection = () => {
           Prices valid per unit​. If you have any questions, please contact us.
         </p>
       </div>
-
       {/* Plans */}
       {!showMulti ? (
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 w-fit mx-auto">
@@ -167,45 +174,6 @@ const PriceSection = () => {
                 buttonText="Choose Plan"
               />
             ))}
-          </div>
-
-          {/* Special Test Drive Plan */}
-          <div
-            className={` flex flex-col md:flex-row justify-between items-center gap-0 md:gap-10 backdrop-blur-xl bg-[#1AABFE]/20 border border-[#1AABFE]/30 py-6 w-full md:w-auto  px-6 rounded-md ${
-              selectedCard === 9 && "bg-[#1AABFE]/20 border-[#1AABFE] border-2"
-            }`}
-          >
-            <div className="w-full md:w-auto">
-              <p className="text-white text-[1rem] md:text-[1.1rem] font-medium">
-                Test Drive
-              </p>
-              <h2 className="text-white text-[1.8rem] md:text-[2.5rem] font-bold">
-                Plan 150
-              </h2>
-              <p className="text-white text-sm md:text-[1rem] font-light">
-                Buy 150 and pay R$140.00
-              </p>
-              <div className="flex flex-col md:flex-row items-start md:items-center  md:gap-4">
-                <h2 className="text-white text-[2.2rem] md:text-[2.8rem] font-bold">
-                  -7%
-                </h2>
-                <p className="text-white text-sm md:text-[1rem] font-light">
-                  of economy
-                </p>
-              </div>
-            </div>
-            <div className="w-full md:w-auto ms-auto mt-6 text-center">
-              <button
-                onClick={() => setSelectedCard(9)}
-                className={`rounded-full w-[90%] mx-auto px-8 py-2 cursor-pointer whitespace-nowrap font-medium md:text-[1.2rem] ${
-                  selectedCard === 9
-                    ? "bg-[#1AABFE] text-white"
-                    : "bg-white text-black"
-                }`}
-              >
-                Choose plan
-              </button>
-            </div>
           </div>
         </div>
       )}
