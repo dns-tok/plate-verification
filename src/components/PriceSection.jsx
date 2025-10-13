@@ -172,6 +172,7 @@ const PriceSection = () => {
                 discount={plan.discount}
                 description={plan.desc}
                 buttonText="Choose Plan"
+                isUserChoice={plan.id === selectedCard}
               />
             ))}
           </div>

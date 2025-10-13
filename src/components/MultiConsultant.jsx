@@ -10,10 +10,11 @@ const MultiConsultant = ({
   discount,
   description,
   buttonText,
+  isUserChoice = false,
 }) => {
   return id === 9 ? (
     <div
-      className={`md:col-span-4 md:justify-self-center flex flex-col md:flex-row justify-between items-center gap-0 md:gap-10 backdrop-blur-xl  py-6 w-full md:w-auto px-6 rounded-md ${
+      className={`md:col-span-4 md:justify-self-center flex flex-col md:flex-row justify-between items-center gap-0 md:gap-10 backdrop-blur-xl  py-6 w-full md:w-auto px-6 rounded-md relative ${
         isSelected
           ? "bg-[#1AABFE]/20 border-[#1AABFE] border-2"
           : "bg-[#1AABFE]/20 border border-[#1AABFE]/30"
@@ -48,10 +49,18 @@ const MultiConsultant = ({
           Choose plan
         </button>
       </div>
+      {/* Badge */}
+      {isUserChoice && (
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-6 py-2 text-center shadow-lg">
+          <p className="text-red-500 font-bold whitespace-nowrap">
+            User's Choice
+          </p>
+        </div>
+      )}
     </div>
   ) : (
     <div
-      className={`rounded-md p-6 backdrop-blur-xl cursor-pointer transition-all duration-300 ${
+      className={`rounded-md p-6 backdrop-blur-xl cursor-pointer transition-all duration-300 relative ${
         isSelected && "bg-[#1AABFE]/20 border-[#1AABFE] border-2"
       }`}
       onClick={onClick}
@@ -85,6 +94,14 @@ const MultiConsultant = ({
           {buttonText}
         </button>
       </div>
+      {/* Badge */}
+      {isUserChoice && (
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-6 py-2 text-center shadow-lg">
+          <p className="text-red-500 font-bold whitespace-nowrap">
+            User's Choice
+          </p>
+        </div>
+      )}
     </div>
   );
 };
