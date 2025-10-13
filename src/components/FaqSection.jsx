@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Faq from "./Faq";
 
 const FaqSection = () => {
+  const [openFaqId, setOpenFaqId] = useState(null);
+
   const faqs = [
     {
       id: 1,
@@ -53,6 +55,10 @@ const FaqSection = () => {
     },
   ];
 
+  const handleFaqToggle = (faqId) => {
+    setOpenFaqId(openFaqId === faqId ? null : faqId);
+  };
+
   return (
     <section className="text-center commonPadding bg-gradient-to-tr from-[#194D9A] via-white to-[#ffffff] ">
       {/* Title */}
@@ -62,12 +68,12 @@ const FaqSection = () => {
 
       <div className="flex flex-col md:flex-row justify-between gap-6 lg:gap-10 xl:gap-12  mx-auto ">
         {/* Left Image */}
-        <div className="md:w-[50%]">
+        <div className="md:w-[50%] max-h-[40rem]">
           <img
             src="/faqSideImg.svg"
             alt="FAQ Illustration"
             loading="lazy"
-            className="w-full h-full object-cover"
+            className=" object-cover w-full h-full"
           />
         </div>
 
@@ -78,7 +84,8 @@ const FaqSection = () => {
               <Faq
                 question={faq.question}
                 answer={faq.answer}
-                isOpen={index === 0}
+                isOpen={openFaqId === faq.id}
+                onToggle={() => handleFaqToggle(faq.id)}
               />
             </div>
           ))}

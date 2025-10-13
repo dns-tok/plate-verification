@@ -1,14 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 
-const Faq = ({ question, answer }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Faq = ({ question, answer, isOpen, onToggle }) => {
   const contentRef = useRef(null);
   const [height, setHeight] = useState("0px");
-
-  const toggleFaq = () => {
-    setIsOpen(!isOpen);
-  };
 
   useEffect(() => {
     setHeight(isOpen ? `${contentRef.current.scrollHeight}px` : "0px");
@@ -20,7 +15,7 @@ const Faq = ({ question, answer }) => {
         className={`bg-[#194D9A] flex justify-between items-center px-5 h-[3.5rem] ${
           isOpen ? "rounded-t-md" : "rounded-md"
         } relative cursor-pointer`}
-        onClick={toggleFaq}
+        onClick={onToggle}
       >
         <h1 className="text-white text-[0.9rem] md:text-[1rem] lg:text-[1.4rem]">
           {question || "How do I purchase a report?"}
