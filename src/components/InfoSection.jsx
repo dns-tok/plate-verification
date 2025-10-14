@@ -164,6 +164,23 @@ const InfoSection = () => {
   const handleCardClick = (card) => {
     setSelectedCard(card);
   };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const handleShowMore = () => {
+    setShowMore(!showMore);
+
+    scrollToSection("advantages");
+  };
+
   return (
     <div className="text-black commonPadding flex flex-col justify-center items-center">
       <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0">
@@ -200,7 +217,7 @@ const InfoSection = () => {
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 my-10 mb-4 md:mb-6">
         <button
           className="bg-[#1AABFE] rounded-md flex items-center gap-3 py-3 px-8 w-fit cursor-pointer hover:bg-[#1AABFE]/80 transition-all duration-300 text-white"
-          onClick={() => setShowMore(!showMore)}
+          onClick={handleShowMore}
         >
           <span className="md:text-[1.4rem] font-medium">
             {showMore ? "View Less" : "View More"}
