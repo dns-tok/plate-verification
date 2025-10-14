@@ -177,8 +177,9 @@ const InfoSection = () => {
 
   const handleShowMore = () => {
     setShowMore(!showMore);
-
-    scrollToSection("advantages");
+    if (showMore) {
+      scrollToSection("advantages");
+    }
   };
 
   return (
@@ -214,7 +215,11 @@ const InfoSection = () => {
           />
         ))}
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 my-10 mb-4 md:mb-6">
+      <p className="text-start w-full ms-2 mt-2 text-gray-600 text-[0.7rem] md:text-[0.8rem] font-normal">
+        *Information available according to the consulted public and private
+        databases
+      </p>
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mt-5 mb-4 md:mb-6">
         <button
           className="bg-[#1AABFE] rounded-md flex items-center gap-3 py-3 px-8 w-fit cursor-pointer hover:bg-[#1AABFE]/80 transition-all duration-300 text-white"
           onClick={handleShowMore}
@@ -223,8 +228,8 @@ const InfoSection = () => {
             {showMore ? "View Less" : "View More"}
           </span>
           <FaArrowRightLong
-            className={` md:text-[1.3rem] transition-all duration-300 ${
-              showMore ? "rotate-0" : "-rotate-45"
+            className={` md:text-[1.3rem] transition-all duration-500 ${
+              !showMore ? "rotate-0" : "-rotate-90"
             }`}
           />
         </button>
