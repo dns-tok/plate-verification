@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { BiMenu } from "react-icons/bi";
 
 const navLinks = [
   {
-    name: "Plano",
-    href: "#",
+    name: "Plans",
+    href: "#plans",
   },
   {
     name: "Advantages",
-    href: "#",
+    href: "#advantages",
   },
   {
     name: "How it works",
@@ -16,11 +16,11 @@ const navLinks = [
   },
   {
     name: "Contact",
-    href: "#",
+    href: "#contact",
   },
   {
     name: "Questions",
-    href: "#",
+    href: "#questions",
   },
   {
     name: "About Us",
@@ -29,6 +29,8 @@ const navLinks = [
 ];
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navbarRef = useRef(null);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -40,8 +42,26 @@ const Navbar = () => {
     });
   };
 
+  const scrollToSection = (sectionId) => {
+    // Close mobile menu first
+    setIsMenuOpen(false);
+
+    // Wait for the menu to close and navbar to resize before scrolling
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        // Use scrollIntoView with scroll-padding-top handling
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 150); // Increased delay to allow navbar to fully resize
+  };
+
   return (
     <div
+      ref={navbarRef}
       className={`bg-black flex flex-col items-start justify-between ${
         isMenuOpen ? "fixed w-full h-full" : "sticky "
       } top-0 z-[1000]`}
@@ -49,7 +69,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between w-full ">
         <img
           onClick={scrollToTop}
-          className=" max-w-[50%] md:max-w-[28%] xl:max-w-[25%] cursor-pointer"
+          className=" max-w-[50%] md:max-w-[28%] xl:max-w-[20%] 2xl:max-w-[15%] cursor-pointer"
           src="/logoNav.svg"
           alt=""
         />
@@ -57,6 +77,11 @@ const Navbar = () => {
           {navLinks.map((link) => (
             <p
               key={link.name}
+              onClick={() =>
+                link.href.startsWith("#") && link.href !== "#"
+                  ? scrollToSection(link.href.substring(1))
+                  : null
+              }
               className="text-sm  xl:text-sm cursor-pointer border-b-2 border-transparent hover:border-[#1AABFE] transition-all duration-300 "
             >
               {link.name}
@@ -85,7 +110,15 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="flex flex-col gap-8 w-full h-full bg-black p-4 pt-8 z-[1000]">
           {navLinks.map((link) => (
-            <p key={link.name} className="text-white text-lg">
+            <p
+              key={link.name}
+              onClick={() =>
+                link.href.startsWith("#") && link.href !== "#"
+                  ? scrollToSection(link.href.substring(1))
+                  : null
+              }
+              className="text-white text-lg cursor-pointer hover:text-[#1AABFE] transition-colors duration-300"
+            >
               {link.name}
             </p>
           ))}

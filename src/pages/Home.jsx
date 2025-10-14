@@ -6,16 +6,23 @@ import InfoSection from "../components/InfoSection";
 import FaqSection from "../components/FaqSection";
 import ContactSection from "../components/ContactSection";
 import TestimonialSection from "../components/TestimonialSection";
-import MultiConsultant from "../components/MultiConsultant";
 
 const Home = () => {
   return (
     <Layout>
       <HeroSection />
-      <PriceSection />
-      <InfoSection />
-      <FaqSection />
-      <ContactSection />
+      <section id="plans" className="scroll-mt-[3.7rem]">
+        <PriceSection />
+      </section>
+      <section id="advantages" className="scroll-mt-[3.7rem]">
+        <InfoSection />
+      </section>
+      <section id="questions" className="scroll-mt-[3.7rem]">
+        <FaqSection />
+      </section>
+      <section id="contact" className="scroll-mt-[3.7rem]">
+        <ContactSection />
+      </section>
       <TestimonialSection />
     </Layout>
   );

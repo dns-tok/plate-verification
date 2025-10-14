@@ -40,8 +40,10 @@ const MultiConsultant = ({
       <div className="w-full md:w-auto ms-auto mt-6 text-center">
         <button
           onClick={onClick}
-          className={`rounded-full w-[90%] mx-auto px-8 py-2 cursor-pointer whitespace-nowrap font-bold md:text-[1.2rem] ${
-            isSelected ? "bg-[#1AABFE] text-white" : "bg-white text-black"
+          className={`rounded-full mx-auto px-8 py-2 cursor-pointer whitespace-nowrap font-bold md:text-[1.2rem]  ${
+            isSelected
+              ? "bg-[#1AABFE] text-white"
+              : "bg-white text-black hover:bg-[#1AABFE] hover:text-white transition-all duration-500"
           }`}
         >
           Choose plan
@@ -77,7 +79,9 @@ const MultiConsultant = ({
         <button
           onClick={onClick}
           className={`rounded-full w-[80%] mx-auto px-8 py-2 cursor-pointer font-bold ${
-            isSelected ? "bg-[#1AABFE] text-white" : "bg-white text-black"
+            isSelected
+              ? "bg-[#1AABFE] text-white"
+              : "bg-white text-black hover:bg-[#1AABFE] hover:text-white transition-all duration-500"
           }`}
         >
           {buttonText}
