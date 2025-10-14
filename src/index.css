@@ -72,3 +72,21 @@ body {
     font-size: 2rem;
   }
 }
+
+/* WhatsApp icon positioning */
+.whatsapp-icon {
+  right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .whatsapp-icon {
+    right: 2rem;
+  }
+}
+
+/* Ensure WhatsApp icon stays within layout bounds on large screens */
+@media (min-width: 2100px) {
+  .whatsapp-icon {
+    right: calc(50vw - 1050px + 2rem);
+  }
+}

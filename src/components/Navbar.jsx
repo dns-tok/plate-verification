@@ -1,48 +1,55 @@
 import React, { useState } from "react";
 import { BiMenu } from "react-icons/bi";
 
+const navLinks = [
+  {
+    name: "Plano",
+    href: "#",
+  },
+  {
+    name: "Advantages",
+    href: "#",
+  },
+  {
+    name: "How it works",
+    href: "#",
+  },
+  {
+    name: "Contact",
+    href: "#",
+  },
+  {
+    name: "Questions",
+    href: "#",
+  },
+  {
+    name: "About Us",
+    href: "#",
+  },
+];
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const navLinks = [
-    {
-      name: "Plano",
-      href: "#",
-    },
-    {
-      name: "Advantages",
-      href: "#",
-    },
-    {
-      name: "How it works",
-      href: "#",
-    },
-    {
-      name: "Contact",
-      href: "#",
-    },
-    {
-      name: "Questions",
-      href: "#",
-    },
-    {
-      name: "About Us",
-      href: "#",
-    },
-  ];
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <div
       className={`bg-black flex flex-col items-start justify-between ${
-        isMenuOpen ? "fixed top-0 z-[1000] w-full h-full" : "relative"
-      }`}
+        isMenuOpen ? "fixed w-full h-full" : "sticky "
+      } top-0 z-[1000]`}
     >
       <div className="flex items-center justify-between w-full ">
         <img
-          className=" max-w-[50%] md:max-w-[28%] xl:max-w-[25%]"
+          onClick={scrollToTop}
+          className=" max-w-[50%] md:max-w-[28%] xl:max-w-[25%] cursor-pointer"
           src="/logoNav.svg"
           alt=""
         />

@@ -85,40 +85,40 @@ const multiPlans = [
   {
     id: 5,
     name: "Always Present",
-    planNumber: "Plan 1200",
-    priceDesc: "Buy 1200 and pay R$900.00",
+    planNumber: "Plan R$1200",
+    priceDesc: "Buy R$1200 and pay R$900.00",
     discount: "-25%",
     desc: "of economy",
   },
   {
     id: 6,
     name: "Eye on security",
-    planNumber: "Plan 700",
-    priceDesc: "Buy 700 and pay R$500.00",
+    planNumber: "Plan R$700",
+    priceDesc: "Buy R$700 and pay R$500.00",
     discount: "-21%",
     desc: "of economy",
   },
   {
     id: 7,
     name: "Professional",
-    planNumber: "Plan 500",
-    priceDesc: "Buy 500 and pay R$410.00",
+    planNumber: "Plan R$500",
+    priceDesc: "Buy R$500 and pay R$410.00",
     discount: "-18%",
     desc: "of economy",
   },
   {
     id: 8,
     name: "Negotiator",
-    planNumber: "Plan 300",
-    priceDesc: "Buy 300 and pay R$250.00",
+    planNumber: "Plan R$300",
+    priceDesc: "Buy R$300 and pay R$250.00",
     discount: "-17%",
     desc: "of economy",
   },
   {
     id: 9,
     name: "Test Drive",
-    planNumber: "Plan 150",
-    priceDesc: "Buy 150 and pay R$140.00",
+    planNumber: "Plan R$150",
+    priceDesc: "Buy R$150 and pay R$140.00",
     discount: "-7%",
     desc: "of economy",
   },
@@ -158,29 +158,26 @@ const PriceSection = () => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col md:gap-12 gap-6 items-center">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-10 w-full">
-            {multiPlans.map((plan) => (
-              <MultiConsultant
-                key={plan.id}
-                id={plan.id}
-                isSelected={selectedCard === plan.id}
-                onClick={() => setSelectedCard(plan.id)}
-                planName={plan.name}
-                planNumber={plan.planNumber}
-                priceDescription={plan.priceDesc}
-                discount={plan.discount}
-                description={plan.desc}
-                buttonText="Choose Plan"
-                isUserChoice={plan.id === selectedCard}
-              />
-            ))}
-          </div>
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 w-fit mx-auto">
+          {multiPlans.map((plan) => (
+            <MultiConsultant
+              key={plan.id}
+              id={plan.id}
+              isSelected={selectedCard === plan.id}
+              onClick={() => setSelectedCard(plan.id)}
+              planName={plan.name}
+              planNumber={plan.planNumber}
+              priceDescription={plan.priceDesc}
+              discount={plan.discount}
+              description={plan.desc}
+              buttonText="Choose Plan"
+              isUserChoice={plan.id === selectedCard}
+            />
+          ))}
         </div>
       )}
 
       {/* Toggle Buttons */}
-
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mt-10 md:mt-20 mb-4 md:mb-6">
         <button
           onClick={() => setShowMulti(false)}

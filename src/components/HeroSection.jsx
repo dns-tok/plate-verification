@@ -5,14 +5,14 @@ const HeroSection = () => {
     <div className="min-h-[36rem] bg-[url('/heroBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden relative commonPadding flex flex-col lg:flex-row gap-10 lg:gap-0 items-end py-8">
       {/* Left Content */}
       <div className="w-full flex flex-col z-10 text-center md:text-start">
-        <h1 className="text-white text-[2rem] md:text-[3.5rem] font-bold pb-6 md:pb-[3rem]">
+        <h1 className="text-white text-[2rem] md:text-[3.5rem] font-bold md:pb-[3rem]">
           Before purchasing, consult.
           <br />
           <span className="text-[#1AABFE]">Protect your dream</span>
         </h1>
         <div className="md:hidden w-full  h-[60%]  flex items-end justify-center lg:justify-end z-0 p-6">
           <img
-            src="/car.svg"
+            src="/car.png"
             alt="Car"
             className="w-auto h-full object-contain object-bottom transform scale-110 lg:scale-100"
           />
@@ -64,7 +64,7 @@ const HeroSection = () => {
       {/* Car Image */}
       <div className="hidden md:flex lg:absolute bottom-0 right-0 w-full lg:w-[55%] h-[60%] lg:h-full  items-end justify-center lg:justify-end z-0 p-8 md:p-0">
         <img
-          src="/car.svg"
+          src="/car.png"
           alt="Car"
           className="w-auto h-full object-contain object-bottom transform scale-110 lg:scale-100"
         />

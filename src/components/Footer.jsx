@@ -1,64 +1,73 @@
 import React from "react";
 
+const footerLinks = [
+  {
+    name: "Company",
+    border: "border-r border-white/50",
+    links: [
+      {
+        name: "About Us",
+        href: "#",
+      },
+      {
+        name: "Solution",
+        href: "#",
+      },
+    ],
+  },
+  {
+    name: "Resources",
+    border: "border-r border-white/50",
+    links: [
+      {
+        name: "Help Center",
+        href: "#",
+      },
+      {
+        name: "Insights",
+        href: "#",
+      },
+      {
+        name: "Blog",
+        href: "#",
+      },
+    ],
+  },
+  {
+    name: "Legal",
+    border: "border-r border-white/50",
+    links: [
+      {
+        name: "Privacy Policy",
+        href: "#",
+      },
+      {
+        name: "Terms of Use",
+        href: "#",
+      },
+      {
+        name: "Compliance – LGPD (General Data Protection Law)",
+        href: "#",
+      },
+    ],
+  },
+];
 const Footer = () => {
-  const footerLinks = [
-    {
-      name: "Company",
-      border: "border-r border-white/50",
-      links: [
-        {
-          name: "About Us",
-          href: "#",
-        },
-        {
-          name: "Solution",
-          href: "#",
-        },
-      ],
-    },
-    {
-      name: "Resources",
-      border: "border-r border-white/50",
-      links: [
-        {
-          name: "Help Center",
-          href: "#",
-        },
-        {
-          name: "Insights",
-          href: "#",
-        },
-        {
-          name: "Blog",
-          href: "#",
-        },
-      ],
-    },
-    {
-      name: "Legal",
-      border: "border-r border-white/50",
-      links: [
-        {
-          name: "Privacy Policy",
-          href: "#",
-        },
-        {
-          name: "Terms of Use",
-          href: "#",
-        },
-        {
-          name: "Compliance – LGPD (General Data Protection Law)",
-          href: "#",
-        },
-      ],
-    },
-  ];
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   return (
     <div className="relative lg:h-[32rem] lg:max-h-[36rem] bg-[url('/footerBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden">
       <div className=" mx-auto z-[100] w-full h-full flex flex-col">
         <div className="text-white w-full h-full commonPadding flex flex-col gap-6  lg:flex-row justify-between items-center">
           <div className=" space-y-6 w-full md:w-auto me-auto ">
-            <div className="w-[30%] lg:w-[40%]">
+            <div
+              className="w-[30%] lg:w-[40%] cursor-pointer"
+              onClick={scrollToTop}
+            >
               <img src="/whiteLogo.svg" alt="Logo" className="" />
             </div>
             <p className="text-lg font-normal max-w-[22rem]">

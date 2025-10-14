@@ -1,4 +1,5 @@
 import React from "react";
+import { BsStarFill } from "react-icons/bs";
 import { FaArrowRightLong } from "react-icons/fa6";
 
 const PriceCard = ({
@@ -14,7 +15,7 @@ const PriceCard = ({
 }) => {
   return (
     <div
-      className={`relative flex flex-col justify-between backdrop-blur-xl rounded-lg py-4 px-5 border h-full w-[18rem] cursor-pointer transition-all duration-300 ${
+      className={`relative flex flex-col justify-between backdrop-blur-xl rounded-lg py-4 px-5 border h-full w-[18rem] transition-all duration-300 ${
         isSelected ? "bg-[#1AABFE]/20 border-[#1AABFE] border-2" : "border-none"
       }`}
     >
@@ -49,9 +50,10 @@ const PriceCard = ({
         <FaArrowRightLong className="text-[#1AABFE] group-hover:translate-x-1 transition-all duration-300" />
       </button>
       {/* Badge */}
-      {isUserChoice && (
-        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-6 py-2 text-center shadow-lg">
-          <p className="text-red-500 font-bold whitespace-nowrap">
+      {id === 2 && (
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#F2DF33] rounded-xl px-6 py-2 text-center shadow-lg flex items-center gap-2">
+          <BsStarFill className="text-black mb-0.5 text-sm" />
+          <p className="text-black font-bold whitespace-nowrap">
             User's Choice
           </p>
         </div>

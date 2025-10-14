@@ -14,21 +14,19 @@ const MultiConsultant = ({
 }) => {
   return id === 9 ? (
     <div
-      className={`md:col-span-4 md:justify-self-center flex flex-col md:flex-row justify-between items-center gap-0 md:gap-10 backdrop-blur-xl  py-6 w-full md:w-auto px-6 rounded-md relative ${
-        isSelected
-          ? "bg-[#1AABFE]/20 border-[#1AABFE] border-2"
-          : "bg-[#1AABFE]/20 border border-[#1AABFE]/30"
+      className={`md:col-span-2 xl:col-span-4 md:justify-self-center flex flex-col md:flex-row justify-between items-center gap-0 md:gap-10 backdrop-blur-xl  py-6 w-full md:w-auto px-6 rounded-md relative transition-all duration-300 ${
+        isSelected ? "bg-[#1AABFE]/20 border-[#1AABFE] border-2" : ""
       }`}
     >
       <div className="w-full md:w-auto">
-        <p className="text-white text-[1rem] md:text-[1.1rem] font-medium">
+        <p className="text-white text-[0.8rem] md:text-[1.2rem] font-medium">
           Test Drive
         </p>
-        <h2 className="text-white text-[1.8rem] md:text-[2.5rem] font-bold">
-          Plan 150
+        <h2 className="text-white text-[1.5rem] md:text-[2.5rem] font-bold">
+          Plan R$150
         </h2>
         <p className="text-white text-sm md:text-[1rem] font-light">
-          Buy 150 and pay R$140.00
+          Buy R$150 and pay R$140.00
         </p>
         <div className="flex flex-col  items-start  ">
           <h2 className="text-white text-[2.2rem] md:text-[2.8rem] font-bold">
@@ -42,34 +40,25 @@ const MultiConsultant = ({
       <div className="w-full md:w-auto ms-auto mt-6 text-center">
         <button
           onClick={onClick}
-          className={`rounded-full w-[90%] mx-auto px-8 py-2 cursor-pointer whitespace-nowrap font-medium md:text-[1.2rem] ${
+          className={`rounded-full w-[90%] mx-auto px-8 py-2 cursor-pointer whitespace-nowrap font-bold md:text-[1.2rem] ${
             isSelected ? "bg-[#1AABFE] text-white" : "bg-white text-black"
           }`}
         >
           Choose plan
         </button>
       </div>
-      {/* Badge */}
-      {isUserChoice && (
-        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-6 py-2 text-center shadow-lg">
-          <p className="text-red-500 font-bold whitespace-nowrap">
-            User's Choice
-          </p>
-        </div>
-      )}
     </div>
   ) : (
     <div
-      className={`rounded-md p-6 backdrop-blur-xl cursor-pointer transition-all duration-300 relative ${
-        isSelected && "bg-[#1AABFE]/20 border-[#1AABFE] border-2"
+      className={`relative flex flex-col justify-between backdrop-blur-xl rounded-lg py-4 px-5 border h-full w-[18rem] transition-all duration-300 ${
+        isSelected ? "bg-[#1AABFE]/20 border-[#1AABFE] border-2" : "border-none"
       }`}
-      onClick={onClick}
     >
-      <p className="text-white text-[1rem] md:text-[1.1rem] font-medium">
+      <p className="text-white text-[0.8rem] md:text-[1.2rem] font-medium">
         {planName}
       </p>
       {planNumber && (
-        <h2 className="text-white text-[1.8rem] md:text-[2.5rem] font-bold">
+        <h2 className="text-white text-[1.5rem] md:text-[2.5rem] font-bold">
           {planNumber}
         </h2>
       )}
@@ -84,24 +73,16 @@ const MultiConsultant = ({
       <p className="text-white text-[1rem] md:text-[1.1rem]  font-normal">
         {description}
       </p>
-      <div className="w-[100%] mt-6 text-center">
+      <div className="w-[100%] my-2 text-center">
         <button
           onClick={onClick}
-          className={`rounded-full w-[90%] mx-auto px-8 py-2 cursor-pointer font-medium md:text-[1.2rem] ${
+          className={`rounded-full w-[80%] mx-auto px-8 py-2 cursor-pointer font-bold ${
             isSelected ? "bg-[#1AABFE] text-white" : "bg-white text-black"
           }`}
         >
           {buttonText}
         </button>
       </div>
-      {/* Badge */}
-      {isUserChoice && (
-        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-6 py-2 text-center shadow-lg">
-          <p className="text-red-500 font-bold whitespace-nowrap">
-            User's Choice
-          </p>
-        </div>
-      )}
     </div>
   );
 };
