@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const footerLinks = [
   {
@@ -39,11 +40,11 @@ const footerLinks = [
     links: [
       {
         name: "Privacy Policy",
-        href: "#",
+        href: "/privacy-policy",
       },
       {
         name: "Terms of Use",
-        href: "#",
+        href: "/terms-of-use",
       },
       {
         name: "Compliance – LGPD (General Data Protection Law)",
@@ -96,14 +97,14 @@ const Footer = () => {
                 <div key={link.name}>
                   <h2 className="text-xl lg:text-2xl mb-3">{link.name}</h2>
                   <ul className="space-y-3">
-                    {link.links.map((link) => (
-                      <li key={link.name} className=" max-w-[15rem]">
-                        <a
-                          href="#"
+                    {link.links.map((linkItem) => (
+                      <li key={linkItem.name} className=" max-w-[15rem]">
+                        <Link
+                          to={linkItem.href}
                           className="lg:text-[1rem] font-light hover:border-b-2 hover:border-[#1AABFE] transition-colors duration-300 !max-w-[2rem]  "
                         >
-                          {link.name}
-                        </a>
+                          {linkItem.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>

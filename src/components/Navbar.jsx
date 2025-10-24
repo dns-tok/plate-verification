@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { BiMenu } from "react-icons/bi";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const navLinks = [
   {
@@ -30,16 +31,11 @@ const navLinks = [
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navbarRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
   };
 
   const scrollToSection = (sectionId) => {
@@ -59,6 +55,20 @@ const Navbar = () => {
     }, 150); // Increased delay to allow navbar to fully resize
   };
 
+  const handleNavClick = (link) => {
+    if (link.href.startsWith("#") && link.href !== "#") {
+      const sectionId = link.href.substring(1);
+
+      // If we're not on the home page, navigate to home with the section hash
+      if (location.pathname !== "/") {
+        navigate(`/#${sectionId}`);
+      } else {
+        // If we're on home page, just scroll to the section
+        scrollToSection(sectionId);
+      }
+    }
+  };
+
   return (
     <div
       ref={navbarRef}
@@ -68,7 +78,7 @@ const Navbar = () => {
     >
       <div className="flex items-center justify-between w-full ">
         <img
-          onClick={scrollToTop}
+          onClick={() => navigate("/")}
           className=" max-w-[50%] md:max-w-[28%] xl:max-w-[20%] 2xl:max-w-[15%] cursor-pointer"
           src="/logoNav.svg"
           alt=""
@@ -77,11 +87,7 @@ const Navbar = () => {
           {navLinks.map((link) => (
             <p
               key={link.name}
-              onClick={() =>
-                link.href.startsWith("#") && link.href !== "#"
-                  ? scrollToSection(link.href.substring(1))
-                  : null
-              }
+              onClick={() => handleNavClick(link)}
               className="text-sm  xl:text-sm cursor-pointer border-b-2 border-transparent hover:border-[#1AABFE] transition-all duration-300 "
             >
               {link.name}
@@ -89,6 +95,9 @@ const Navbar = () => {
           ))}
 
           <button
+            onClick={() =>
+              window.open("https://car-user-panel.vercel.app/signup", "_blank")
+            }
             className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2 cursor-pointer rounded-full ms-[3rem] md:ms-[1rem] xl:ms-[6rem]`}
           >
             Enlrar
@@ -112,11 +121,7 @@ const Navbar = () => {
           {navLinks.map((link) => (
             <p
               key={link.name}
-              onClick={() =>
-                link.href.startsWith("#") && link.href !== "#"
-                  ? scrollToSection(link.href.substring(1))
-                  : null
-              }
+              onClick={() => handleNavClick(link)}
               className="text-white text-lg cursor-pointer hover:text-[#1AABFE] transition-colors duration-300"
             >
               {link.name}
@@ -125,6 +130,9 @@ const Navbar = () => {
 
           <button
             className={`text-lg bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2  cursor-pointer rounded-full`}
+            onClick={() =>
+              window.open("https://car-user-panel.vercel.app/signup", "_blank")
+            }
           >
             Enlrar
           </button>
