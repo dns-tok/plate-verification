@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import Layout from "../components/Layout";
-import HeroSection from "../components/HeroSection";
-import PriceSection from "../components/PriceSection";
-import InfoSection from "../components/InfoSection";
-import FaqSection from "../components/FaqSection";
-import ContactSection from "../components/ContactSection";
-import TestimonialSection from "../components/TestimonialSection";
+import Layout from "../components/layout/Layout";
+import HeroSection from "../components/home/HeroSection";
+import PriceSection from "../components/home/PriceSection";
+import InfoSection from "../components/home/InfoSection";
+import FaqSection from "../components/home/FaqSection";
+import ContactSection from "../components/home/ContactSection";
+import TestimonialSection from "../components/home/TestimonialSection";
 
 const Home = () => {
   useEffect(() => {
