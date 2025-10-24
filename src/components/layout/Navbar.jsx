@@ -77,12 +77,10 @@ const Navbar = () => {
           ))}
 
           <button
-            onClick={() =>
-              window.open("https://car-user-panel.vercel.app/login", "_blank")
-            }
+            onClick={() => navigate("/login")}
             className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2 cursor-pointer rounded-full ms-[3rem] md:ms-[1rem] xl:ms-[6rem]`}
           >
-            Enlrar
+            Entrar
           </button>
         </div>
         <div className="flex lg:hidden text-4xl text-white cursor-pointer me-2">
@@ -112,11 +110,9 @@ const Navbar = () => {
 
           <button
             className={`text-lg bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2  cursor-pointer rounded-full`}
-            onClick={() =>
-              window.open("https://car-user-panel.vercel.app/login", "_blank")
-            }
+            onClick={() => navigate("/login")}
           >
-            Enlrar
+            Entrar
           </button>
         </div>
       )}

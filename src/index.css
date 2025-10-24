@@ -90,3 +90,18 @@ body {
     right: calc(50vw - 1050px + 2rem);
   }
 }
+
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #09529c;
+    border-radius: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #1aabfe;
+    border-radius: 6px;
+  }
+}

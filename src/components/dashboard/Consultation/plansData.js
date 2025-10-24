@@ -1,0 +1,105 @@
+const singlePlans = [
+  {
+    id: 1,
+    name: "Premium Plan",
+    price: "R$ 58,00",
+    desc: "Single consultation",
+    features: [
+      "Everything from the previous plan",
+      "Renajud",
+      "Renainf",
+      "Query history",
+      "Rental company registration",
+      "Complete Technical Sheet and much more",
+    ],
+  },
+  {
+    id: 2,
+    name: "Ultra Plan",
+    price: "R$ 44,90",
+    desc: "Complete consultation",
+    features: [
+      "Everything from the previous plan",
+      "Ownership history",
+      "Inspection checklist",
+      "Fipe and Price Chart",
+      "Lien",
+      "Recall and much more...",
+    ],
+  },
+  {
+    id: 3,
+    name: "Plus Plan",
+    price: "R$ 33,90",
+    desc: "Multi consultation",
+    features: [
+      "Everything from the previous plan",
+      "State restrictions",
+      "National restrictions",
+      "Debts and Fines",
+      "Fipe Table",
+      "Chassis Decoder",
+    ],
+  },
+  {
+    id: 4,
+    name: "Light Plan",
+    price: "R$ 27,90",
+    desc: "Unlimited consultation",
+    features: [
+      "Vehicle Registration Data",
+      "KM History",
+      "Market price",
+      "Loss Index",
+    ],
+  },
+];
+
+const multiPlans = [
+  {
+    id: 5,
+    name: "Always Present",
+    planNumber: "Plan R$1200",
+    priceDesc: "Buy R$1200 and pay",
+    price: "R$900.00",
+    discount: "-25%",
+    desc: "of economy",
+  },
+  {
+    id: 6,
+    name: "Keep an eye on security",
+    planNumber: "Plan R$700",
+    priceDesc: "Buy R$700 and pay",
+    price: "R$500.00",
+    discount: "-21%",
+    desc: "of economy",
+  },
+  {
+    id: 7,
+    name: "Professional",
+    planNumber: "Plan R$500",
+    priceDesc: "Buy R$500 and pay",
+    price: "R$410.00",
+    discount: "-18%",
+    desc: "of economy",
+  },
+  {
+    id: 8,
+    name: "Negotiator",
+    planNumber: "Plan R$300",
+    priceDesc: "Buy R$300 and pay",
+    price: "R$250.00",
+    discount: "-17%",
+    desc: "of economy",
+  },
+  {
+    id: 9,
+    name: "Test Drive",
+    planNumber: "Plan R$150",
+    priceDesc: "Buy R$150 and pay",
+    price: "R$140.00",
+    discount: "-7%",
+  },
+];
+
+export { singlePlans, multiPlans };
