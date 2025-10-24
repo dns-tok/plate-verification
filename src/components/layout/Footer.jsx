@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { scrollToTop } from "../../utils/scrollUtils";
 
 const footerLinks = [
   {
@@ -54,12 +55,6 @@ const footerLinks = [
   },
 ];
 const Footer = () => {
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
   return (
     <div className="relative lg:h-[32rem] lg:max-h-[36rem] bg-[url('/footerBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden">
       <div className=" mx-auto z-[100] w-full h-full flex flex-col">

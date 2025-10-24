@@ -17,13 +17,13 @@ const Faq = ({ question, answer, isOpen, onToggle }) => {
         } relative cursor-pointer`}
         onClick={onToggle}
       >
-        <h1 className="text-white text-[0.9rem] md:text-[1rem] lg:text-[1.4rem]">
-          {question || "How do I purchase a report?"}
+        <h1 className="text-white text-[0.8rem] md:text-[0.9rem] xl:text-[1rem] w-[92%] ">
+          {question}
         </h1>
         <FaChevronDown
-          className={`text-white transition-transform duration-300 ${
+          className={`text-white transition-transform duration-300  ${
             isOpen ? "rotate-0" : "-rotate-90"
-          }`}
+          } w-[5%] `}
         />
       </div>
       <div
@@ -31,10 +31,8 @@ const Faq = ({ question, answer, isOpen, onToggle }) => {
         style={{ maxHeight: height }}
         className="overflow-hidden transition-max-height duration-300 ease-in-out "
       >
-        <div className="text-[0.9rem] md:text-[1rem] p-4 border border-[#194D9A] rounded-b-md border-t-0 text-left bg-white">
-          {answer ||
-            `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-          industry's standard dummy text ever since the 1500s.`}
+        <div className="text-[0.9rem] md:text-[0.9rem] p-4 border border-[#194D9A] rounded-b-md border-t-0 text-left bg-white">
+          {answer}
         </div>
       </div>
     </div>

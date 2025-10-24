@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import Layout from "../components/layout/Layout";
+import { useScrollToTop } from "../utils/scrollUtils";
 
 const TermsOfUse = () => {
+  const scrollToTopOnMount = useScrollToTop();
+
   useEffect(() => {
-    // Scroll to top when component mounts
-    window.scrollTo(0, 0);
-  }, []);
+    scrollToTopOnMount();
+  }, [scrollToTopOnMount]);
 
   return (
     <Layout>

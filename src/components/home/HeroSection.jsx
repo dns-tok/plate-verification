@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "../ui/Modal";
+import { scrollToSection } from "../../utils/scrollUtils";
 
 const HeroSection = () => {
   const [formData, setFormData] = useState({
@@ -28,16 +29,6 @@ const HeroSection = () => {
   const labelClass = "text-[0.9rem] md:text-[0.8rem] font-semibold";
   const inputClass =
     "bg-white rounded-md py-2 px-2 w-full text-black text-[1rem] md:text-[1rem] outline-none shadow-md";
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();

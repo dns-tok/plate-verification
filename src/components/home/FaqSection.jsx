@@ -1,57 +1,75 @@
 import React, { useState } from "react";
 import Faq from "./Faq";
+import { useNavigate } from "react-router-dom";
+import { smartScrollToSection } from "../../utils/scrollUtils";
 
 const FaqSection = () => {
   const [openFaqId, setOpenFaqId] = useState(null);
+  const navigate = useNavigate();
+
+  const scrollToPlans = () => {
+    smartScrollToSection("plans", navigate);
+  };
 
   const faqs = [
     {
       id: 1,
-      question: "How do I purchase a report?",
+      question: "What is Verified License Plate?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+        "It's an online service that checks a vehicle's history using its license plate, so you can know before you buy.",
     },
     {
       id: 2,
-      question: "How do I purchase a plan?",
+      question: "Why should I check the vehicle before purchasing?",
       answer:
-        "The report includes vehicle registration details, accident history, ownership records, and complete vehicle history.",
+        "Because you can find out if there are restrictions, claims, auctions, blocks, or debits, and avoid surprises. And if the report indicates a risk or irregularity, you have a stronger argument to request a discount or cancel the purchase.",
     },
     {
       id: 3,
-      question: "How do I buy credits?",
+      question: "What does the report show?",
       answer:
-        "You will receive your report instantly after payment confirmation. The process usually takes less than 2 minutes.",
+        "Depends on the plan: may include basic data, auction history, debts, owner, market value, and more.",
     },
     {
       id: 4,
-      question: "How do I connect?",
-      answer:
-        "Currently, the report is available in English and Portuguese. More language options are coming soon.",
+      question:
+        "What plans are available and what is the difference between them?",
+      answer: (
+        <span>
+          Plans vary by price and depth of consultation: Light, Plus, Ultra,
+          Premium.{" "}
+          <button
+            onClick={scrollToPlans}
+            className="text-[#1AABFE] underline hover:text-[#1590d4] transition-colors duration-300 font-semibold"
+          >
+            Click here to see the plans
+          </button>
+        </span>
+      ),
     },
     {
       id: 5,
-      question: "How do I reset my password?",
-      answer:
-        "Yes, you can access your purchased reports anytime by logging into your account and visiting your order history.",
+      question: "How long does it take to receive the report after purchase?",
+      answer: "The report is sent immediately after payment confirmation.",
     },
     {
       id: 6,
-      question: "What types of reports are there?",
+      question:
+        "Do I need any information other than the license plate to make the query?",
       answer:
-        "Absolutely. All transactions are encrypted and processed through trusted, secure payment gateways.",
+        "No. Simply enter the vehicle's license plate number to perform the query.",
     },
     {
       id: 7,
-      question: "What does each report include?",
+      question: "Is the data reliable? Where does it come from?",
       answer:
-        "Refunds are available only in cases where the report could not be generated due to incomplete vehicle information or technical errors.",
+        "Yes. The data is extracted from official databases, competent bodies, and certified suppliers.",
     },
     {
       id: 8,
-      question: "How long are reports available?",
+      question: "How does support work if I have questions or problems?",
       answer:
-        "Yes, you can purchase and view reports for as many vehicles as you like — each one is handled separately.",
+        "You can contact us via WhatsApp or email. Our team is ready to help.",
     },
   ];
 

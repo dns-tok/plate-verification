@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import InfoSectionCard from "./InfoSectionCard";
+import { scrollToSection } from "../../utils/scrollUtils";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { RiAuctionFill } from "react-icons/ri";
 import { FaPhotoFilm } from "react-icons/fa6";
@@ -163,16 +164,6 @@ const InfoSection = () => {
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
-  };
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
   };
 
   const handleShowMore = () => {

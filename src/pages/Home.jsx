@@ -6,28 +6,14 @@ import InfoSection from "../components/home/InfoSection";
 import FaqSection from "../components/home/FaqSection";
 import ContactSection from "../components/home/ContactSection";
 import TestimonialSection from "../components/home/TestimonialSection";
+import { useHashNavigation } from "../utils/scrollUtils";
 
 const Home = () => {
-  useEffect(() => {
-    // Handle hash navigation when coming from other pages
-    const handleHashNavigation = () => {
-      const hash = window.location.hash;
-      if (hash) {
-        const sectionId = hash.substring(1);
-        setTimeout(() => {
-          const element = document.getElementById(sectionId);
-          if (element) {
-            element.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-          }
-        }, 100); // Small delay to ensure page is loaded
-      }
-    };
+  const handleHashNavigation = useHashNavigation();
 
+  useEffect(() => {
     handleHashNavigation();
-  }, []);
+  }, [handleHashNavigation]);
 
   return (
     <Layout>

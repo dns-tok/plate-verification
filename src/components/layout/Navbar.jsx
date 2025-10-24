@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { BiMenu } from "react-icons/bi";
 import { useNavigate, useLocation } from "react-router-dom";
+import { smartScrollToSection } from "../../utils/scrollUtils";
 
 const navLinks = [
   {
@@ -38,34 +39,15 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const scrollToSection = (sectionId) => {
-    // Close mobile menu first
-    setIsMenuOpen(false);
-
-    // Wait for the menu to close and navbar to resize before scrolling
-    setTimeout(() => {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        // Use scrollIntoView with scroll-padding-top handling
-        element.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-    }, 150); // Increased delay to allow navbar to fully resize
-  };
-
   const handleNavClick = (link) => {
     if (link.href.startsWith("#") && link.href !== "#") {
       const sectionId = link.href.substring(1);
-
-      // If we're not on the home page, navigate to home with the section hash
-      if (location.pathname !== "/") {
-        navigate(`/#${sectionId}`);
-      } else {
-        // If we're on home page, just scroll to the section
-        scrollToSection(sectionId);
-      }
+      smartScrollToSection(
+        sectionId,
+        navigate,
+        () => setIsMenuOpen(false),
+        150
+      );
     }
   };
 
@@ -96,7 +78,7 @@ const Navbar = () => {
 
           <button
             onClick={() =>
-              window.open("https://car-user-panel.vercel.app/signup", "_blank")
+              window.open("https://car-user-panel.vercel.app/login", "_blank")
             }
             className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2 cursor-pointer rounded-full ms-[3rem] md:ms-[1rem] xl:ms-[6rem]`}
           >
@@ -131,7 +113,7 @@ const Navbar = () => {
           <button
             className={`text-lg bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2  cursor-pointer rounded-full`}
             onClick={() =>
-              window.open("https://car-user-panel.vercel.app/signup", "_blank")
+              window.open("https://car-user-panel.vercel.app/login", "_blank")
             }
           >
             Enlrar
