@@ -40,7 +40,7 @@ const FaqSection = () => {
           Premium.{" "}
           <button
             onClick={scrollToPlans}
-            className="text-[#1AABFE] underline hover:text-[#1590d4] transition-colors duration-300 font-semibold"
+            className="text-[#1AABFE] underline hover:text-[#1590d4] transition-colors duration-300 font-semibold cursor-pointer"
           >
             Click here to see the plans
           </button>
