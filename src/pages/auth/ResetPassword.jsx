@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdLock } from "react-icons/md";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import AuthLayout from "../../components/layout/AuthLayout";
 import InputField from "../../components/common/Form/InputField";
@@ -33,10 +33,10 @@ const passwordSchema = z
 
 export default function ResetPassword() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [tokenValid, setTokenValid] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resetToken, setResetToken] = useState("");
   const { resetPassword } = useAuth();
 
   const form = useForm({
@@ -47,14 +47,31 @@ export default function ResetPassword() {
     },
   });
 
-  useEffect(() => {
-    const token = searchParams.get("token");
+  // Function to parse hash fragment parameters
+  const parseHashParams = () => {
+    const hash = window.location.hash.substring(1); // Remove the #
+    const params = {};
+    hash.split("&").forEach((param) => {
+      const [key, value] = param.split("=");
+      if (key && value) {
+        params[key] = decodeURIComponent(value);
+      }
+    });
+    return params;
+  };
 
-    // if (!token) {
-    //   toast.error("Invalid reset link. Please request a new password reset.");
-    //   navigate("/forgot-password");
-    //   return;
-    // }
+  useEffect(() => {
+    const hashParams = parseHashParams();
+    const token = hashParams.access_token;
+
+    if (!token) {
+      toast.error("Invalid reset link. Please request a new password reset.");
+      navigate("/forgot-password");
+      return;
+    }
+
+    // Store the token for use in form submission
+    setResetToken(token);
 
     const validateToken = async () => {
       try {
@@ -67,18 +84,20 @@ export default function ResetPassword() {
     };
 
     validateToken();
-  }, [searchParams, navigate]);
+  }, [navigate]);
 
   const handleSubmit = async (data) => {
-    const token = searchParams.get("token");
     setIsSubmitting(true);
     try {
-      await resetPassword({ token, newPassword: data.password });
+      await resetPassword({ token: resetToken, newPassword: data.password });
       toast.success("Password reset successfully!");
       navigate("/login");
     } catch (error) {
       console.log("Password reset failed", error);
-      toast.error("Invalid or expired reset link. Please request a new one.");
+      toast.error(
+        error?.response?.data?.message ||
+          "Invalid or expired reset link. Please request a new one."
+      );
     } finally {
       setIsSubmitting(false);
     }
