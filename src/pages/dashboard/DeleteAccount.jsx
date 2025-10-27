@@ -1,8 +1,76 @@
-import React from "react";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import MainContent from "../../components/layout/MainContent";
-import { FaCheckCircle } from "react-icons/fa";
+import InputField from "../../components/common/Form/InputField";
+import { useAuth } from "../../hooks/useAuth";
+import { deleteAccount } from "../../services/authService";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+const deleteAccountSchema = z.object({
+  password: z.string().nonempty("Password is required"),
+});
 
 const DeleteAccountPage = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const form = useForm({
+    resolver: zodResolver(deleteAccountSchema),
+    defaultValues: {
+      password: "",
+    },
+  });
+
+  const handleDelete = async (data) => {
+    if (!showConfirmation) {
+      setShowConfirmation(true);
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await deleteAccount(data.password);
+      console.log("Delete account response:", response);
+
+      // Check if deletion was successful
+      if (response) {
+        toast.success("Account deletion initiated successfully!");
+        // Logout and redirect after a short delay
+        setTimeout(() => {
+          logout();
+          navigate("/login");
+        }, 1500);
+      }
+    } catch (error) {
+      console.error("Failed to delete account:", error);
+
+      // Extract error message
+      const errorMessage =
+        error?.response?.data?.detail ||
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to delete account. Please check your password and try again.";
+
+      toast.error(errorMessage);
+      // Reset confirmation on error so user can try again
+      setShowConfirmation(false);
+      form.reset();
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+    form.reset();
+  };
+
   return (
     <MainContent showMenu={false}>
       <p className="text-2xl font-semibold mb-4">Delete Your Account</p>
@@ -18,7 +86,7 @@ const DeleteAccountPage = () => {
           <li>
             If there is any activity recorded, your account will only be
             deactivated for up to 3 years, and can be reactivated at any Time
-            through the “I forgot my password” option.
+            through the "I forgot my password" option.
           </li>
           <li>
             After this period, the deletion will be final and irreversible. All
@@ -28,22 +96,62 @@ const DeleteAccountPage = () => {
           </li>
         </ul>
       </div>
-      <div className="mt-4 space-y-2">
+
+      <form
+        onSubmit={form.handleSubmit(handleDelete)}
+        className="mt-4 space-y-2"
+      >
         <p className="text-[0.7rem] font-[600]">
           If you are sure you want to proceed, enter your password and click
-          “Delete Account” <span className="text-red-500">*</span>
+          "Delete Account" <span className="text-red-500">*</span>
         </p>
-        <div className="flex flex-col gap-2.5">
-          <input
-            type="password"
+
+        {showConfirmation && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-3 mb-3">
+            <p className="text-red-700 text-[0.7rem] font-semibold">
+              ⚠️ WARNING: This action cannot be undone. Are you absolutely
+              certain you want to delete your account?
+            </p>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-1 w-[70%]">
+          <InputField
+            form={form}
+            label="Password"
+            name="password"
+            required
+            isPassword={true}
             placeholder="Enter your password"
-            className="bg-gray-200 rounded-md px-2 py-2 w-[70%] text-[0.6rem] font-[400] outline-none"
+            labelClassName="!text-black !text-sm"
+            inputClassName="!bg-[#EDEDED] !p-2 !py-3 !rounded-md !text-black !text-sm"
+            inputContainerClassName="!bg-[#EDEDED] !p-0 !rounded-md !text-black !text-sm"
           />
-          <button className="w-fit bg-red-500 hover:bg-red-700 text-white rounded-md px-3 py-1.5 text-[0.6rem] font-[400] outline-none cursor-pointer transition-all duration-200">
-            Delete Account
-          </button>
+
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className={`w-fit bg-red-500 hover:bg-red-700 text-white rounded-md px-3 py-1.5 text-[0.8rem] font-[400] outline-none cursor-pointer transition-all duration-200 ${
+                isDeleting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Account"}
+            </button>
+
+            {showConfirmation && (
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="w-fit bg-gray-500 hover:bg-gray-700 text-white rounded-md px-3 py-1.5 text-[0.8rem] font-[400] outline-none cursor-pointer transition-all duration-200"
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
     </MainContent>
   );
 };

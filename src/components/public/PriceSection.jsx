@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import PriceCard from "./PriceCard";
 import MultiConsultant from "./MultiConsultant";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const singlePlans = [
   {
@@ -127,6 +128,12 @@ const multiPlans = [
 const PriceSection = () => {
   const [selectedCard, setSelectedCard] = useState(2);
   const [showMulti, setShowMulti] = useState(false);
+  const navigate = useNavigate();
+  const handleChoosePlan = (id) => {
+    setSelectedCard(id);
+    setShowMulti(false);
+    navigate(`/login`);
+  };
 
   useEffect(() => {
     setSelectedCard(2);
@@ -151,7 +158,7 @@ const PriceSection = () => {
               key={plan.id}
               id={plan.id}
               isSelected={selectedCard === plan.id}
-              onClick={() => setSelectedCard(plan.id)}
+              onClick={() => handleChoosePlan(plan.id)}
               planName={plan.name}
               price={plan.price}
               description={plan.desc}
@@ -168,7 +175,7 @@ const PriceSection = () => {
               key={plan.id}
               id={plan.id}
               isSelected={selectedCard === plan.id}
-              onClick={() => setSelectedCard(plan.id)}
+              onClick={() => handleChoosePlan(plan.id)}
               planName={plan.name}
               planNumber={plan.planNumber}
               priceDescription={plan.priceDesc}

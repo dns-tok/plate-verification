@@ -1,10 +1,11 @@
 import React from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../context/CartContext";
+import { useNavigate } from "react-router-dom";
 export const TopBar = () => {
   const { user } = useAuth();
   const { openCart } = useCart();
-
+  const navigate = useNavigate();
   return (
     <div className="bg-[url('/assets/topBarBg2.png')] bg-cover bg-center bg-no-repeat rounded-3xl flex justify-between  overflow-hidden relative z-20">
       <div className="flex flex-col  gap-2 p-6">
@@ -27,7 +28,10 @@ export const TopBar = () => {
               R$ 123.52
             </p>
           </div>
-          <button className="bg-white rounded px-3 py-0.5 text-[#194D9A] font-medium mb-1 whitespace-nowrap cursor-pointer hover:text-[#1AABFE] transition-all duration-300">
+          <button
+            className="bg-white rounded px-3 py-0.5 text-[#194D9A] font-medium mb-1 whitespace-nowrap cursor-pointer hover:text-[#1AABFE] transition-all duration-300"
+            onClick={() => navigate("/new-consultation")}
+          >
             Buy Consultations
           </button>
         </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { BsStarFill } from "react-icons/bs";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 
-const PlanCard = ({ plan, onClick, isMultiple }) => {
+const PlanCard = ({ plan, onClick, isMultiple, isPurchased = false }) => {
   return plan.id === 9 ? (
     <div
       className={`col-span-4 w-[50%] relative flex items-center  backdrop-blur-xl rounded-2xl  mx-auto  justify-between transition-all duration-300 shadow-[0px_0px_20px_0px_rgba(0,0,0,0.2)] bg-white`}
@@ -115,9 +115,11 @@ const PlanCard = ({ plan, onClick, isMultiple }) => {
       >
         <button
           onClick={onClick}
-          className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
+          className={`rounded-full mx-auto px-6 py-[7px] ${
+            isPurchased ? "bg-[#28a745] text-white" : "bg-[#F2DF33] text-black"
+          } cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
         >
-          {plan.id === 2 ? "Check" : "Choose Plan"}
+          {isPurchased ? "Check" : "Choose Plan"}
         </button>
       </div>
       {/* Badge */}

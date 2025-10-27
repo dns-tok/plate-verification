@@ -19,6 +19,7 @@ const InputField = ({
   placeholder = "",
   icon = null,
   onForgotPassword = null,
+  inputContainerClassName = "",
 }) => {
   const {
     control,
@@ -54,7 +55,7 @@ const InputField = ({
   placeholder-[#9F9F9F] font-[400]
   transition-colors duration-200 ease-in-out
 disabled:opacity-50 disabled:cursor-not-allowed
-  sm:text-sm px-3 py-3 `}
+  sm:text-sm px-3 py-3 ${inputContainerClassName}`}
       >
         {icon && <div className="text-[#9F9F9F] mr-2">{icon}</div>}
         <Controller

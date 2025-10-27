@@ -14,7 +14,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import ConfirmEmail from "../pages/auth/ConfirmEmail";
 
 // Dashboard pages (from user-panel)
-import { Home as DashboardHome } from "../pages/dashboard/Home";
+// import { Home as DashboardHome } from "../pages/dashboard/Home";
 import Consultation from "../pages/dashboard/Consultation";
 import Recommend from "../pages/dashboard/Recommend";
 import Profile from "../pages/dashboard/Profile";
@@ -28,6 +28,7 @@ import PurchaseHistoryPage from "../pages/dashboard/PurchaseHistory";
 // Layout components
 import PrivateRoute from "./PrivateRoute";
 import PageNotFound from "../pages/dashboard/PageNotFound";
+import Payment from "../components/dashboard/Payment/Payment";
 
 // Auth route wrapper to redirect authenticated users
 function AuthRoute({ children }) {
@@ -122,6 +123,14 @@ export default function AppRoutes() {
 
       {/* Protected Dashboard Routes */}
       <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <Consultation />
+          </PrivateRoute>
+        }
+      />
+      <Route
         path="/dashboard"
         element={
           <PrivateRoute>
@@ -201,6 +210,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+      <Route path="/payment" element={<Payment />} />
 
       {/* Catch all route */}
       <Route path="*" element={<PageNotFound />} />

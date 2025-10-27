@@ -52,6 +52,20 @@ export async function updateProfile(update) {
 export async function deleteAccount(password) {
   const { data } = await apiClient.delete("/auth/delete-account", {
     data: { password },
+    _skipAuthRedirect: true, // Flag to prevent automatic redirect
+  });
+  return data;
+}
+
+export async function sendMessage(message) {
+  const { data } = await apiClient.post("/message-support", { message });
+  return data;
+}
+
+export async function validateCoupon(couponCode, orderValue) {
+  const { data } = await apiClient.post("/validate-coupon", {
+    coupon_code: couponCode,
+    order_value: orderValue,
   });
   return data;
 }

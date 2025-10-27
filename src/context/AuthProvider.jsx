@@ -135,6 +135,15 @@ export function AuthProvider({ children }) {
     return data;
   }, [refreshToken]);
 
+  const refreshUserProfile = useCallback(async () => {
+    try {
+      const profileData = await getProfile();
+      setUser(profileData);
+    } catch (error) {
+      console.error("Failed to refresh user profile:", error);
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -148,6 +157,7 @@ export function AuthProvider({ children }) {
       requestPasswordReset,
       resetPassword: apiResetPassword,
       getProfile,
+      refreshUserProfile,
     }),
     [
       user,
@@ -158,6 +168,7 @@ export function AuthProvider({ children }) {
       handleRegister,
       handleLogout,
       handleRefresh,
+      refreshUserProfile,
     ]
   );
 

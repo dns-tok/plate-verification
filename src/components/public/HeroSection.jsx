@@ -2,37 +2,26 @@ import React, { useState } from "react";
 import Modal from "../common/Modal";
 import { scrollToSection } from "../../utils/scrollUtils";
 import { toast } from "react-toastify";
+import SearchPlateForm from "../common/SearchPlateForm";
 
 const HeroSection = () => {
-  const [formData, setFormData] = useState({
-    makeAndModel: "VW/Golf GTI AC",
-    licensePlate: "",
-    chassis: "WBAEA21010B00000",
-    color: "Red",
-    yearOfManufacture: "2024/2025",
-  });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+  const [licensePlate, setLicensePlate] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const openModal = () => {
-    if (formData.licensePlate.trim() === "") {
+    if (licensePlate.trim() === "") {
       toast.error("Please enter a valid license plate");
       return;
     }
     setIsModalOpen(true);
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const labelClass = "text-[0.9rem] md:text-[0.8rem] font-semibold";
-  const inputClass =
-    "bg-white rounded-md py-2 px-2 w-full text-black text-[1rem] md:text-[1rem] outline-none shadow-md";
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
+  const handleFormSubmit = (data) => {
+    console.log("Form data:", data);
     scrollToSection("plans");
     closeModal();
   };
@@ -59,10 +48,9 @@ const HeroSection = () => {
             <input
               type="text"
               placeholder="Type here is the vehicle license..."
-              className="text-[1rem] resize-none border-none outline-none w-full h-6 px-2 md:px-4 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-0 focus:shadow-none !bg-white"
-              name="licensePlate"
-              value={formData.licensePlate}
-              onChange={handleChange}
+              className="text-[1rem] resize-none border-none outline-none w-full h-6 px-2 md:px-4 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-0 focus:shadow-none bg-white"
+              value={licensePlate}
+              onChange={(e) => setLicensePlate(e.target.value)}
               required
             />
 
@@ -84,6 +72,12 @@ const HeroSection = () => {
         {/* Trust Badges */}
         <div className="flex flex-wrap gap-4 md:gap-6 mt-6 md:mt-[1.6rem] justify-center md:justify-start">
           <img
+            onClick={() =>
+              window.open(
+                "https://www.reclameaqui.com.br/empresa/prototyp3-servicos-de-informatica-ltda/",
+                "_blank"
+              )
+            }
             src="/verificationBadge1.svg"
             alt="Reclame Aqui"
             className="h-10 md:h-12 w-auto object-contain"
@@ -112,78 +106,17 @@ const HeroSection = () => {
 
       {isModalOpen && (
         <Modal title="Query Data" onClose={closeModal}>
-          <form
-            className="flex flex-col gap-3"
-            action=""
+          <SearchPlateForm
             onSubmit={handleFormSubmit}
-          >
-            <div className="flex flex-col uppercase">
-              <label htmlFor="name" className={labelClass}>
-                Make & Modal
-              </label>
-              <input
-                type="text"
-                className={inputClass}
-                name="makeAndModel"
-                value={formData.makeAndModel}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col  uppercase">
-              <label htmlFor="email" className={labelClass}>
-                License Plate
-              </label>
-              <input
-                type="text"
-                className={inputClass}
-                name="licensePlate"
-                value={formData.licensePlate}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col uppercase">
-              <label htmlFor="phone" className={labelClass}>
-                Chassis
-              </label>
-              <input
-                type="text"
-                className={inputClass}
-                name="chassis"
-                value={formData.chassis}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col uppercase">
-              <label htmlFor="city" className={labelClass}>
-                Color
-              </label>
-              <input
-                type="text"
-                className={inputClass}
-                name="color"
-                value={formData.color}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col uppercase">
-              <label htmlFor="city" className={labelClass}>
-                Year Of Manufacture / Model
-              </label>
-              <input
-                type="text"
-                className={inputClass}
-                name="yearOfManufacture"
-                value={formData.yearOfManufacture}
-                onChange={handleChange}
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-white rounded-full mx-auto font-bold px-6 py-2 text-[1rem] md:text-[0.9rem] mt-4 text-[#1AABFE] whitespace-nowrap mb-2 cursor-pointer"
-            >
-              Release All Information
-            </button>
-          </form>
+            defaultValues={{
+              makeAndModel: "VW/Golf GTI AC",
+              licensePlate: licensePlate,
+              chassis: "WBAEA21010B00000",
+              color: "Red",
+              yearOfManufacture: "2024/2025",
+            }}
+            labelClassName="!text-black"
+          />
         </Modal>
       )}
     </div>

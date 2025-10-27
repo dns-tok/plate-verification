@@ -1,38 +1,39 @@
 import React from "react";
+import { createPortal } from "react-dom";
 
-const Modal = ({ title, description, children, onClose }) => {
+const Modal = ({ title, description, children, onClose, className }) => {
   const handleBackgroundClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
-  return (
+  const modalContent = (
     <div
-      className="fixed -inset-1 md:-inset-[1.22rem] bg-black/70  flex justify-center items-center  z-[1000] "
+      className="fixed inset-0 bg-black/70 flex justify-center items-center z-[1000]"
       onClick={handleBackgroundClick}
     >
-      <div
-        className="w-full h-screen flex justify-center items-start overflow-y-auto sm:py-20 sm:px-4"
-        onClick={handleBackgroundClick}
-      >
+      <div className="w-full h-full flex justify-center items-start overflow-y-auto sm:py-20 sm:px-4">
         <div
-          className="bg-gray-100/90 px-[1.5rem] xl:px-[2rem] py-[1rem] md:py-[1rem] rounded-lg relative space-y-5 my-auto  w-full md:w-auto "
+          className={`bg-gray-100/90 px-6 xl:px-8 py-4 rounded-lg relative space-y-5 my-auto w-full max-w-md ${className}`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex  text-center justify-between items-center w-full">
+          <div className="flex text-center justify-between items-center w-full">
             <h2 className="text-[1.5rem] md:text-[1.8rem] font-medium">
               {title}
             </h2>
-            <button className="text-3xl  cursor-pointer" onClick={onClose}>
+            <button className="text-3xl cursor-pointer" onClick={onClose}>
               ✕
             </button>
           </div>
-          <div className="w-full md:min-w-[400px]">{children}</div>
+          <div className="w-full">{children}</div>
         </div>
       </div>
     </div>
   );
+
+  // Render modal outside the normal DOM hierarchy using a portal
+  return createPortal(modalContent, document.body);
 };
 
 export default Modal;

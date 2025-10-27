@@ -5,17 +5,66 @@ import {
   transformApiPlans,
 } from "../../../services/plansService";
 import PlanCard from "./PlanCard";
+import { useCart } from "../../../context/CartContext";
+import { useAuth } from "../../../hooks/useAuth";
+import Modal from "../../common/Modal";
+import SearchPlateForm from "../../common/SearchPlateForm";
 
 const Consultation = ({ activeMenu }) => {
   const [apiSinglePlans, setApiSinglePlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [showReportPopup, setShowReportPopup] = useState(false);
+  const { addToCart, openCart } = useCart();
+  const { user } = useAuth();
+  const [purchasedPlanIds, setPurchasedPlanIds] = useState([]);
+
+  // Helper function to map purchase data to plan ID
+  const getPlanIdFromPurchase = (purchase) => {
+    // Map purchase.chosen or purchase.plan to plan IDs
+    const planMapping = {
+      Premium: 1,
+      Ultra: 2,
+      Plus: 3,
+      Light: 4,
+      "Always Present": 5,
+      "Keep an eye on security": 6,
+      Professional: 7,
+      Negotiator: 8,
+      "Test Drive": 9,
+    };
+
+    const purchaseName = purchase.chosen || purchase.plan_name || purchase.plan;
+    return planMapping[purchaseName];
+  };
+
   useEffect(() => {
     if (activeMenu === "single") {
       loadSinglePlans();
     }
   }, [activeMenu]);
+
+  useEffect(() => {
+    console.log("user", user);
+    if (user) {
+      // Extract purchased plan IDs from user data
+      // This assumes the user object contains purchase history
+      // Adjust this logic based on your actual API response structure
+      const purchasedIds = [];
+      if (user.purchases) {
+        user.purchases.forEach((purchase) => {
+          // Map purchase data to plan IDs
+          // Adjust based on your API structure
+          const planId = getPlanIdFromPurchase(purchase);
+          if (planId) {
+            purchasedIds.push(planId);
+          }
+        });
+      }
+      setPurchasedPlanIds(purchasedIds);
+    }
+  }, [user]);
 
   const loadSinglePlans = async () => {
     setLoading(true);
@@ -43,6 +92,26 @@ const Consultation = ({ activeMenu }) => {
     return activeMenu === "single" ? getSinglePlans() : multiPlans;
   };
 
+  const handleChoosePlan = (plan) => {
+    const isPurchased = purchasedPlanIds.includes(plan.id);
+
+    if (isPurchased) {
+      // If purchased, show report popup
+      setShowReportPopup(true);
+    } else {
+      // If not purchased, add to cart
+      addToCart(plan);
+      openCart();
+    }
+  };
+
+  const handleFormSubmit = (data) => {
+    console.log("Form data:", data);
+    // Close the modal after submission
+    setShowReportPopup(false);
+    // You can add additional logic here to process the form data
+  };
+
   return (
     <div className="py-4">
       <div className="flex items-center justify-between mb-2">
@@ -65,14 +134,42 @@ const Consultation = ({ activeMenu }) => {
           activeMenu === "multiple" ? "gap-4" : "gap-2"
         } max-w-[860px] mx-auto`}
       >
-        {getPlansToRender().map((plan) => (
-          <PlanCard
-            key={plan.id}
-            plan={plan}
-            isMultiple={activeMenu === "multiple"}
-          />
-        ))}
+        {getPlansToRender().map((plan) => {
+          const isPurchased = purchasedPlanIds.includes(plan.id);
+          return (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              isMultiple={activeMenu === "multiple"}
+              onClick={() => handleChoosePlan(plan)}
+              isPurchased={isPurchased}
+            />
+          );
+        })}
       </div>
+
+      {showReportPopup && (
+        <Modal
+          title="Confirm Data"
+          onClose={() => setShowReportPopup(false)}
+          className="!bg-[#002F74] !text-white !rounded-3xl !p-8"
+          buttonText="Confirm"
+        >
+          <SearchPlateForm
+            onSubmit={handleFormSubmit}
+            defaultValues={{
+              makeAndModel: "",
+              licensePlate: "",
+              chassis: "",
+              color: "",
+              yearOfManufacture: "",
+            }}
+            showCancelButton={true}
+            onCancel={() => setShowReportPopup(false)}
+            buttonText="Confirm"
+          />
+        </Modal>
+      )}
     </div>
   );
 };
