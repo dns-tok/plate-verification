@@ -50,11 +50,11 @@ export default function ResetPassword() {
   useEffect(() => {
     const token = searchParams.get("token");
 
-    if (!token) {
-      toast.error("Invalid reset link. Please request a new password reset.");
-      navigate("/forgot-password");
-      return;
-    }
+    // if (!token) {
+    //   toast.error("Invalid reset link. Please request a new password reset.");
+    //   navigate("/forgot-password");
+    //   return;
+    // }
 
     const validateToken = async () => {
       try {
