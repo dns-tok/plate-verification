@@ -6,9 +6,7 @@ import { apiClient } from "./apiClient";
  */
 export const fetchSinglePlans = async () => {
   try {
-    console.log("Fetching single plans from API...");
     const response = await apiClient.get("/plans");
-    console.log("API Response:", response.data);
     return response.data.plans || [];
   } catch (error) {
     console.error("Error fetching single plans:", error);
@@ -23,8 +21,6 @@ export const fetchSinglePlans = async () => {
  * @returns {Array} Transformed plans in correct order
  */
 export const transformApiPlans = (apiPlans) => {
-  console.log("Transforming API plans:", apiPlans);
-
   // Define the correct order to match static data
   const planOrder = ["premium", "ultra", "plus", "light"];
 
@@ -67,6 +63,5 @@ export const transformApiPlans = (apiPlans) => {
     })
     .filter(Boolean); // Remove any null entries
 
-  console.log("Transformed plans in correct order:", transformed);
   return transformed;
 };

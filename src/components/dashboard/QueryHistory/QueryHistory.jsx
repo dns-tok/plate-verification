@@ -1,17 +1,36 @@
-import React, { useState, useMemo } from "react";
-import { queryData } from "./queryData";
+import React, { useState, useEffect } from "react";
 import Pagination from "../../common/Pagination";
+import { getSearchHistory } from "../../../services/authService";
+import { toast } from "react-toastify";
 
 const History = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searches, setSearches] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState(null);
+  const [totalItems, setTotalItems] = useState(0);
 
-  // Calculate paginated data
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return queryData.slice(startIndex, endIndex);
-  }, [currentPage, itemsPerPage]);
+  useEffect(() => {
+    loadSearchHistory();
+  }, [currentPage]);
+
+  const loadSearchHistory = async () => {
+    setLoading(true);
+    try {
+      const response = await getSearchHistory(currentPage);
+      setSearches(response.searches || []);
+      setPagination(response.pagination);
+      setTotalItems(response.pagination?.total_count || 0);
+    } catch (error) {
+      console.error("Failed to load search history:", error);
+      toast.error("Failed to load search history. Please try again.");
+      setSearches([]);
+      setTotalItems(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -22,6 +41,19 @@ const History = () => {
     setCurrentPage(1); // Reset to first page when changing items per page
   };
 
+  // Format date from API response
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    });
+  };
+
+  const paginatedData = searches;
+
   return (
     <div
       className={`flex flex-col justify-between gap-4 ${
@@ -31,47 +63,61 @@ const History = () => {
       <div className="space-y-4">
         <p className="text-2xl font-semibold mb-4 text-center">Query History</p>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse">
-            <thead className="">
-              <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
-                <th className="!rounded-l-md">Date of conclusion</th>
-                <th>Chosen</th>
-                <th>Plate</th>
-                <th>Status</th>
-                <th className="!rounded-r-md">Purchase</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((item) => (
-                <tr
-                  key={item.id || item.plate}
-                  className="hover:bg-gray-50 text-[0.75rem] [&>td]:!font-[500] [&>td]:!text-[0.75rem] [&>td]:!p-2"
-                >
-                  <td>{item.date}</td>
-                  <td>{item.chosen}</td>
-                  <td>{item.plate}</td>
-                  <td>{item.status}</td>
-                  <td>
-                    <button className="text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer">
-                      {item.purchase}
-                    </button>
-                  </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        ) : searches.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No search history found.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse">
+              <thead className="">
+                <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
+                  <th className="!rounded-l-md">Date of conclusion</th>
+                  <th>Chosen</th>
+                  <th>Plate</th>
+                  <th>Status</th>
+                  <th className="!rounded-r-md">Purchase</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {paginatedData.map((item, index) => (
+                  <tr
+                    key={item.id || item.plate || index}
+                    className="hover:bg-gray-50 text-[0.75rem] [&>td]:!font-[500] [&>td]:!text-[0.75rem] [&>td]:!p-2"
+                  >
+                    <td>
+                      {formatDate(item.date_of_conclusion || item.created_at)}
+                    </td>
+                    <td>{item.plan_name || item.chosen || "N/A"}</td>
+                    <td>{item.license_plate || item.plate || "N/A"}</td>
+                    <td>{item.status || "Success"}</td>
+                    <td>
+                      <button className="text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer">
+                        Access your report
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Pagination Component */}
-      <Pagination
-        totalItems={queryData.length}
-        itemsPerPage={itemsPerPage}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-        onItemsPerPageChange={handleItemsPerPageChange}
-      />
+      {!loading && totalItems > 0 && (
+        <Pagination
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
+        />
+      )}
     </div>
   );
 };

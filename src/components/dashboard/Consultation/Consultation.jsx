@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { multiPlans, singlePlans } from "./plansData";
 import {
   fetchSinglePlans,
@@ -9,6 +12,8 @@ import { useCart } from "../../../context/CartContext";
 import { useAuth } from "../../../hooks/useAuth";
 import Modal from "../../common/Modal";
 import SearchPlateForm from "../../common/SearchPlateForm";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Consultation = ({ activeMenu }) => {
   const [apiSinglePlans, setApiSinglePlans] = useState([]);
@@ -19,6 +24,45 @@ const Consultation = ({ activeMenu }) => {
   const { addToCart, openCart } = useCart();
   const { user } = useAuth();
   const [purchasedPlanIds, setPurchasedPlanIds] = useState([]);
+
+  const navigate = useNavigate();
+
+  const [plateSearchResult, setPlateSearchResult] = useState(null);
+  const [isSearchingPlate, setIsSearchingPlate] = useState(false);
+
+  // Validation schema - dynamic based on whether we have results
+  const getSearchPlateSchema = (searchMode) => {
+    if (searchMode) {
+      return z.object({
+        licensePlate: z.string().min(1, "License Plate is required"),
+      });
+    }
+    return z.object({
+      makeAndModel: z.string().min(1, "Make & Model is required"),
+      licensePlate: z.string().min(1, "License Plate is required"),
+      chassis: z.string().min(1, "Chassis is required"),
+      color: z.string().min(1, "Color is required"),
+      yearOfManufacture: z.string().min(1, "Year Of Manufacture is required"),
+    });
+  };
+
+  const searchMode = !plateSearchResult;
+
+  const form = useForm({
+    resolver: zodResolver(getSearchPlateSchema(searchMode)),
+    defaultValues: {
+      makeAndModel: "",
+      licensePlate: "",
+      chassis: "",
+      color: "",
+      yearOfManufacture: "",
+    },
+  });
+
+  // Update resolver when searchMode changes
+  useEffect(() => {
+    form.clearErrors();
+  }, [searchMode, form]);
 
   // Helper function to map purchase data to plan ID
   const getPlanIdFromPurchase = (purchase) => {
@@ -46,7 +90,6 @@ const Consultation = ({ activeMenu }) => {
   }, [activeMenu]);
 
   useEffect(() => {
-    console.log("user", user);
     if (user) {
       // Extract purchased plan IDs from user data
       // This assumes the user object contains purchase history
@@ -105,11 +148,51 @@ const Consultation = ({ activeMenu }) => {
     }
   };
 
-  const handleFormSubmit = (data) => {
-    console.log("Form data:", data);
-    // Close the modal after submission
+  const handleFormSubmit = async (data) => {
+    if (!data.licensePlate?.trim()) {
+      toast.error("Please enter a license plate");
+      return;
+    }
+    if (plateSearchResult) {
+      navigate("/history");
+      return;
+    }
+
+    setIsSearchingPlate(true);
+    try {
+      const { searchPlate } = await import("../../../services/authService");
+      const result = await searchPlate(data.licensePlate);
+      setPlateSearchResult(result);
+
+      form.reset({
+        makeAndModel: result.Marca + "/" + result.Modelo || "",
+        licensePlate: result.Placa,
+        chassis: result.Chassi || "",
+        color: result.Cor || "",
+        yearOfManufacture: result.Ano_Fabricacao || "",
+      });
+      // Don't close modal, show results instead
+    } catch (error) {
+      console.error("Failed to search plate:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to search plate. Please try again."
+      );
+    } finally {
+      setIsSearchingPlate(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setPlateSearchResult(null);
     setShowReportPopup(false);
-    // You can add additional logic here to process the form data
+    form.reset({
+      makeAndModel: "",
+      licensePlate: "",
+      chassis: "",
+      color: "",
+      yearOfManufacture: "",
+    });
   };
 
   return (
@@ -150,23 +233,24 @@ const Consultation = ({ activeMenu }) => {
 
       {showReportPopup && (
         <Modal
-          title="Confirm Data"
-          onClose={() => setShowReportPopup(false)}
-          className="!bg-[#002F74] !text-white !rounded-3xl !p-8"
-          buttonText="Confirm"
+          title={!plateSearchResult ? "Search Plate" : "Confirm Data"}
+          onClose={handleCloseModal}
+          className="!bg-[#194D9A] !text-white !rounded-3xl !p-8"
         >
           <SearchPlateForm
+            form={form}
             onSubmit={handleFormSubmit}
-            defaultValues={{
-              makeAndModel: "",
-              licensePlate: "",
-              chassis: "",
-              color: "",
-              yearOfManufacture: "",
-            }}
             showCancelButton={true}
-            onCancel={() => setShowReportPopup(false)}
-            buttonText="Confirm"
+            onCancel={handleCloseModal}
+            buttonText={
+              plateSearchResult
+                ? "Confirm"
+                : isSearchingPlate
+                ? "Searching..."
+                : "Search"
+            }
+            searchMode={searchMode}
+            isSearching={isSearchingPlate}
           />
         </Modal>
       )}

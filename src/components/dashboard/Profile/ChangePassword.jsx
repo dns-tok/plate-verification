@@ -31,24 +31,13 @@ const ChangePassword = () => {
   const handleSubmit = async (data) => {
     setIsLoading(true);
     try {
-      // Map form data to API format
-      const updateData = {
-        cpf: data.id,
-        full_name: data.fullName,
-        birth_date: data.dateOfBirth,
-        email: data.email,
-        zip_code: data.zipCode,
-        house_number: data.houseNumber,
-        phone: data.telephone,
-      };
-
-      await updateProfile(updateData);
+      await updateProfile(data);
       // Refresh user data to reflect changes in context
       await refreshUserProfile();
-      toast.success("Profile updated successfully!");
+      toast.success("Password updated successfully!");
     } catch (error) {
-      console.error("Failed to update profile:", error);
-      toast.error("Failed to update profile. Please try again.");
+      console.error("Failed to update password:", error);
+      toast.error("Failed to update password. Please try again.");
     } finally {
       setIsLoading(false);
     }

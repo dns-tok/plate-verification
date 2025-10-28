@@ -20,10 +20,30 @@ const HeroSection = () => {
     setIsModalOpen(false);
   };
 
-  const handleFormSubmit = (data) => {
-    console.log("Form data:", data);
-    scrollToSection("plans");
-    closeModal();
+  const [plateSearchResult, setPlateSearchResult] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleSearchPlate = async () => {
+    if (!licensePlate?.trim()) {
+      toast.error("Please enter a license plate");
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const { searchPlate } = await import("../../services/authService");
+      const result = await searchPlate(licensePlate);
+      setPlateSearchResult(result);
+      openModal();
+    } catch (error) {
+      console.error("Failed to search plate:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to search plate. Please try again."
+      );
+    } finally {
+      setIsSearching(false);
+    }
   };
   return (
     <div className="min-h-[36rem] bg-[url('/heroBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden relative commonPadding flex flex-col lg:flex-row gap-10 lg:gap-0 items-end py-8">
@@ -55,10 +75,13 @@ const HeroSection = () => {
             />
 
             <button
-              className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 py-2 md:py-3 px-3 md:px-5  cursor-pointer rounded-full`}
-              onClick={openModal}
+              className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 py-2 md:py-3 px-3 md:px-5   rounded-full ${
+                isSearching ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              }`}
+              onClick={handleSearchPlate}
+              disabled={isSearching}
             >
-              Consult Now
+              {isSearching ? "Searching..." : "Consult Now"}
             </button>
           </div>
 
@@ -80,7 +103,7 @@ const HeroSection = () => {
             }
             src="/verificationBadge1.svg"
             alt="Reclame Aqui"
-            className="h-10 md:h-12 w-auto object-contain"
+            className="h-10 md:h-12 w-auto object-contain cursor-pointer rounded-lg"
           />
           <img
             src="/verificationBadge2.svg"
@@ -107,15 +130,21 @@ const HeroSection = () => {
       {isModalOpen && (
         <Modal title="Query Data" onClose={closeModal}>
           <SearchPlateForm
-            onSubmit={handleFormSubmit}
+            onSubmit={() => {
+              scrollToSection("plans");
+              closeModal();
+            }}
             defaultValues={{
-              makeAndModel: "VW/Golf GTI AC",
-              licensePlate: licensePlate,
-              chassis: "WBAEA21010B00000",
-              color: "Red",
-              yearOfManufacture: "2024/2025",
+              makeAndModel: plateSearchResult
+                ? `${plateSearchResult.Marca}/${plateSearchResult.Modelo}`
+                : "",
+              licensePlate: licensePlate || plateSearchResult?.Placa || "",
+              chassis: plateSearchResult?.Chassi || "",
+              color: "",
+              yearOfManufacture: "",
             }}
             labelClassName="!text-black"
+            searchMode={!plateSearchResult}
           />
         </Modal>
       )}

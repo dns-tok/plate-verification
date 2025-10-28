@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import { getCurrentAccount } from "../../services/authService";
+
 export const TopBar = () => {
   const { user } = useAuth();
   const { openCart } = useCart();
   const navigate = useNavigate();
+  const [walletBalance, setWalletBalance] = useState("0.00");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadWalletInfo();
+  }, []);
+
+  const loadWalletInfo = async () => {
+    try {
+      const response = await getCurrentAccount(1);
+      const balance = response.account?.wallet_info?.current_balance || "0.0";
+      setWalletBalance(parseFloat(balance).toFixed(2));
+    } catch (error) {
+      console.error("Failed to load wallet info:", error);
+      setWalletBalance("0.00");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-[url('/assets/topBarBg2.png')] bg-cover bg-center bg-no-repeat rounded-3xl flex justify-between  overflow-hidden relative z-20">
       <div className="flex flex-col  gap-2 p-6">
@@ -25,7 +47,11 @@ export const TopBar = () => {
           <div className="">
             <p className="text-white font-[400] text-lg">Balance</p>
             <p className="text-white font-medium text-2xl whitespace-nowrap">
-              R$ 123.52
+              {loading ? (
+                <span className="animate-pulse text-md">Loading Wallet...</span>
+              ) : (
+                `R$ ${walletBalance}`
+              )}
             </p>
           </div>
           <button

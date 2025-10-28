@@ -69,3 +69,18 @@ export async function validateCoupon(couponCode, orderValue) {
   });
   return data;
 }
+
+export async function searchPlate(plate) {
+  const { data } = await apiClient.post("/plate/search_plate", { plate });
+  return data;
+}
+
+export async function getSearchHistory(page = 1) {
+  const { data } = await apiClient.get("/search-history", { page });
+  return data;
+}
+
+export async function getCurrentAccount() {
+  const { data } = await apiClient.get("/current-account");
+  return data;
+}

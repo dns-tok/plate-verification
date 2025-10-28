@@ -104,14 +104,7 @@ export default function AppRoutes() {
           </AuthRoute>
         }
       />
-      <Route
-        path="/reset-password"
-        element={
-          <AuthRoute>
-            <ResetPassword />
-          </AuthRoute>
-        }
-      />
+      <Route path="/reset-password" element={<Navigate to="/" replace />} />
       <Route
         path="/confirm-email"
         element={

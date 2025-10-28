@@ -1,17 +1,36 @@
-import React, { useState, useMemo } from "react";
-import { purchaseData } from "./purchaseData";
+import React, { useState, useEffect } from "react";
 import Pagination from "../../common/Pagination";
+import { getCurrentAccount } from "../../../services/authService";
+import { toast } from "react-toastify";
 
 const Purchases = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState(null);
+  const [totalItems, setTotalItems] = useState(0);
 
-  // Calculate paginated data
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return purchaseData.slice(startIndex, endIndex);
-  }, [currentPage, itemsPerPage]);
+  useEffect(() => {
+    loadTransactions();
+  }, [currentPage]);
+
+  const loadTransactions = async () => {
+    setLoading(true);
+    try {
+      const response = await getCurrentAccount(currentPage);
+      setTransactions(response.account?.transactions?.data || []);
+      setPagination(response.account?.transactions?.meta);
+      setTotalItems(response.account?.transactions?.meta?.total_count || 0);
+    } catch (error) {
+      console.error("Failed to load transactions:", error);
+      toast.error("Failed to load transactions. Please try again.");
+      setTransactions([]);
+      setTotalItems(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -21,6 +40,19 @@ const Purchases = () => {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Reset to first page when changing items per page
   };
+
+  // Format date from API response
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    });
+  };
+
+  const paginatedData = transactions;
 
   return (
     <div
@@ -33,53 +65,67 @@ const Purchases = () => {
           Purchases History
         </p>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse">
-            <thead className="">
-              <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
-                <th className="!rounded-l-md">Date of conclusion</th>
-                <th>Chosen</th>
-                <th>Plate</th>
-                <th>Status</th>
-                <th className="!rounded-r-md">Purchase</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((item) => (
-                <tr
-                  key={item.id || item.plate}
-                  className="hover:bg-gray-50 text-[0.75rem] [&>td]:!font-[500] [&>td]:!text-[0.75rem] [&>td]:!p-2"
-                >
-                  <td>{item.date}</td>
-                  <td>{item.chosen}</td>
-                  <td>{item.plate}</td>
-                  <td>{item.status}</td>
-                  <td>
-                    <button
-                      className={`text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer ${
-                        item.status === "Paid"
-                          ? "text-green-500"
-                          : "text-orange-400"
-                      }`}
-                    >
-                      {item.purchase}
-                    </button>
-                  </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        ) : transactions.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No transactions found.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse">
+              <thead className="">
+                <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
+                  <th className="!rounded-l-md">Date of conclusion</th>
+                  <th>Chosen</th>
+                  <th>Plate</th>
+                  <th>Status</th>
+                  <th className="!rounded-r-md">Purchase</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {paginatedData.map((item, index) => (
+                  <tr
+                    key={item.id || index}
+                    className="hover:bg-gray-50 text-[0.75rem] [&>td]:!font-[500] [&>td]:!text-[0.75rem] [&>td]:!p-2"
+                  >
+                    <td>{formatDate(item.created_at || item.date)}</td>
+                    <td>{item.plan_name || item.chosen || "N/A"}</td>
+                    <td>{item.plate || item.license_plate || "N/A"}</td>
+                    <td>{item.status || "Success"}</td>
+                    <td>
+                      <button
+                        className={`text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer ${
+                          item.status === "Paid" || item.status === "success"
+                            ? "text-green-500"
+                            : "text-orange-400"
+                        }`}
+                      >
+                        {item.status === "Paid" || item.status === "success"
+                          ? "Paid"
+                          : "Pending"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Pagination Component */}
-      <Pagination
-        totalItems={purchaseData.length}
-        itemsPerPage={itemsPerPage}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-        onItemsPerPageChange={handleItemsPerPageChange}
-      />
+      {!loading && totalItems > 0 && (
+        <Pagination
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
+        />
+      )}
     </div>
   );
 };
