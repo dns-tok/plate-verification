@@ -12,6 +12,7 @@ import Signup from "../pages/auth/Signup";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import ConfirmEmail from "../pages/auth/ConfirmEmail";
+import ResetPasswordRedirect from "../components/auth/ResetPasswordRedirect";
 
 // Dashboard pages (from user-panel)
 // import { Home as DashboardHome } from "../pages/dashboard/Home";
@@ -104,7 +105,7 @@ export default function AppRoutes() {
           </AuthRoute>
         }
       />
-      <Route path="/reset-password" element={<Navigate to="/" replace />} />
+      <Route path="/reset-password" element={<ResetPasswordRedirect />} />
       <Route
         path="/confirm-email"
         element={
