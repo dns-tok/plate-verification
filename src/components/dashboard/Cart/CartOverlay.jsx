@@ -109,7 +109,9 @@ export default function CartOverlay() {
                 className="px-6 py-4 space-y-4 w-full overflow-y-auto"
                 style={{
                   height: `calc(100vh - ${
-                    cartOverlayRef.current?.clientHeight + 65
+                    (cartOverlayRef.current?.clientHeight >= 260
+                      ? cartOverlayRef.current?.clientHeight
+                      : 260) + 65
                   }px)`,
                 }}
               >
@@ -218,7 +220,7 @@ export default function CartOverlay() {
                   </div>
                 </div>
                 <div className="border-t border-[#194D9A]" />
-                <div className="px-6 py-4">
+                <div className="px-6 py-4 mb-2">
                   <div className="flex flex-col items-end mb-3">
                     {appliedCoupon && (
                       <>

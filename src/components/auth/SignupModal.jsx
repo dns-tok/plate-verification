@@ -93,12 +93,10 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
   });
 
   const handleStep1Submit = (data) => {
-    console.log("Step 1 data:", data);
     setStep(2);
   };
 
   const handleStep2Submit = async (data) => {
-    console.log(data);
     if (!termsAccepted) {
       setTermsError("Please accept the terms of use to continue.");
       return;

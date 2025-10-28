@@ -35,7 +35,6 @@ const DeleteAccountPage = () => {
     setIsDeleting(true);
     try {
       const response = await deleteAccount(data.password);
-      console.log("Delete account response:", response);
 
       // Check if deletion was successful
       if (response) {
