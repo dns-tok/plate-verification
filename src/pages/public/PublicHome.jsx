@@ -47,16 +47,28 @@ const PublicHome = () => {
     }
   }, []);
 
-  // Listen for login button click from Navbar
+  // Listen for login button click from Navbar and hash trigger
   useEffect(() => {
     const handleShowLogin = () => {
       setShowLoginModal(true);
     };
 
+    const checkHashForLogin = () => {
+      if (window.location.hash === "#showLogin") {
+        setShowLoginModal(true);
+        window.history.replaceState(null, "", "/");
+      }
+    };
+
     window.addEventListener("showLoginModal", handleShowLogin);
+    window.addEventListener("hashchange", checkHashForLogin);
+
+    // Check on mount
+    checkHashForLogin();
 
     return () => {
       window.removeEventListener("showLoginModal", handleShowLogin);
+      window.removeEventListener("hashchange", checkHashForLogin);
     };
   }, []);
 

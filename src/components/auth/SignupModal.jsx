@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Modal from "../common/Modal";
 import InputField from "../common/Form/InputField";
@@ -180,7 +180,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             important notifications via email or SMS. Full details are available
             in our{" "}
             <span className="text-[#1AABFE] cursor-pointer hover:underline">
-              Privacy Policy
+              <Link to="/privacy-policy">Privacy Policy</Link>
             </span>
             .
           </p>
@@ -279,7 +279,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             information for the Protected Plate plan. For more information, see
             our{" "}
             <span className="text-[#1AABFE] cursor-pointer hover:underline">
-              Privacy Policy
+              <Link to="/privacy-policy">Privacy Policy</Link>
             </span>
             .
           </p>

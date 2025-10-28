@@ -1,6 +1,7 @@
 import React from "react";
 import MainContent from "../../components/layout/MainContent";
 import { FaCheckCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const ConnectedPage = () => {
   return (
@@ -28,7 +29,11 @@ const ConnectedPage = () => {
         essential part of the experience, ensuring alerts and ongoing
         monitoring. Data processing fully complies with the General Data
         Protection Law (LGPD), with security and transparency. You can manage
-        your preferences at any time. For more details, see our Privacy Policy.
+        your preferences at any time. For more details, see our{" "}
+        <span className="text-[#194D9A] cursor-pointer hover:underline">
+          <Link to="/privacy-policy">Privacy Policy</Link>
+        </span>
+        .
       </p>
     </MainContent>
   );

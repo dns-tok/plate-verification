@@ -78,7 +78,11 @@ const Navbar = () => {
 
           <button
             onClick={() => {
-              window.dispatchEvent(new Event("showLoginModal"));
+              if (window.location.pathname === "/") {
+                window.dispatchEvent(new Event("showLoginModal"));
+              } else {
+                window.location.href = "/#showLogin";
+              }
             }}
             className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2 cursor-pointer rounded-full ms-[3rem] md:ms-[1rem] xl:ms-[6rem]`}
           >
@@ -114,7 +118,11 @@ const Navbar = () => {
             className={`text-lg bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2  cursor-pointer rounded-full`}
             onClick={() => {
               setIsMenuOpen(false);
-              window.dispatchEvent(new Event("showLoginModal"));
+              if (window.location.pathname === "/") {
+                window.dispatchEvent(new Event("showLoginModal"));
+              } else {
+                window.location.href = "/#showLogin";
+              }
             }}
           >
             Entrar

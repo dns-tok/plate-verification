@@ -131,8 +131,8 @@ const PriceSection = () => {
   const handleChoosePlan = (id) => {
     setSelectedCard(id);
     setShowMulti(false);
-    // Trigger login modal
-    window.dispatchEvent(new Event("showLoginModal"));
+    // Navigate to home with hash to trigger login modal
+    window.location.href = "/#showLogin";
   };
 
   useEffect(() => {
