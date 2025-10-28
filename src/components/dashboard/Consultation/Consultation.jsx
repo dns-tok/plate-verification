@@ -174,10 +174,12 @@ const Consultation = ({ activeMenu }) => {
       // Don't close modal, show results instead
     } catch (error) {
       console.error("Failed to search plate:", error);
-      toast.error(
+      const errorMessage =
         error?.response?.data?.message ||
-          "Failed to search plate. Please try again."
-      );
+        error?.response?.data?.error ||
+        error?.message ||
+        "Failed to search plate. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsSearchingPlate(false);
     }

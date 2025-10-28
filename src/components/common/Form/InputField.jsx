@@ -52,12 +52,12 @@ const InputField = ({
         className={`relative flex items-center
   w-full  rounded-md
   text-sm xl:text-base bg-white
-  placeholder-[#9F9F9F] font-[400]
+  placeholder-[#565656] font-[400]
   transition-colors duration-200 ease-in-out
 disabled:opacity-50 disabled:cursor-not-allowed
   sm:text-sm px-3 py-3 ${inputContainerClassName}`}
       >
-        {icon && <div className="text-[#9F9F9F] mr-2">{icon}</div>}
+        {icon && <div className="text-[#565656] mr-2">{icon}</div>}
         <Controller
           name={name}
           control={control}
@@ -73,11 +73,11 @@ disabled:opacity-50 disabled:cursor-not-allowed
               onChange={(e) => field.onChange(e.target.value)}
               className={`
                 w-full
-                text-sm xl:text-base bg-white outline-none text-[#535353] 
-                placeholder-[#9F9F9F] font-[400]
+                text-sm xl:text-base bg-white outline-none text-[#343434] 
+                placeholder-[#9F9F9F] !font-[600]
                 transition-colors duration-200 ease-in-out
                  focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed
-                sm:text-sm
+                
                 ${isPassword ? "pr-10 sm:pr-8" : ""}
                 ${inputClassName}
               `}

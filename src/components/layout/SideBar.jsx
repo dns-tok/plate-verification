@@ -203,7 +203,7 @@ export const SideBar = () => {
             className="flex items-center gap-2 py-1 px-3 text-white cursor-pointer rounded transition-colors w-full group"
             onClick={() => {
               logout();
-              navigate("/login");
+              navigate("/");
             }}
           >
             <img

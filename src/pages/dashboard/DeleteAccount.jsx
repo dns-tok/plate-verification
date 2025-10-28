@@ -43,7 +43,7 @@ const DeleteAccountPage = () => {
         // Logout and redirect after a short delay
         setTimeout(() => {
           logout();
-          navigate("/login");
+          navigate("/");
         }, 1500);
       }
     } catch (error) {

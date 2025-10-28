@@ -6,12 +6,6 @@ import PublicHome from "../pages/public/PublicHome";
 import PrivacyPolicy from "../pages/public/PrivacyPolicy";
 import TermsOfUse from "../pages/public/TermsOfUse";
 
-// Auth pages (from user-panel)
-import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ResetPassword from "../pages/auth/ResetPassword";
-import ConfirmEmail from "../pages/auth/ConfirmEmail";
 import ResetPasswordRedirect from "../components/auth/ResetPasswordRedirect";
 
 // Dashboard pages (from user-panel)
@@ -80,40 +74,8 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Auth Routes */}
-      <Route
-        path="/login"
-        element={
-          <AuthRoute>
-            <Login />
-          </AuthRoute>
-        }
-      />
-      <Route
-        path="/signup"
-        element={
-          <AuthRoute>
-            <Signup />
-          </AuthRoute>
-        }
-      />
-      <Route
-        path="/forgot-password"
-        element={
-          <AuthRoute>
-            <ForgotPassword />
-          </AuthRoute>
-        }
-      />
+      {/* Auth Redirects */}
       <Route path="/reset-password" element={<ResetPasswordRedirect />} />
-      <Route
-        path="/confirm-email"
-        element={
-          <AuthRoute>
-            <ConfirmEmail />
-          </AuthRoute>
-        }
-      />
 
       {/* Protected Dashboard Routes */}
       <Route

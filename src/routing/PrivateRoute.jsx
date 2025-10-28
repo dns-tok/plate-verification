@@ -6,7 +6,7 @@ export default function PrivateRoute({ children }) {
   const { accessToken, loading } = useAuth();
 
   if (loading) return null;
-  if (!accessToken) return <Navigate to="/login" replace />;
+  if (!accessToken) return <Navigate to="/" replace />;
 
   return <PrivateLayout>{children}</PrivateLayout>;
 }
