@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import PriceCard from "./PriceCard";
 import MultiConsultant from "./MultiConsultant";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
 
 const singlePlans = [
   {
@@ -128,11 +127,12 @@ const multiPlans = [
 const PriceSection = () => {
   const [selectedCard, setSelectedCard] = useState(2);
   const [showMulti, setShowMulti] = useState(false);
-  const navigate = useNavigate();
+
   const handleChoosePlan = (id) => {
     setSelectedCard(id);
     setShowMulti(false);
-    navigate(`/login`);
+    // Trigger login modal
+    window.dispatchEvent(new Event("showLoginModal"));
   };
 
   useEffect(() => {

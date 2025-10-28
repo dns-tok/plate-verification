@@ -69,7 +69,7 @@ apiClient.interceptors.response.use(
         console.error("Token refresh failed:", refreshError);
         // Clear tokens and redirect to login
         localStorage.removeItem("authTokens");
-        window.location.href = "/login";
+        window.location.href = "/";
       }
     }
 
