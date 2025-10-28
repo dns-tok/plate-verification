@@ -14,7 +14,7 @@ const navLinks = [
   },
   {
     name: "How it works",
-    href: "#",
+    href: "/how-it-works",
   },
   {
     name: "Contact",
@@ -26,7 +26,7 @@ const navLinks = [
   },
   {
     name: "About Us",
-    href: "#",
+    href: "/about-us",
   },
 ];
 const Navbar = () => {
@@ -48,6 +48,8 @@ const Navbar = () => {
         () => setIsMenuOpen(false),
         150
       );
+    } else {
+      navigate(link.href);
     }
   };
 

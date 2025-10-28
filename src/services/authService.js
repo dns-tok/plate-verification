@@ -75,12 +75,26 @@ export async function searchPlate(plate) {
   return data;
 }
 
-export async function getSearchHistory(page = 1) {
-  const { data } = await apiClient.get("/search-history", { page });
+export async function getSearchHistory(page = 1, perPage = 10) {
+  const { data } = await apiClient.get("/search-history", {
+    params: { page, per_page: perPage },
+  });
   return data;
 }
 
-export async function getCurrentAccount() {
-  const { data } = await apiClient.get("/current-account");
+export async function getCurrentAccount(page = 1, perPage = 10) {
+  const { data } = await apiClient.get("/current-account", {
+    params: { page, per_page: perPage },
+  });
+  return data;
+}
+
+export async function createOrValidateOrder(payload) {
+  const { data } = await apiClient.post("/orders/create-or-validate", payload);
+  return data;
+}
+
+export async function consultaSaldo() {
+  const { data } = await apiClient.get("/consulta_saldo");
   return data;
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { getCurrentAccount } from "../../services/authService";
+import { consultaSaldo } from "../../services/authService";
 
 export const TopBar = () => {
   const { user } = useAuth();
@@ -17,9 +17,9 @@ export const TopBar = () => {
 
   const loadWalletInfo = async () => {
     try {
-      const response = await getCurrentAccount(1);
-      const balance = response.account?.wallet_info?.current_balance || "0.0";
-      setWalletBalance(parseFloat(balance).toFixed(2));
+      const response = await consultaSaldo();
+      const balance = response.saldo || "0.00";
+      setWalletBalance(balance);
     } catch (error) {
       console.error("Failed to load wallet info:", error);
       setWalletBalance("0.00");

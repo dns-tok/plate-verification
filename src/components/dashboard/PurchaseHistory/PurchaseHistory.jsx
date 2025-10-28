@@ -13,12 +13,12 @@ const Purchases = () => {
 
   useEffect(() => {
     loadTransactions();
-  }, [currentPage]);
+  }, [currentPage, itemsPerPage]);
 
   const loadTransactions = async () => {
     setLoading(true);
     try {
-      const response = await getCurrentAccount(currentPage);
+      const response = await getCurrentAccount(currentPage, itemsPerPage);
       setTransactions(response.account?.transactions?.data || []);
       setPagination(response.account?.transactions?.meta);
       setTotalItems(response.account?.transactions?.meta?.total_count || 0);
@@ -43,7 +43,7 @@ const Purchases = () => {
 
   // Format date from API response
   const formatDate = (dateString) => {
-    if (!dateString) return "";
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -88,24 +88,40 @@ const Purchases = () => {
               <tbody>
                 {paginatedData.map((item, index) => (
                   <tr
-                    key={item.id || index}
+                    key={item.lago_id || item.id || index}
                     className="hover:bg-gray-50 text-[0.75rem] [&>td]:!font-[500] [&>td]:!text-[0.75rem] [&>td]:!p-2"
                   >
                     <td>{formatDate(item.created_at || item.date)}</td>
-                    <td>{item.plan_name || item.chosen || "N/A"}</td>
-                    <td>{item.plate || item.license_plate || "N/A"}</td>
-                    <td>{item.status || "Success"}</td>
+                    <td>{item.name || "N/A"}</td>
+                    <td>{formatDate(item.settled_at)}</td>
                     <td>
                       <button
                         className={`text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer ${
-                          item.status === "Paid" || item.status === "success"
+                          item.status === "settled" ||
+                          item.transaction_status === "purchased"
                             ? "text-green-500"
                             : "text-orange-400"
                         }`}
                       >
-                        {item.status === "Paid" || item.status === "success"
+                        {item.status === "settled" ||
+                        item.transaction_status === "purchased"
                           ? "Paid"
                           : "Pending"}
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className={`text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer ${
+                          item.status === "settled" ||
+                          item.transaction_status === "purchased"
+                            ? "text-green-500"
+                            : "text-orange-400"
+                        }`}
+                      >
+                        {item.status === "settled" ||
+                        item.transaction_status === "purchased"
+                          ? "Completed"
+                          : "Complete Purchase"}
                       </button>
                     </td>
                   </tr>

@@ -150,9 +150,7 @@ export default function CartOverlay() {
                   Your Cart is Empty
                 </h3>
                 <p className="text-xs font-medium text-gray-500 text-center mb-8 leading-relaxed">
-                  Lorem ipsum quia dolor sit porro quisquam est qui dolorem
-                  ipsum quia dolor sit amet consectetur adipisci velit sed quia
-                  non numquam eius modi.
+                  Add items to your cart to get started.
                 </p>
               </div>
             )}

@@ -7,6 +7,8 @@ import PrivacyPolicy from "../pages/public/PrivacyPolicy";
 import TermsOfUse from "../pages/public/TermsOfUse";
 
 import ResetPasswordRedirect from "../components/auth/ResetPasswordRedirect";
+import AboutUs from "../pages/public/AboutUs";
+import HowItWorks from "../pages/public/HowItWorks";
 
 // Dashboard pages (from user-panel)
 // import { Home as DashboardHome } from "../pages/dashboard/Home";
@@ -74,6 +76,23 @@ export default function AppRoutes() {
         }
       />
 
+      <Route
+        path="/how-it-works"
+        element={
+          <PublicRoute>
+            <HowItWorks />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path="/about-us"
+        element={
+          <PublicRoute>
+            <AboutUs />
+          </PublicRoute>
+        }
+      />
       {/* Auth Redirects */}
       <Route path="/reset-password" element={<ResetPasswordRedirect />} />
 

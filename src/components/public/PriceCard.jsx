@@ -1,6 +1,7 @@
 import React from "react";
 import { BsStarFill } from "react-icons/bs";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 const PriceCard = ({
   id,
@@ -45,10 +46,13 @@ const PriceCard = ({
           ))}
         </div>
       </div>
-      <button className="ms-6 border-[1.5px] rounded-md flex items-center gap-3 py-1.5 px-4 w-fit cursor-pointer hover:bg-white hover:text-[#1AABFE] transition-all duration-300 border-[#1AABFE] group">
+      <Link
+        to="/how-it-works"
+        className="ms-6 border-[1.5px] rounded-md flex items-center gap-3 py-1.5 px-4 w-fit cursor-pointer hover:bg-white hover:text-[#1AABFE] transition-all duration-300 border-[#1AABFE] group"
+      >
         <span className="font-light text-[0.9rem]">View More</span>
         <FaArrowRightLong className="text-[#1AABFE] group-hover:translate-x-1 transition-all duration-300" />
-      </button>
+      </Link>
       {/* Badge */}
       {id === 2 && (
         <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#F2DF33] rounded-xl px-6 py-2 text-center shadow-lg flex items-center gap-2">

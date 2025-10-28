@@ -13,12 +13,12 @@ const History = () => {
 
   useEffect(() => {
     loadSearchHistory();
-  }, [currentPage]);
+  }, [currentPage, itemsPerPage]);
 
   const loadSearchHistory = async () => {
     setLoading(true);
     try {
-      const response = await getSearchHistory(currentPage);
+      const response = await getSearchHistory(currentPage, itemsPerPage);
       setSearches(response.searches || []);
       setPagination(response.pagination);
       setTotalItems(response.pagination?.total_count || 0);
@@ -86,7 +86,7 @@ const History = () => {
               <tbody>
                 {paginatedData.map((item, index) => (
                   <tr
-                    key={item.id || item.plate || index}
+                    key={index}
                     className="hover:bg-gray-50 text-[0.75rem] [&>td]:!font-[500] [&>td]:!text-[0.75rem] [&>td]:!p-2"
                   >
                     <td>
