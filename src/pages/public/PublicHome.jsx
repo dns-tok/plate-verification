@@ -21,7 +21,17 @@ const PublicHome = () => {
   const [resetToken, setResetToken] = useState("");
 
   useEffect(() => {
-    handleHashNavigation();
+    // If there's a section hash, scroll once, then clear it to prevent future auto-scrolls
+    if (
+      window.location.hash &&
+      !window.location.hash.includes("showLogin") &&
+      !window.location.hash.includes("access_token")
+    ) {
+      handleHashNavigation();
+      // Clear the hash without reloading the page
+      const cleanUrl = window.location.pathname + window.location.search;
+      window.history.replaceState(null, "", cleanUrl);
+    }
   }, [handleHashNavigation]);
 
   // Check for reset password token in URL hash

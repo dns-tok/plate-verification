@@ -51,8 +51,8 @@ const ChangePassword = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <div className="space-y-4 flex justify-between">
-        <div className="w-[45%]">
+      <div className="lg:space-y-4 flex justify-between flex-col lg:flex-row">
+        <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
             label="Current Password"
@@ -66,7 +66,7 @@ const ChangePassword = () => {
           />
         </div>
 
-        <div className="w-[45%]">
+        <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
             label="New Password"
@@ -83,7 +83,7 @@ const ChangePassword = () => {
 
       <button
         type="submit"
-        className={`text-sm w-[140px] bg-[#194D9A] hover:bg-[#1AABFE] text-white font-medium px-4 py-3 rounded-md transition  shadow-lg  ${
+        className={`text-sm w-[140px] bg-[#194D9A] hover:bg-[#1AABFE] text-white font-medium px-4 py-3 rounded-md transition-all duration-300 hover:drop-shadow-lg  shadow-lg mb-6  ${
           isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
         }`}
         disabled={isLoading}

@@ -14,6 +14,7 @@ import Modal from "../../common/Modal";
 import SearchPlateForm from "../../common/SearchPlateForm";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { getCurrentAccount } from "../../../services/authService";
 
 const Consultation = ({ activeMenu }) => {
   const [apiSinglePlans, setApiSinglePlans] = useState([]);
@@ -90,24 +91,52 @@ const Consultation = ({ activeMenu }) => {
   }, [activeMenu]);
 
   useEffect(() => {
-    if (user) {
-      // Extract purchased plan IDs from user data
-      // This assumes the user object contains purchase history
-      // Adjust this logic based on your actual API response structure
-      const purchasedIds = [];
-      if (user.purchases) {
-        user.purchases.forEach((purchase) => {
-          // Map purchase data to plan IDs
-          // Adjust based on your API structure
-          const planId = getPlanIdFromPurchase(purchase);
-          if (planId) {
-            purchasedIds.push(planId);
+    // Fallback: infer purchased plans by matching transaction amounts to plan prices
+    const inferPurchasedPlans = async () => {
+      try {
+        const resp = await getCurrentAccount(1, 100);
+        const txs = resp?.account?.transactions?.data || [];
+
+        // Build price to planId map using API single plans if available, otherwise static
+        const plansSource =
+          apiSinglePlans.length > 0 ? apiSinglePlans : singlePlans;
+        const priceToPlanId = new Map();
+        plansSource.forEach((plan) => {
+          const rawPrice =
+            plan.apiData?.originalPrice ??
+            Number(
+              String(plan.price)
+                .replace(/[^0-9.,]/g, "")
+                .replace(".", "")
+                .replace(",", ".")
+            );
+          const normalized = Number(parseFloat(rawPrice).toFixed(2));
+          if (!Number.isNaN(normalized)) {
+            priceToPlanId.set(normalized, plan.id);
           }
         });
+
+        const matchedIds = new Set();
+        txs.forEach((tx) => {
+          if (
+            tx.status === "settled" ||
+            tx.transaction_status === "purchased"
+          ) {
+            const amt = Number(parseFloat(tx.amount).toFixed(2));
+            const planId = priceToPlanId.get(amt);
+            if (planId) matchedIds.add(planId);
+          }
+        });
+
+        setPurchasedPlanIds(Array.from(matchedIds));
+      } catch (e) {
+        // Silent fail; keep current purchasedPlanIds
+        console.error("Failed to infer purchased plans from transactions", e);
       }
-      setPurchasedPlanIds(purchasedIds);
-    }
-  }, [user]);
+    };
+
+    inferPurchasedPlans();
+  }, [user, apiSinglePlans]);
 
   const loadSinglePlans = async () => {
     setLoading(true);
@@ -197,6 +226,21 @@ const Consultation = ({ activeMenu }) => {
     });
   };
 
+  // Skeleton component for loading state
+  const PlanSkeleton = () => (
+    <div className="bg-white rounded-lg border border-gray-200 p-4 animate-pulse">
+      <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+      <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+      <div className="space-y-2">
+        <div className="h-3 bg-gray-200 rounded"></div>
+        <div className="h-3 bg-gray-200 rounded"></div>
+        <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+      </div>
+      <div className="h-10 bg-gray-200 rounded mt-4"></div>
+    </div>
+  );
+
   return (
     <div className="py-4">
       <div className="flex items-center justify-between mb-2">
@@ -214,24 +258,34 @@ const Consultation = ({ activeMenu }) => {
         )}
       </div>
 
-      <div
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${
-          activeMenu === "multiple" ? "gap-4" : "gap-2"
-        } max-w-[860px] mx-auto`}
-      >
-        {getPlansToRender().map((plan) => {
-          const isPurchased = purchasedPlanIds.includes(plan.id);
-          return (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              isMultiple={activeMenu === "multiple"}
-              onClick={() => handleChoosePlan(plan)}
-              isPurchased={isPurchased}
-            />
-          );
-        })}
-      </div>
+      {activeMenu === "single" && loading ? (
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 max-w-[860px] mx-auto`}
+        >
+          {[1, 2, 3, 4].map((i) => (
+            <PlanSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${
+            activeMenu === "multiple" ? "gap-4" : "gap-2"
+          } max-w-[860px] mx-auto`}
+        >
+          {getPlansToRender().map((plan) => {
+            const isPurchased = purchasedPlanIds.includes(plan.id);
+            return (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                isMultiple={activeMenu === "multiple"}
+                onClick={() => handleChoosePlan(plan)}
+                isPurchased={isPurchased}
+              />
+            );
+          })}
+        </div>
+      )}
 
       {showReportPopup && (
         <Modal

@@ -12,6 +12,8 @@ const Payment = () => {
   const [copyCode, setCopyCode] = useState(false);
   const [paymentData, setPaymentData] = useState(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(null);
+  const [isExpired, setIsExpired] = useState(false);
 
   // Map plan names to API codes
   const getPlanCode = (planName) => {
@@ -70,6 +72,11 @@ const Payment = () => {
         setSelectedPaymentMethod(method);
 
         if (method === "pix" && response.payment_options?.pix) {
+          // Initialize countdown timer
+          const expirationSeconds =
+            response.payment_options.pix.expiracao || 3600;
+          setTimeRemaining(expirationSeconds);
+          setIsExpired(false);
           toast.success("PIX payment details retrieved!");
         } else if (method === "card" && response.payment_options?.cartao) {
           // Redirect to card payment
@@ -104,6 +111,37 @@ const Payment = () => {
     toast.success("PIX code copied to clipboard");
   };
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (timeRemaining === null || timeRemaining <= 0) {
+      if (timeRemaining === 0) {
+        setIsExpired(true);
+        toast.error("Payment time expired. Please create a new order.");
+      }
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          setIsExpired(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeRemaining]);
+
+  // Format time remaining as MM:SS
+  const formatTime = (seconds) => {
+    if (!seconds || seconds < 0) return "00:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  };
+
   // Handle payment completion
   const handlePaymentComplete = () => {
     toast.success("Payment completed! Order is being processed.");
@@ -117,7 +155,7 @@ const Payment = () => {
     <div className="flex flex-col gap-10 w-full h-screen border items-center justify-center">
       <div className="p-8 w-[180px] fixed top-0 left-0">
         <img
-          //   onClick={() => navigate("/")}
+          onClick={() => navigate("/")}
           className="cursor-pointer "
           src="/logo.svg"
           alt=""
@@ -188,22 +226,26 @@ const Payment = () => {
                 {paymentData?.payment_options?.pix?.valor_original ||
                   totalAmount.toFixed(2).replace(".", ",")}
               </p>
-              <p className="text-[0.8rem] font-medium">
-                Time Remaining:{" "}
-                {paymentData?.payment_options?.pix?.expiracao
-                  ? `${Math.floor(
-                      paymentData.payment_options.pix.expiracao / 60
-                    )}:${String(
-                      paymentData.payment_options.pix.expiracao % 60
-                    ).padStart(2, "0")}`
-                  : "10:00"}
+              <p
+                className={`text-[0.8rem] font-medium ${
+                  isExpired ? "text-red-600" : ""
+                }`}
+              >
+                Time Remaining: {formatTime(timeRemaining)}
               </p>
+              {isExpired && (
+                <p className="text-red-600 text-sm font-medium">
+                  Payment expired! Please go back to cart and create a new
+                  order.
+                </p>
+              )}
             </div>
             <div className="flex flex-col items-center gap-3 bg-[#F3F3F3] p-4 rounded-lg">
               <p className="text-[0.9rem] font-medium">
                 Scan to pay with your bank app
               </p>
-              {paymentData?.payment_options?.pix?.pix_copia_e_cola ? (
+              {!isExpired &&
+              paymentData?.payment_options?.pix?.pix_copia_e_cola ? (
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
                     paymentData.payment_options.pix.pix_copia_e_cola
@@ -220,15 +262,34 @@ const Payment = () => {
               )}
               <img src="/assets/pix.svg" alt="" className="w-28" />
             </div>
-          </div>
-          <div className="flex justify-between items-center gap-2 bg-[#F3F3F3] p-4 rounded-lg">
-            <p className="text-[0.8rem] font-medium">Or copy the code to pay</p>
-            <button
-              className="bg-[#194D9A] text-white px-4 py-1 rounded w-fit text-xs cursor-pointer"
-              onClick={handleCopyCode}
-            >
-              <span className="text-xs">COPY CODE</span>
-            </button>
+            {isExpired && (
+              <div className="flex flex-col items-center gap-3 bg-red-50 border-2 border-red-500 p-4 rounded-lg my-4">
+                <p className="text-red-600 font-medium text-center">
+                  Payment time has expired
+                </p>
+                <button
+                  onClick={() => {
+                    navigate("/new-consultation");
+                  }}
+                  className="bg-[#194D9A] text-white px-6 py-2 rounded hover:bg-[#1AABFE] transition-all"
+                >
+                  Go Back to Plans
+                </button>
+              </div>
+            )}
+            {!isExpired && (
+              <div className="flex justify-between items-center gap-2 bg-[#F3F3F3] p-4 rounded-lg mt-4">
+                <p className="text-[0.8rem] font-medium">
+                  Or copy the code to pay
+                </p>
+                <button
+                  className="bg-[#194D9A] text-white px-4 py-1 rounded w-fit text-xs cursor-pointer"
+                  onClick={handleCopyCode}
+                >
+                  <span className="text-xs">COPY CODE</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

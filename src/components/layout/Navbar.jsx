@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { BiMenu } from "react-icons/bi";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { smartScrollToSection } from "../../utils/scrollUtils";
 
 const navLinks = [
@@ -33,7 +33,6 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navbarRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

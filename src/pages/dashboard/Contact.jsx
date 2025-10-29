@@ -48,18 +48,16 @@ const ContactPage = () => {
             can also contact us through the options below:
           </p>
         </div>
-        <div className="flex gap-4 justify-between items-center">
-          <div className="w-[45%] relative">
-            <div className="h-full w-full">
-              <img
-                src="/assets/contactBg.svg"
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div className="absolute top-0 left-0 w-full h-full text-white p-9">
+        <div className="flex gap-4 justify-between items-center rounded-xl overflow-hidden">
+          <div className="w-[45%] h-[418px] relative bg-[#2D3134]">
+            <img
+              src="/contactVector.svg"
+              alt=""
+              className="absolute bottom-0 right-0 size-[30%] "
+            />
+            <div className="w-full h-full text-white p-9">
               <p className="text-2xl font-medium">Contact Information</p>
-              <p className="text-white/60 ">
+              <p className="text-white/60 font-light text-[0.9rem] ms-0.5">
                 Say something to start a live chat!
               </p>
               <div className="flex flex-col justify-evenly gap-2 [&>p]:flex [&>p]:items-center [&>p]:gap-2 mt-5 h-[200px]">
@@ -84,28 +82,33 @@ const ContactPage = () => {
           <form onSubmit={handleSubmit} className="w-[50%]">
             <label
               htmlFor="message"
-              className="text-sm font-semibold mb-2 block"
+              className="text-sm font-semibold mb-2 block text-black/70"
             >
               Message
             </label>
             <textarea
               name="message"
               id="message"
-              className="w-full border border-[#8D8D8D] p-2 rounded-md resize-none text-sm focus:outline-none focus:ring-0 focus:border-[#1AABFE]"
+              className="w-full border-2 border-[#8D8D8D]/60 p-2 rounded-md resize-none text-sm focus:outline-none focus:ring-0 focus:border-[#1AABFE] transition-all duration-500"
               value={message}
               onChange={handleMessageChange}
-              placeholder="Enter your message"
+              placeholder="Write your message..."
               rows={5}
               required
             />
             <button
               type="submit"
-              className={`text-sm w-[140px] bg-[#194D9A] hover:bg-[#1AABFE] text-white font-medium px-4 py-3 rounded-md transition  shadow-lg mt-2  ${
+              className={`relative text-sm w-[140px] bg-[#194D9A] hover:bg-[#1AABFE] text-white font-medium px-4 py-3 rounded-md transition-all duration-300 shadow-lg mt-2  ${
                 isSending ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
               }`}
               disabled={isSending}
             >
               {isSending ? "Sending..." : "Send Message"}
+              <img
+                src="/letterSend.svg"
+                alt=""
+                className="absolute bottom-0 right-0 translate-y-full translate-x-[-30%] "
+              />
             </button>
           </form>
         </div>
