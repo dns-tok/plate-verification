@@ -1,40 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../common/Modal";
-import { scrollToSection } from "../../utils/scrollUtils";
 import { toast } from "react-toastify";
 import SearchPlateForm from "../common/SearchPlateForm";
+import { searchPlate } from "../../services/authService";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { scrollToSection } from "../../utils/scrollUtils";
 
 const HeroSection = () => {
   const [licensePlate, setLicensePlate] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [plateSearchResult, setPlateSearchResult] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showFilledFormModal, setShowFilledFormModal] = useState(false);
 
-  const openModal = () => {
-    if (licensePlate.trim() === "") {
+  // Show all fields, these are required
+  const schema = z.object({
+    makeAndModel: z.string().min(1, "Make & Model is required"),
+    licensePlate: z.string().min(1, "License Plate is required"),
+    chassis: z.string().min(1, "Chassis is required"),
+    color: z.string().min(1, "Color is required"),
+    yearOfManufacture: z.string().min(1, "Year Of Manufacture is required"),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      makeAndModel: "",
+      licensePlate: licensePlate,
+      chassis: "",
+      color: "",
+      yearOfManufacture: "",
+    },
+  });
+
+  // When car data is fetched, fill the form fields
+  useEffect(() => {
+    if (plateSearchResult) {
+      form.reset({
+        makeAndModel:
+          plateSearchResult.Marca && plateSearchResult.Modelo
+            ? `${plateSearchResult.Marca}/${plateSearchResult.Modelo}`
+            : "",
+        licensePlate: plateSearchResult.Placa || licensePlate,
+        chassis: plateSearchResult.Chassi || "",
+        color: plateSearchResult.Cor || "",
+        yearOfManufacture: plateSearchResult.Ano_Fabricacao || "",
+      });
+    }
+    // eslint-disable-next-line
+  }, [plateSearchResult]);
+
+  // Only handle main hero section input & submit here
+  const handleConsultNow = async () => {
+    if (!licensePlate.trim()) {
       toast.error("Please enter a valid license plate");
       return;
     }
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const [plateSearchResult, setPlateSearchResult] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
-
-  const handleSearchPlate = async () => {
-    if (!licensePlate?.trim()) {
-      toast.error("Please enter a license plate");
-      return;
-    }
-
     setIsSearching(true);
     try {
-      const { searchPlate } = await import("../../services/authService");
       const result = await searchPlate(licensePlate);
       setPlateSearchResult(result);
-      openModal();
+      setShowFilledFormModal(true);
     } catch (error) {
       console.error("Failed to search plate:", error);
       const errorMessage =
@@ -47,6 +74,28 @@ const HeroSection = () => {
       setIsSearching(false);
     }
   };
+
+  // When modal closes, clear state and reset form
+  const handleModalClose = () => {
+    setShowFilledFormModal(false);
+    setPlateSearchResult(null);
+    form.reset({
+      makeAndModel: "",
+      licensePlate: licensePlate,
+      chassis: "",
+      color: "",
+      yearOfManufacture: "",
+    });
+  };
+
+  // Modal submit just closes the modal (or scrolls, etc. - adjust as needed)
+  const handleFormSubmit = (data) => {
+    // Scroll to plans section before closing modal
+    scrollToSection("plans");
+    setShowFilledFormModal(false);
+    // Optionally, you could do more here
+  };
+
   return (
     <div className="min-h-[36rem] bg-[url('/heroBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden relative commonPadding flex flex-col lg:flex-row gap-10 lg:gap-0 items-end py-8">
       {/* Left Content */}
@@ -80,7 +129,7 @@ const HeroSection = () => {
               className={`text-[0.8rem] md:text-[0.9rem] bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 py-2 md:py-3 px-3 md:px-5   rounded-full ${
                 isSearching ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
               }`}
-              onClick={handleSearchPlate}
+              onClick={handleConsultNow}
               disabled={isSearching}
             >
               {isSearching ? "Searching..." : "Consult Now"}
@@ -129,24 +178,18 @@ const HeroSection = () => {
         />
       </div>
 
-      {isModalOpen && (
-        <Modal title="Query Data" onClose={closeModal}>
+      {/* Only show modal when plateSearchResult (car) is set */}
+      {showFilledFormModal && plateSearchResult && (
+        <Modal title="Query Data" onClose={handleModalClose}>
           <SearchPlateForm
-            onSubmit={() => {
-              scrollToSection("plans");
-              closeModal();
-            }}
-            defaultValues={{
-              makeAndModel: plateSearchResult
-                ? `${plateSearchResult.Marca}/${plateSearchResult.Modelo}`
-                : "",
-              licensePlate: licensePlate || plateSearchResult?.Placa || "",
-              chassis: plateSearchResult?.Chassi || "",
-              color: "",
-              yearOfManufacture: "",
-            }}
+            form={form}
+            onSubmit={handleFormSubmit}
+            showCancelButton={true}
+            onCancel={handleModalClose}
+            buttonText={"Confirm"}
             labelClassName="!text-black"
-            searchMode={!plateSearchResult}
+            searchMode={false} // Always show all fields in modal
+            isSearching={false}
           />
         </Modal>
       )}
