@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { BsStarFill } from "react-icons/bs";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import PlateSearchBar from "../../common/PlateSearchBar";
+import { toast } from "react-toastify";
 
-const PlanCard = ({ plan, onClick, isMultiple, isPurchased = false }) => {
+const PlanCard = ({
+  plan,
+  onClick,
+  isMultiple,
+  isPurchased = false,
+  showSearchPlateInput,
+  showSearchInput,
+}) => {
+  const handleSearchConfirm = () => {
+    window.location.href = "/history";
+  };
   return plan.id === 9 ? (
     <div
       className={`col-span-4 w-[50%] relative flex items-center  backdrop-blur-xl rounded-2xl  mx-auto  justify-between transition-all duration-300 shadow-[0px_0px_20px_0px_rgba(0,0,0,0.2)] bg-white`}
@@ -33,12 +45,21 @@ const PlanCard = ({ plan, onClick, isMultiple, isPurchased = false }) => {
             isMultiple ? "" : "mt-auto"
           } mb-3.5`}
         >
-          <button
-            onClick={onClick}
-            className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
-          >
-            Choose Plan
-          </button>
+          {(showSearchPlateInput || showSearchInput) && isPurchased ? (
+            <PlateSearchBar
+              buttonText="Check"
+              onConfirm={handleSearchConfirm}
+              planCard={true}
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={onClick}
+              className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
+            >
+              Choose Plan
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -104,14 +125,21 @@ const PlanCard = ({ plan, onClick, isMultiple, isPurchased = false }) => {
           isMultiple ? "" : "mt-auto"
         } mb-4`}
       >
-        <button
-          onClick={onClick}
-          className={`rounded-full mx-auto px-6 py-[7px] ${
-            isPurchased ? "bg-[#28a745] text-white" : "bg-[#F2DF33] text-black"
-          } cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
-        >
-          {isPurchased ? "Check" : "Choose Plan"}
-        </button>
+        {(showSearchPlateInput || showSearchInput) && isPurchased ? (
+          <PlateSearchBar
+            buttonText="Check"
+            onConfirm={handleSearchConfirm}
+            planCard={true}
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={onClick}
+            className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] text-black font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md cursor-pointer`}
+          >
+            Choose Plan
+          </button>
+        )}
       </div>
       {/* Badge */}
       {plan.id === 2 && (

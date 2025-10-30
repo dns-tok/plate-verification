@@ -147,7 +147,7 @@ const Payment = () => {
     toast.success("Payment completed! Order is being processed.");
     clearCart();
     setTimeout(() => {
-      navigate("/dashboard");
+      navigate("/buy-consultation");
     }, 2000);
   };
 

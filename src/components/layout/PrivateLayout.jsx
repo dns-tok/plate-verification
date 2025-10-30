@@ -1,5 +1,6 @@
 import { SideBar } from "./SideBar";
 import { TopBar } from "./TopBar";
+import WhatsAppButton from "../common/WhatsAppButton";
 
 export default function PrivateLayout({ children }) {
   return (
@@ -12,6 +13,7 @@ export default function PrivateLayout({ children }) {
           <div className="absolute -bottom-4 left-0 right-0 mx-auto w-[98%] h-[30%] bg-black/50 z-10 rounded-3xl blur-xl  " />
         </div>
         <div className="relative z-20 max-w-[980px] mx-auto">{children}</div>
+        <WhatsAppButton />
       </div>
     </div>
   );

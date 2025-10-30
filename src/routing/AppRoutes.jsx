@@ -26,23 +26,24 @@ import PurchaseHistoryPage from "../pages/dashboard/PurchaseHistory";
 import PrivateRoute from "./PrivateRoute";
 import PageNotFound from "../pages/dashboard/PageNotFound";
 import Payment from "../components/dashboard/Payment/Payment";
+import DashboardPage from "../pages/dashboard/Dashboard";
 
 // Auth route wrapper to redirect authenticated users
-function AuthRoute({ children }) {
-  const { accessToken, loading } = useAuth();
+// function AuthRoute({ children }) {
+//   const { accessToken, loading } = useAuth();
 
-  if (loading) return null;
-  if (accessToken) return <Navigate to="/dashboard" replace />;
+//   if (loading) return null;
+//   if (accessToken) return <Navigate to="/" replace />;
 
-  return children;
-}
+//   return children;
+// }
 
 // Public route wrapper to redirect authenticated users to dashboard
 function PublicRoute({ children }) {
   const { accessToken, loading } = useAuth();
 
   if (loading) return null;
-  if (accessToken) return <Navigate to="/dashboard" replace />;
+  if (accessToken) return <Navigate to="/buy-consultation" replace />;
 
   return children;
 }
@@ -101,15 +102,15 @@ export default function AppRoutes() {
         path="/"
         element={
           <PrivateRoute>
-            <Consultation />
+            <DashboardPage />
           </PrivateRoute>
         }
       />
       <Route
-        path="/dashboard"
+        path="/buy-consultation"
         element={
           <PrivateRoute>
-            <Consultation />
+            <DashboardPage />
           </PrivateRoute>
         }
       />

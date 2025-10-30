@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import InputField from "./Form/InputField";
+import { formatPlateDisplay, unmaskPlate } from "../../utils/plateFormat";
 
 const SearchPlateForm = ({
   form,
@@ -16,6 +17,36 @@ const SearchPlateForm = ({
     "!bg-white !py-2 !px-2 !rounded-md !text-black !text-[1rem] md:!text-[1rem] !shadow-md";
   const containerClass = "!bg-white !p-0 !rounded-md";
 
+  const handleLicenseChange = (e) => {
+    const masked = formatPlateDisplay(e.target.value);
+    form.setValue("licensePlate", masked, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  // const handleInternalSubmit = (data) => {
+  //   const payload = { ...data, licensePlate: unmaskPlate(data.licensePlate) };
+  //   return onSubmit(payload);
+  // };
+
+  // Ensure the plate is always shown masked, even when form resets programmatically
+  // useEffect(() => {
+  //   const subscription = form.watch((values, { name }) => {
+  //     if (name === "licensePlate") {
+  //       const current = values?.licensePlate ?? "";
+  //       const masked = formatPlateDisplay(current);
+  //       if (current !== masked) {
+  //         form.setValue("licensePlate", masked, {
+  //           shouldValidate: false,
+  //           shouldDirty: false,
+  //         });
+  //       }
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe?.();
+  // }, [form]);
+
   return (
     <form className="flex flex-col " onSubmit={form.handleSubmit(onSubmit)}>
       <InputField
@@ -26,6 +57,8 @@ const SearchPlateForm = ({
         inputClassName={inputClass}
         inputContainerClassName={containerClass}
         required
+        disabled={!searchMode}
+        inputProps={{ onChange: handleLicenseChange }}
       />
       {!searchMode && (
         <>

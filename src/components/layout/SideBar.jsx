@@ -107,7 +107,10 @@ export const SideBar = () => {
       <div className="fixed md:relative top-0 left-0 h-full z-50 bg-[#09529C] flex flex-col w-[260px]">
         {/* Header with Logo */}
         <div className="p-6">
-          <Link to="/dashboard" className="flex flex-col items-center w-fit">
+          <Link
+            to="/buy-consultation"
+            className="flex flex-col items-center w-fit"
+          >
             <img
               src="/assets/logo.svg"
               alt="logo"

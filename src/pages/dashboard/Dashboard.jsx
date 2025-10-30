@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MainContent from "../../components/layout/MainContent";
 import Consultation from "../../components/dashboard/Consultation/Consultation";
 
-const ConsultationPage = () => {
+const DashboardPage = () => {
   const menuItems = [
     { label: "Single Consultation", value: "single" },
     { label: "Multiple Consultation", value: "multiple" },
@@ -16,9 +16,9 @@ const ConsultationPage = () => {
       activeItem={activeMenu}
       setActiveItem={setActiveMenu}
     >
-      <Consultation activeMenu={activeMenu} showSearchPlateInput={true} />
+      <Consultation activeMenu={activeMenu} />
     </MainContent>
   );
 };
 
-export default ConsultationPage;
+export default DashboardPage;
