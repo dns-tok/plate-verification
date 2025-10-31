@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { searchPlate } from "../../services/authService";
+import { searchPlate } from "../../services/plansService";
 import { formatPlateDisplay, unmaskPlate } from "../../utils/plateFormat";
 import Modal from "./Modal";
 import SearchPlateForm from "./SearchPlateForm";
