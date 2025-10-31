@@ -49,6 +49,11 @@ export async function updateProfile(update) {
   return data;
 }
 
+export async function changePassword(update) {
+  const { data } = await apiClient.post("/auth/change-password", update);
+  return data;
+}
+
 export async function deleteAccount(password) {
   const { data } = await apiClient.delete("/auth/delete-account", {
     data: { password },
@@ -68,4 +73,3 @@ export async function getCurrentAccount(page = 1, perPage = 10) {
   });
   return data;
 }
-

@@ -55,7 +55,10 @@ const InputField = ({
   placeholder-[#565656] font-[400]
   transition-colors duration-200 ease-in-out
 disabled:opacity-50 disabled:cursor-not-allowed
-  sm:text-sm px-3 py-3 ${inputContainerClassName}`}
+  sm:text-sm px-3 py-3 ${inputContainerClassName}
+                ${errorMessage ? "border-red-500 border" : ""}
+  
+  `}
       >
         {icon && <div className="text-[#565656] mr-2">{icon}</div>}
         <Controller
@@ -77,7 +80,6 @@ disabled:opacity-50 disabled:cursor-not-allowed
                 placeholder-[#9F9F9F] !font-[600]
                 transition-colors duration-200 ease-in-out
                  focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed
-                
                 ${isPassword ? "pr-10 sm:pr-8" : ""}
                 ${inputClassName}
               `}

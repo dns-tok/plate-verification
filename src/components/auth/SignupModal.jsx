@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
+import DateInputField from "../common/Form/DateInputField";
 
 // Step 1 Schema
 const step1Schema = z.object({
@@ -201,6 +202,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             label="ID"
             name="id"
             placeholder="_ _ _ _ _ - _ _"
+            required
           />
 
           <InputField
@@ -208,21 +210,28 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             label="Full Name"
             name="fullName"
             placeholder="John Doe"
+            required
           />
 
-          <InputField
+          {/* <InputField
             form={step1Form}
             label="Date of Birth"
             name="dateOfBirth"
             placeholder="_ _ / _ _ / _ _ _ _"
             inputProps={{ type: "date" }}
+          /> */}
+          <DateInputField
+            name="dateOfBirth"
+            label="Date of Birth"
+            required
+            form={step1Form}
           />
-
           <InputField
             form={step1Form}
             label="E-mail"
             name="email"
             placeholder="you@example.com"
+            required
           />
 
           <InputField
@@ -230,6 +239,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             label="Telephone"
             name="telephone"
             placeholder="(_ _) _ _ _ _ _ - _ _ _ _"
+            required
           />
 
           {/* Privacy Notice */}
@@ -292,6 +302,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             label="ZIP Code"
             name="zipCode"
             placeholder="_ _ _ _ _ - _ _"
+            required
           />
 
           <InputField
@@ -299,6 +310,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             label="House Number"
             name="houseNumber"
             placeholder="_ _ _ _"
+            required
           />
 
           <InputField
@@ -307,6 +319,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             name="password"
             placeholder="Password"
             isPassword={true}
+            required
           />
 
           <InputField
@@ -315,6 +328,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             name="confirmPassword"
             placeholder="Confirm Password"
             isPassword={true}
+            required
           />
 
           {/* Password Requirements */}

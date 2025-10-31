@@ -98,3 +98,17 @@ export async function validateCoupon(couponCode, orderValue) {
   });
   return data;
 }
+
+export async function criarOrder(placa, plano, cupom = "") {
+  const { data } = await apiClient.post("/criar_order", {
+    placa,
+    plano,
+    cupom,
+  });
+  return data;
+}
+
+export async function checkPaymentStatus(chargeId) {
+  const { data } = await apiClient.get(`/payment/status/${chargeId}`);
+  return data;
+}

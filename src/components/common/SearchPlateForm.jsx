@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import InputField from "./Form/InputField";
-import { formatPlateDisplay, unmaskPlate } from "../../utils/plateFormat";
+import { formatPlateDisplay } from "../../utils/plateFormat";
 
 const SearchPlateForm = ({
   form,
@@ -9,7 +9,6 @@ const SearchPlateForm = ({
   onCancel,
   buttonText = "Release All Information",
   labelClassName = "",
-  searchMode = false, // When true, only show license plate field
   isSearching = false,
 }) => {
   const labelClass = `text-[0.9rem] md:text-[0.8rem] font-semibold text-[0.9rem] md:text-[0.8rem] uppercase ${labelClassName}`;
@@ -56,56 +55,42 @@ const SearchPlateForm = ({
         labelClassName={labelClass}
         inputClassName={inputClass}
         inputContainerClassName={containerClass}
-        required
-        disabled={!searchMode}
+        disabled
         inputProps={{ onChange: handleLicenseChange }}
       />
-      {!searchMode && (
-        <>
-          <InputField
-            form={form}
-            label="Make & Model"
-            name="makeAndModel"
-            labelClassName={labelClass}
-            inputClassName={inputClass}
-            inputContainerClassName={containerClass}
-            required
+      <InputField
+        form={form}
+        label="Make & Model"
+        name="makeAndModel"
+        labelClassName={labelClass}
+        inputClassName={inputClass}
+        inputContainerClassName={containerClass}
+        disabled
+      />
+      <InputField
+        form={form}
+        label="Chassis"
+        name="chassis"
+        labelClassName={labelClass}
+        inputClassName={inputClass}
+        inputContainerClassName={containerClass}
+        disabled
+      />
+      <div className="W-full">
+        <div className="bg-white rounded-md w-[100px] h-[100px] aspect-square mx-auto">
+          <img
+            loading="lazy"
+            onError={(e) => {
+              e.target.src = "/logo.svg";
+            }}
+            src={form.watch("logo") || "/logo.svg"}
+            alt=""
+            className="w-full h-full "
           />
-          <InputField
-            form={form}
-            label="Chassis"
-            name="chassis"
-            labelClassName={labelClass}
-            inputClassName={inputClass}
-            inputContainerClassName={containerClass}
-            required
-          />
-          {console.log(form.watch("logo"))}
-          <div className="W-full">
-            <div className="flex items-start justify-between w-full">
-              <label
-                htmlFor="logo"
-                className={`mb-1.5 text-base text-white sm:text-sm sm:mb-1 ${labelClass}`}
-              >
-                Logo
-              </label>
-            </div>
-            <div className="bg-white rounded-md w-[100px] h-[100px] aspect-square">
-              <img
-                loading="lazy"
-                onError={(e) => {
-                  e.target.src = "/logo.svg";
-                }}
-                src={form.watch("logo")}
-                alt=""
-                className="w-full h-full "
-              />
-            </div>
-          </div>
-        </>
-      )}
+        </div>
+      </div>
       <div className="flex items-center mx-auto gap-4 ">
-        {showCancelButton && !searchMode && (
+        {showCancelButton && (
           <button
             type="button"
             className="bg-transparent border border-white rounded-full font-bold px-6 py-2 text-[1rem] md:text-[0.9rem] mt-4 text-white whitespace-nowrap mb-2 cursor-pointer hover:bg-white hover:text-black transition-all duration-300"

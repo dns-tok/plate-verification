@@ -3,6 +3,7 @@ import { BsStarFill } from "react-icons/bs";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import PlateSearchBar from "../../common/PlateSearchBar";
 import { useNavigate } from "react-router-dom";
+import { useWallet } from "../../../context/WalletContext";
 
 const PlanCard = ({
   plan,
@@ -13,7 +14,10 @@ const PlanCard = ({
   showSearchInput,
 }) => {
   const navigate = useNavigate();
+
+  const { fetchWalletInfo } = useWallet();
   const handleSearchConfirm = () => {
+    fetchWalletInfo();
     navigate("/history");
   };
   return plan.id === 9 ? (
@@ -51,6 +55,7 @@ const PlanCard = ({
               buttonText="Check"
               onConfirm={handleSearchConfirm}
               planCard={true}
+              plan={plan}
             />
           ) : (
             <button
@@ -126,11 +131,12 @@ const PlanCard = ({
           isMultiple ? "" : "mt-auto"
         } mb-4`}
       >
-        {(showSearchPlateInput || showSearchInput) && isPurchased ? (
+        {showSearchPlateInput || showSearchInput ? (
           <PlateSearchBar
             buttonText="Check"
             onConfirm={handleSearchConfirm}
             planCard={true}
+            plan={plan}
           />
         ) : (
           <button

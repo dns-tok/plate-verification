@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { searchPlate } from "../../services/plansService";
+import { searchPlate, criarOrder } from "../../services/plansService";
 import { formatPlateDisplay, unmaskPlate } from "../../utils/plateFormat";
 import Modal from "./Modal";
 import SearchPlateForm from "./SearchPlateForm";
@@ -15,16 +15,18 @@ const PlateSearchBar = ({
   className = "",
   openModalOnSuccess = true,
   planCard = false,
+  plan = null,
 }) => {
   const [licensePlate, setLicensePlate] = useState("");
   const [plateSearchResult, setPlateSearchResult] = useState(null);
   const [showSearchPlatePopup, setShowSearchPlatePopup] = useState(false);
   const [isSearchingPlate, setIsSearchingPlate] = useState(false);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
   const schema = z.object({
-    makeAndModel: z.string().min(1, "Make & Model is required"),
-    licensePlate: z.string().min(1, "License Plate is required"),
-    chassis: z.string().min(1, "Chassis is required"),
+    makeAndModel: z.string(),
+    licensePlate: z.string(),
+    chassis: z.string(),
     logo: z.string(),
   });
 
@@ -65,7 +67,6 @@ const PlateSearchBar = ({
   };
 
   useEffect(() => {
-    console.log(plateSearchResult);
     if (plateSearchResult) {
       form.reset({
         makeAndModel:
@@ -91,9 +92,65 @@ const PlateSearchBar = ({
     });
   };
 
-  const handleFormSubmit = () => {
-    onConfirm && onConfirm();
-    setShowSearchPlatePopup(false);
+  const handleFormSubmit = async () => {
+    if (!plateSearchResult || !licensePlate.trim()) {
+      toast.error("Please search for a plate first");
+      return;
+    }
+    // If plan is provided, call criar_order API
+    if (plan) {
+      setIsCreatingOrder(true);
+      try {
+        // Extract plan code - prefer apiData.code, otherwise derive from plan name
+        let planCode;
+        if (plan.apiData?.code) {
+          planCode = plan.apiData.code;
+        } else {
+          // Extract from plan name (e.g., "Light Plan" -> "light", "Premium Plan" -> "premium")
+          const planName = plan.name || "";
+          planCode = planName
+            .toLowerCase()
+            .replace(" plan", "")
+            .replace(/\s+/g, "_");
+        }
+
+        const unmaskedPlate = unmaskPlate(licensePlate);
+
+        const response = await criarOrder(unmaskedPlate, planCode, "");
+
+        // Order created successfully - redirect to query history
+        toast.success("Order created successfully!");
+        setShowSearchPlatePopup(false);
+        // Call onConfirm callback which redirects to history, or redirect directly
+        if (onConfirm) {
+          onConfirm();
+        }
+      } catch (error) {
+        // Check for insufficient balance error
+        const errorResponse = error?.response?.data;
+        if (
+          errorResponse?.error === "Saldo Insuficiente" ||
+          errorResponse?.message === "Saldo Insuficiente"
+        ) {
+          toast.error(
+            "Insufficient wallet balance. Please add funds to your account."
+          );
+        } else {
+          const errorMessage =
+            errorResponse?.message ||
+            errorResponse?.error ||
+            error?.message ||
+            "Failed to create order. Please try again.";
+          toast.error(errorMessage);
+        }
+      } finally {
+        setIsCreatingOrder(false);
+      }
+    } else {
+      // If no plan, just call the onConfirm callback
+      onConfirm && onConfirm();
+      setShowSearchPlatePopup(false);
+    }
   };
 
   return (
@@ -161,7 +218,7 @@ const PlateSearchBar = ({
             showCancelButton={planCard ? true : false}
             onCancel={handleModalClose}
             buttonText={planCard ? "Confirm" : "Release All Information"}
-            isSearching={isSearchingPlate}
+            isSearching={isSearchingPlate || isCreatingOrder}
           />
         </Modal>
       )}

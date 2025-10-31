@@ -11,7 +11,6 @@ const ConsultationPage = () => {
   const [activeMenu, setActiveMenu] = useState(menuItems[0]?.value);
   return (
     <MainContent
-      showMenu={true}
       menuItems={menuItems}
       activeItem={activeMenu}
       setActiveItem={setActiveMenu}

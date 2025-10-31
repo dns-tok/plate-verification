@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "../../../hooks/useAuth";
-import { updateProfile } from "../../../services/authService";
+import { changePassword } from "../../../services/authService";
 import { toast } from "react-toastify";
 
 // Change Password Schema
@@ -34,9 +34,9 @@ const ChangePassword = () => {
   const handleSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await updateProfile({
-        currentPassword: data.currentPassword,
-        password: data.password,
+      await changePassword({
+        new_password: data.password,
+        current_password: data.currentPassword,
       });
       // Refresh user data to reflect changes in context
       await refreshUserProfile();
@@ -44,7 +44,10 @@ const ChangePassword = () => {
       form.reset();
     } catch (error) {
       console.error("Failed to update password:", error);
-      toast.error("Failed to update password. Please try again.");
+      toast.error(
+        error?.response?.data?.error ||
+          "Failed to update password. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }

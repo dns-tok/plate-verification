@@ -1,10 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AiOutlineSafetyCertificate } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useCart } from "../../context/CartContext";
-import { createOrValidateOrder } from "../../services/plansService";
+import {
+  createOrValidateOrder,
+  checkPaymentStatus,
+} from "../../services/plansService";
 import { useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
+
+const GoBackButton = ({ onClick, className }) => {
+  return (
+    <div
+      className={`flex items-center cursor-pointer group bg-gray-200 text-gray-700 rounded-full text-lg  ${className}`}
+      onClick={onClick}
+    >
+      <BiArrowBack className="size-7 p-1" />
+      <span className="w-0 group-hover:w-[65px] transition-all duration-300 overflow-hidden whitespace-nowrap group-hover:pe-1 text-sm">
+        Go Back
+      </span>
+    </div>
+  );
+};
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -15,6 +32,8 @@ const Payment = () => {
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [isExpired, setIsExpired] = useState(false);
+  const [isCheckingPayment, setIsCheckingPayment] = useState(false);
+  const paymentCheckIntervalRef = useRef(null);
 
   // Map plan names to API codes
   const getPlanCode = (planName) => {
@@ -80,8 +99,12 @@ const Payment = () => {
           setIsExpired(false);
           toast.success("PIX payment details retrieved!");
         } else if (method === "card" && response.payment_options?.cartao) {
-          // Redirect to card payment
-          window.location.href = response.payment_options.cartao.payment_url;
+          // Open payment URL in new tab
+          window.open(response.payment_options.cartao.payment_url, "_blank");
+
+          // Start checking payment status
+          setIsCheckingPayment(true);
+          startPaymentStatusCheck(response.payment_options.cartao.charge_id);
         }
       }
     } catch (error) {
@@ -143,6 +166,81 @@ const Payment = () => {
     return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   };
 
+  // Start polling payment status
+  const startPaymentStatusCheck = (chargeId) => {
+    if (!chargeId) {
+      setIsCheckingPayment(false);
+      return;
+    }
+
+    // Clear any existing interval
+    if (paymentCheckIntervalRef.current) {
+      clearInterval(paymentCheckIntervalRef.current);
+    }
+
+    // Poll every 3 seconds
+    paymentCheckIntervalRef.current = setInterval(async () => {
+      try {
+        const response = await checkPaymentStatus(chargeId);
+
+        // Check if payment is successful (adjust based on actual API response structure)
+        if (
+          response.status === "paid" ||
+          response.status === "succeeded" ||
+          response.payment_status === "paid" ||
+          response.success === true
+        ) {
+          // Payment successful
+          clearInterval(paymentCheckIntervalRef.current);
+          paymentCheckIntervalRef.current = null;
+          setIsCheckingPayment(false);
+          toast.success("Payment completed successfully!");
+          clearCart();
+          setTimeout(() => {
+            navigate("/buy-consultation");
+          }, 2000);
+        } else if (
+          response.status === "failed" ||
+          response.status === "cancelled" ||
+          response.payment_status === "failed"
+        ) {
+          // Payment failed
+          clearInterval(paymentCheckIntervalRef.current);
+          paymentCheckIntervalRef.current = null;
+          setIsCheckingPayment(false);
+          toast.error("Payment failed. Please try again.");
+          setSelectedPaymentMethod(null);
+        }
+        // If status is pending, continue polling
+      } catch (error) {
+        console.error("Error checking payment status:", error);
+        // Don't stop polling on error, might be temporary
+      }
+    }, 3000); // Check every 3 seconds
+
+    // Stop polling after 10 minutes (600 seconds) to prevent infinite polling
+    setTimeout(() => {
+      if (paymentCheckIntervalRef.current) {
+        clearInterval(paymentCheckIntervalRef.current);
+        paymentCheckIntervalRef.current = null;
+        setIsCheckingPayment(false);
+        toast.error(
+          "Payment check timeout. Please verify payment status manually."
+        );
+        setSelectedPaymentMethod(null);
+      }
+    }, 600000); // 10 minutes
+  };
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (paymentCheckIntervalRef.current) {
+        clearInterval(paymentCheckIntervalRef.current);
+      }
+    };
+  }, []);
+
   // Handle payment completion
   const handlePaymentComplete = () => {
     toast.success("Payment completed! Order is being processed.");
@@ -162,10 +260,26 @@ const Payment = () => {
           alt=""
         />
       </div>
-      {selectedPaymentMethod === null && (
-        <>
+      {(selectedPaymentMethod === null || selectedPaymentMethod === "card") && (
+        <div className="flex flex-col gap-2 md:gap-10 items-center justify-center relative">
+          <GoBackButton
+            onClick={() => {
+              // Stop payment check if in progress
+              if (paymentCheckIntervalRef.current) {
+                clearInterval(paymentCheckIntervalRef.current);
+                paymentCheckIntervalRef.current = null;
+                setIsCheckingPayment(false);
+              }
+              navigate("/buy-consultation");
+            }}
+            className="absolute -top-10 left-0 me-auto"
+          />
           <p className="text-xl font-medium">
-            {isCreatingOrder ? "Processing..." : "Choose Your payment method"}
+            {isCreatingOrder
+              ? "Processing..."
+              : isCheckingPayment
+              ? "Waiting for payment confirmation..."
+              : "Choose Your payment method"}
           </p>
 
           <div
@@ -214,29 +328,26 @@ const Payment = () => {
             <div className=" h-full !w-fit mb-4 ms-auto">
               <AiOutlineSafetyCertificate className="text-2xl " />
             </div>
-
-            {isCreatingOrder && (
-              <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black/30">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1AABFE]" />
-              </div>
-            )}
           </button>
-        </>
+          {(isCreatingOrder || isCheckingPayment) && (
+            <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-white/80 z-10">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1AABFE]" />
+              {isCheckingPayment && (
+                <p className="mt-4 text-sm text-gray-600">
+                  Please complete the payment in the new tab. We're checking the
+                  payment status...
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
       {selectedPaymentMethod === "pix" && paymentData && (
         <div className=" h-full md:h-auto">
           <div className="flex flex-col  gap-2 w-[390px] py-4 ">
             <div className="flex  items-center gap-2 mb-4">
-              <div
-                className="flex items-center cursor-pointer group bg-gray-200 rounded-full text-lg "
-                onClick={() => setSelectedPaymentMethod(null)}
-              >
-                <BiArrowBack className="size-7 p-1" />
-                <span className="w-0 group-hover:w-[65px] transition-all duration-300 overflow-hidden whitespace-nowrap group-hover:pe-1 text-sm">
-                  Go Back
-                </span>
-              </div>
+              <GoBackButton onClick={() => setSelectedPaymentMethod(null)} />
               <p className="bg-[#194D9A]  text-white px-4 py-1 rounded  text-center text-lg md:text-base">
                 PIX
               </p>
