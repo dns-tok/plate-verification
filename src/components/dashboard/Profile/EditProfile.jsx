@@ -114,6 +114,7 @@ const EditProfile = () => {
             inputClassName={inputClass}
             labelClassName={labelClass}
             inputContainerClassName={inputContainerClass}
+            disabled
           />
 
           <InputField
@@ -143,7 +144,6 @@ const EditProfile = () => {
             form={form}
             label="E-mail"
             name="email"
-            disabled
             required
             placeholder="you@example.com"
             inputClassName={inputClass}

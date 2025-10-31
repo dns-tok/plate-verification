@@ -25,6 +25,10 @@ const navLinks = [
     href: "#questions",
   },
   {
+    name: "Blog",
+    href: "/blogs",
+  },
+  {
     name: "About Us",
     href: "/about-us",
   },

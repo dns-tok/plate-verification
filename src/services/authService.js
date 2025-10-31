@@ -62,26 +62,6 @@ export async function sendMessage(message) {
   return data;
 }
 
-export async function validateCoupon(couponCode, orderValue) {
-  const { data } = await apiClient.post("/validate-coupon", {
-    coupon_code: couponCode,
-    order_value: orderValue,
-  });
-  return data;
-}
-
-export async function searchPlate(plate) {
-  const { data } = await apiClient.post("/plate/search_plate", { plate });
-  return data;
-}
-
-export async function getSearchHistory(page = 1, perPage = 10) {
-  const { data } = await apiClient.get("/search-history", {
-    params: { page, per_page: perPage },
-  });
-  return data;
-}
-
 export async function getCurrentAccount(page = 1, perPage = 10) {
   const { data } = await apiClient.get("/current-account", {
     params: { page, per_page: perPage },
@@ -89,12 +69,3 @@ export async function getCurrentAccount(page = 1, perPage = 10) {
   return data;
 }
 
-export async function createOrValidateOrder(payload) {
-  const { data } = await apiClient.post("/orders/create-or-validate", payload);
-  return data;
-}
-
-export async function consultaSaldo() {
-  const { data } = await apiClient.get("/consulta_saldo");
-  return data;
-}

@@ -46,12 +46,27 @@ export function CartProvider({ children }) {
   const addToCart = (item) => {
     const existingItem = cartItems.find((i) => i.id === item.id);
     if (existingItem) {
-      // existingItem.quantity += 1;
+      existingItem.quantity += 1;
       return;
     }
     setCartItems((prev) => [...prev, { ...item, quantity: 1 }]);
   };
 
+  const increaseQuantity = (item) => {
+    setCartItems((prev) =>
+      prev.map((i) =>
+        i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+      )
+    );
+  };
+
+  const decreaseQuantity = (item) => {
+    setCartItems((prev) =>
+      prev.map((i) =>
+        i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i
+      )
+    );
+  };
   const removeFromCart = (item) => {
     setCartItems((prev) => prev.filter((i) => i.id !== item.id));
   };
@@ -68,6 +83,8 @@ export function CartProvider({ children }) {
     closeCart,
     cartItems,
     addToCart,
+    increaseQuantity,
+    decreaseQuantity,
     removeFromCart,
     clearCart,
     appliedCoupon,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { consultaSaldo } from "../../services/authService";
+import { consultaSaldo } from "../../services/plansService";
 
 export const TopBar = () => {
   const { user } = useAuth();
@@ -33,16 +33,15 @@ export const TopBar = () => {
       <div className="flex flex-col gap-2 p-6">
         <div className="flex items-center gap-1">
           <p className="text-white font-medium text-xl me-1">
-            Hi, {user?.full_name || user?.nome_completo}
+            Hi, {user?.full_name || user?.nome_completo || "User"}
           </p>
-          <div className="relative">
+          <div className="relative cursor-pointer" onClick={openCart}>
             <img
               src="/assets/cart.svg"
               alt="cart"
               className="size-[1.3rem] cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={openCart}
             />
-            <p className="absolute -top-2 -right-4 text-white text-xs bg-red-500 rounded-full size-4 flex items-center justify-center leading-none p-1">
+            <p className="absolute -top-2 -right-3 text-white text-xs bg-red-500 rounded-full size-4 flex items-center justify-center leading-none p-1">
               {cartItems.length}
             </p>
           </div>

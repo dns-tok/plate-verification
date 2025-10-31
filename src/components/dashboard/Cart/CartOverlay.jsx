@@ -2,9 +2,11 @@ import React, { useRef, useState } from "react";
 import { MdClose, MdDelete, MdShoppingCart } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../../context/CartContext";
-import { validateCoupon } from "../../../services/authService";
+import { validateCoupon } from "../../../services/plansService";
 import { toast } from "react-toastify";
 import { FaSpinner } from "react-icons/fa6";
+import { BiArrowBack } from "react-icons/bi";
+import { BsCartX } from "react-icons/bs";
 
 export default function CartOverlay() {
   const navigate = useNavigate();
@@ -18,13 +20,18 @@ export default function CartOverlay() {
     couponDiscount,
     setCouponDiscount,
     removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    clearCart,
   } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
   // Calculate order value
   const orderValue = cartItems.reduce(
-    (acc, item) => acc + Number(item.price.replace("R$", "").replace(",", ".")),
+    (acc, item) =>
+      acc +
+      Number(item.price.replace("R$", "").replace(",", ".")) * item.quantity,
     0
   );
 
@@ -93,13 +100,22 @@ export default function CartOverlay() {
           {/* Header */}
           <div className="fixed top-0 left-0 w-full z-10 bg-white flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center justify-between w-full gap-2">
-              <h2 className="text-xl font-semibold text-gray-800">Cart</h2>
-              <button
-                onClick={closeCart}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors cursor-pointer font-bold text-gray-700 h-6 w-6 flex items-center justify-center"
-              >
-                ✕
-              </button>
+              <div className="flex items-center gap-2">
+                <BiArrowBack
+                  className="hover:bg-gray-300 bg-gray-100 p-1 text-3xl rounded-full transition-all duration-300 cursor-pointer font-bold text-gray-700 "
+                  onClick={closeCart}
+                />
+                <h2 className="text-xl font-semibold text-gray-800">Cart</h2>
+              </div>
+
+              <BsCartX
+                title="Clear Cart"
+                aria-label="Clear Cart"
+                onClick={clearCart}
+                className={`text-xl transition-all duration-300 cursor-pointer font-bold text-gray-700 hover:text-red-500 ${
+                  cartItems.length > 0 ? "block" : "hidden"
+                }`}
+              />
             </div>
           </div>
           {/* Cart Content */}
@@ -118,7 +134,7 @@ export default function CartOverlay() {
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between text-sm rounded-xl border border-gray-200 px-4 py-2 shadow-md"
+                    className="flex items-center justify-between text-sm rounded-xl border border-gray-200 px-4 py-2 drop-shadow"
                   >
                     <div>
                       <p className="text-lg font-medium text-gray-800">
@@ -128,12 +144,32 @@ export default function CartOverlay() {
                         {item.price}
                       </p>
                     </div>
-                    <div>
+                    <div className="flex items-center justify-between gap-2 bg-gray-100 rounded-md px-2 drop-shadow  min-w-22">
+                      {item.quantity > 1 ? (
+                        <>
+                          <button
+                            onClick={() => decreaseQuantity(item)}
+                            className="text-gray-600 hover:text-gray-800 cursor-pointer text-2xl"
+                          >
+                            -
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => removeFromCart(item)}
+                          className="text-red-600 hover:text-red-800 cursor-pointer text-lg"
+                        >
+                          <MdDelete />
+                        </button>
+                      )}
+                      <p className="text-gray-600 font-medium">
+                        {item.quantity}
+                      </p>
                       <button
-                        onClick={() => removeFromCart(item)}
-                        className="text-red-600 hover:text-red-800 cursor-pointer text-2xl"
+                        onClick={() => increaseQuantity(item)}
+                        className="text-gray-600 hover:text-gray-800 cursor-pointer text-2xl "
                       >
-                        <MdDelete />
+                        +
                       </button>
                     </div>
                   </div>
@@ -145,7 +181,6 @@ export default function CartOverlay() {
                   <MdShoppingCart className="w-12 h-12 text-gray-400" />
                 </div>
 
-                {/* Empty Cart Message */}
                 <h3 className="text-[1.4rem] font-medium text-gray-800 mb-3">
                   Your Cart is Empty
                 </h3>
@@ -212,7 +247,14 @@ export default function CartOverlay() {
                         className="flex items-center justify-between text-sm"
                       >
                         <p>{item.name}</p>
-                        <p>{item.price}</p>
+                        <p>
+                          R${" "}
+                          {(
+                            Number(
+                              item.price.replace("R$", "").replace(",", ".")
+                            ) * item.quantity
+                          ).toFixed(2)}
+                        </p>
                       </div>
                     ))}
                   </div>

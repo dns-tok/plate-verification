@@ -11,7 +11,6 @@ import AboutUs from "../pages/public/AboutUs";
 import HowItWorks from "../pages/public/HowItWorks";
 
 // Dashboard pages (from user-panel)
-// import { Home as DashboardHome } from "../pages/dashboard/Home";
 import Consultation from "../pages/dashboard/Consultation";
 import Recommend from "../pages/dashboard/Recommend";
 import Profile from "../pages/dashboard/Profile";
@@ -25,7 +24,7 @@ import PurchaseHistoryPage from "../pages/dashboard/PurchaseHistory";
 // Layout components
 import PrivateRoute from "./PrivateRoute";
 import PageNotFound from "../pages/dashboard/PageNotFound";
-import Payment from "../components/dashboard/Payment/Payment";
+import Payment from "../pages/dashboard/Payment";
 import DashboardPage from "../pages/dashboard/Dashboard";
 
 // Auth route wrapper to redirect authenticated users

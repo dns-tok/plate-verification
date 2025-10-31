@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineSafetyCertificate } from "react-icons/ai";
 import { toast } from "react-toastify";
-import { useCart } from "../../../context/CartContext";
-import { createOrValidateOrder } from "../../../services/authService";
+import { useCart } from "../../context/CartContext";
+import { createOrValidateOrder } from "../../services/plansService";
 import { useNavigate } from "react-router-dom";
+import { BiArrowBack } from "react-icons/bi";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -152,8 +153,8 @@ const Payment = () => {
   };
 
   return (
-    <div className="flex flex-col gap-10 w-full h-screen border items-center justify-center">
-      <div className="p-8 w-[180px] fixed top-0 left-0">
+    <div className="flex flex-col gap-2 md:gap-10  w-full h-screen items-center justify-center">
+      <div className="p-4 md:p-8 w-[150px] md:w-[180px] md:fixed top-0 left-0">
         <img
           onClick={() => navigate("/")}
           className="cursor-pointer "
@@ -215,11 +216,22 @@ const Payment = () => {
       )}
 
       {selectedPaymentMethod === "pix" && paymentData && (
-        <div>
-          <div className="flex flex-col  gap-2 w-[390px] py-4">
-            <p className="bg-[#194D9A]  text-white px-4 py-1 rounded w-2/3 mx-auto text-center mb-4 ">
-              PIX
-            </p>
+        <div className=" h-full md:h-auto">
+          <div className="flex flex-col  gap-2 w-[390px] py-4 ">
+            <div className="flex  items-center gap-2 mb-4">
+              <div
+                className="flex items-center cursor-pointer group bg-gray-200 rounded-full text-lg "
+                onClick={() => setSelectedPaymentMethod(null)}
+              >
+                <BiArrowBack className="size-7 p-1" />
+                <span className="w-0 group-hover:w-[65px] transition-all duration-300 overflow-hidden whitespace-nowrap group-hover:pe-1 text-sm">
+                  Go Back
+                </span>
+              </div>
+              <p className="bg-[#194D9A]  text-white px-4 py-1 rounded  text-center text-lg md:text-base">
+                PIX
+              </p>
+            </div>
             <div>
               <p className="text-[1.8rem] font-semibold">
                 R${" "}

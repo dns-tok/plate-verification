@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BsStarFill } from "react-icons/bs";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import PlateSearchBar from "../../common/PlateSearchBar";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const PlanCard = ({
   plan,
@@ -12,8 +12,9 @@ const PlanCard = ({
   showSearchPlateInput,
   showSearchInput,
 }) => {
+  const navigate = useNavigate();
   const handleSearchConfirm = () => {
-    window.location.href = "/history";
+    navigate("/history");
   };
   return plan.id === 9 ? (
     <div

@@ -8,18 +8,21 @@ import { updateProfile } from "../../../services/authService";
 import { toast } from "react-toastify";
 
 // Change Password Schema
-const changePasswordSchema = z.object({
-  currentPassword: z.string().nonempty("Current password is required"),
-  newPassword: z
-    .string()
-    .min(8, { message: "Must be at least 8 characters long" })
-    .regex(/[0-9]/, { message: "Must have at least one number" })
-    .regex(/[a-z]/, { message: "Must have at least one lowercase letter" })
-    .regex(/[A-Z]/, { message: "Must have at least one capital letter" })
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, {
-      message: "Must have at least one special character",
-    }),
-});
+const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().nonempty("Current password is required"),
+    password: z
+      .string()
+      .nonempty({ message: "Password is required" })
+      .min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z
+      .string()
+      .min(1, { message: "Please confirm your password" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 const ChangePassword = () => {
   const { refreshUserProfile } = useAuth();
@@ -31,10 +34,14 @@ const ChangePassword = () => {
   const handleSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await updateProfile(data);
+      await updateProfile({
+        currentPassword: data.currentPassword,
+        password: data.password,
+      });
       // Refresh user data to reflect changes in context
       await refreshUserProfile();
       toast.success("Password updated successfully!");
+      form.reset();
     } catch (error) {
       console.error("Failed to update password:", error);
       toast.error("Failed to update password. Please try again.");
@@ -51,7 +58,7 @@ const ChangePassword = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <div className="lg:space-y-4 flex justify-between flex-col lg:flex-row">
+      <div className="flex justify-between flex-col">
         <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
@@ -70,9 +77,20 @@ const ChangePassword = () => {
           <InputField
             form={form}
             label="New Password"
-            name="newPassword"
+            name="password"
             required
             placeholder="Enter new password"
+            isPassword={true}
+            inputClassName={inputClass}
+            labelClassName={labelClass}
+            inputContainerClassName={inputContainerClass}
+          />
+          <InputField
+            form={form}
+            label="Confirm Password"
+            name="confirmPassword"
+            required
+            placeholder="Confirm new password"
             isPassword={true}
             inputClassName={inputClass}
             labelClassName={labelClass}

@@ -35,13 +35,8 @@ const step2Schema = z
     houseNumber: z.string().min(1, { message: "House number is required" }),
     password: z
       .string()
-      .min(8, { message: "Must be at least 8 characters long" })
-      .regex(/[0-9]/, { message: "Must have at least one number" })
-      .regex(/[a-z]/, { message: "Must have at least one lowercase letter" })
-      .regex(/[A-Z]/, { message: "Must have at least one capital letter" })
-      .regex(/[!@#$%^&*(),.?":{}|<>]/, {
-        message: "Must have at least one special character",
-      }),
+      .nonempty({ message: "Password is required" })
+      .min(6, { message: "Password must be at least 6 characters" }),
     confirmPassword: z
       .string()
       .min(1, { message: "Please confirm your password" }),
@@ -120,7 +115,10 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
       navigate("/");
     } catch (e) {
       console.log(e);
-      toast.error("Registration failed. Please check your details.");
+      toast.error(
+        e.response.data.error ||
+          "Registration failed. Please check your details."
+      );
     } finally {
       setIsLoading(false);
     }

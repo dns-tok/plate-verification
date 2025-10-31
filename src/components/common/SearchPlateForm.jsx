@@ -80,26 +80,28 @@ const SearchPlateForm = ({
             inputContainerClassName={containerClass}
             required
           />
-
-          <InputField
-            form={form}
-            label="Color"
-            name="color"
-            labelClassName={labelClass}
-            inputClassName={inputClass}
-            inputContainerClassName={containerClass}
-            required
-          />
-
-          <InputField
-            form={form}
-            label="Year Of Manufacture / Model"
-            name="yearOfManufacture"
-            labelClassName={labelClass}
-            inputClassName={inputClass}
-            inputContainerClassName={containerClass}
-            required
-          />
+          {console.log(form.watch("logo"))}
+          <div className="W-full">
+            <div className="flex items-start justify-between w-full">
+              <label
+                htmlFor="logo"
+                className={`mb-1.5 text-base text-white sm:text-sm sm:mb-1 ${labelClass}`}
+              >
+                Logo
+              </label>
+            </div>
+            <div className="bg-white rounded-md w-[100px] h-[100px] aspect-square">
+              <img
+                loading="lazy"
+                onError={(e) => {
+                  e.target.src = "/logo.svg";
+                }}
+                src={form.watch("logo")}
+                alt=""
+                className="w-full h-full "
+              />
+            </div>
+          </div>
         </>
       )}
       <div className="flex items-center mx-auto gap-4 ">

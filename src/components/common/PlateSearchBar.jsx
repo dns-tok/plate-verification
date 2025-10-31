@@ -12,8 +12,6 @@ const PlateSearchBar = ({
   onSuccess,
   onError,
   onConfirm,
-  buttonText = "Consult Now",
-  placeholder = "License Plate...",
   className = "",
   openModalOnSuccess = true,
   planCard = false,
@@ -27,8 +25,7 @@ const PlateSearchBar = ({
     makeAndModel: z.string().min(1, "Make & Model is required"),
     licensePlate: z.string().min(1, "License Plate is required"),
     chassis: z.string().min(1, "Chassis is required"),
-    color: z.string().min(1, "Color is required"),
-    yearOfManufacture: z.string().min(1, "Year Of Manufacture is required"),
+    logo: z.string(),
   });
 
   const form = useForm({
@@ -37,8 +34,7 @@ const PlateSearchBar = ({
       makeAndModel: "",
       licensePlate: "",
       chassis: "",
-      color: "",
-      yearOfManufacture: "",
+      logo: "",
     },
   });
 
@@ -69,6 +65,7 @@ const PlateSearchBar = ({
   };
 
   useEffect(() => {
+    console.log(plateSearchResult);
     if (plateSearchResult) {
       form.reset({
         makeAndModel:
@@ -77,8 +74,7 @@ const PlateSearchBar = ({
             : "",
         licensePlate: formatPlateDisplay(plateSearchResult.Placa) || "",
         chassis: plateSearchResult.Chassi || "",
-        color: plateSearchResult.Cor || "",
-        yearOfManufacture: plateSearchResult.Ano_Fabricacao || "",
+        logo: plateSearchResult.logo || "",
       });
     }
     // eslint-disable-next-line
@@ -91,8 +87,7 @@ const PlateSearchBar = ({
       makeAndModel: "",
       licensePlate: "",
       chassis: "",
-      color: "",
-      yearOfManufacture: "",
+      logo: "",
     });
   };
 
@@ -109,7 +104,7 @@ const PlateSearchBar = ({
     >
       <input
         type="text"
-        placeholder={placeholder}
+        placeholder={"License Plate..."}
         className={` resize-none  outline-none w-full  text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-0 focus:shadow-none bg-white ${
           planCard
             ? "h-8 border border-gray-300 rounded-full text-sm px-3 text-center focus:border-[#1AABFE]"
@@ -118,6 +113,11 @@ const PlateSearchBar = ({
         value={licensePlate}
         onChange={(e) => setLicensePlate(formatPlateDisplay(e.target.value))}
         required
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
       />
       {planCard ? (
         <button
@@ -132,7 +132,7 @@ const PlateSearchBar = ({
             }
             `}
         >
-          {isSearchingPlate ? "Searching..." : buttonText}
+          {isSearchingPlate ? "Searching..." : "Check"}
         </button>
       ) : (
         <button
@@ -146,7 +146,7 @@ const PlateSearchBar = ({
           onClick={handleSearch}
           disabled={isSearchingPlate || !licensePlate.trim()}
         >
-          {isSearchingPlate ? "Searching..." : buttonText}
+          {isSearchingPlate ? "Searching..." : "Consult Now"}
         </button>
       )}
       {showSearchPlatePopup && (
@@ -158,9 +158,9 @@ const PlateSearchBar = ({
           <SearchPlateForm
             form={form}
             onSubmit={handleFormSubmit}
-            showCancelButton={true}
+            showCancelButton={planCard ? true : false}
             onCancel={handleModalClose}
-            buttonText={"Confirm"}
+            buttonText={planCard ? "Confirm" : "Release All Information"}
             isSearching={isSearchingPlate}
           />
         </Modal>
