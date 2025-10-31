@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "../../common/Pagination";
-import { getSearchHistory } from "../../../services/authService";
+import {
+  getHistoryDetails,
+  getSearchHistory,
+} from "../../../services/plansService";
 import { toast } from "react-toastify";
 
 const History = () => {
@@ -54,6 +57,16 @@ const History = () => {
 
   const paginatedData = searches;
 
+  const handleGetHistoryDetails = async (queryId) => {
+    try {
+      const response = await getHistoryDetails(queryId);
+      console.log(response);
+    } catch (error) {
+      console.error("Failed to get history details:", error);
+      toast.error("Failed to get history details. Please try again.");
+    }
+  };
+
   return (
     <div
       className={`flex flex-col justify-between gap-4 ${
@@ -96,7 +109,12 @@ const History = () => {
                     <td>{item.license_plate || item.plate || "N/A"}</td>
                     <td>{item.status || "Success"}</td>
                     <td>
-                      <button className="text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer">
+                      <button
+                        className="text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer"
+                        onClick={() =>
+                          handleGetHistoryDetails(item.customer_query_id)
+                        }
+                      >
                         Access your report
                       </button>
                     </td>
