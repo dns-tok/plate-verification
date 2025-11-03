@@ -92,8 +92,8 @@ const Purchases = () => {
                     className="hover:bg-gray-50 text-[0.75rem] [&>td]:!font-[500] [&>td]:!text-[0.75rem] [&>td]:!p-2"
                   >
                     <td>{formatDate(item.created_at || item.date)}</td>
-                    <td>{item.name || "N/A"}</td>
-                    <td>{formatDate(item.settled_at)}</td>
+                    <td>{item?.name?.split(" - ")[0] || "N/A"}</td>
+                    <td>{item?.name?.split(" - ")[1] || "N/A"}</td>
                     <td>
                       <button
                         className={`text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer ${

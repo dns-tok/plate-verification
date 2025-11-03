@@ -105,7 +105,7 @@ const History = () => {
                     <td>
                       {formatDate(item.date_of_conclusion || item.created_at)}
                     </td>
-                    <td>{item.plan_name || item.chosen || "N/A"}</td>
+                    <td className="capitalize">{item.plan_name || item.plan_code || "N/A"}</td>
                     <td>{item.license_plate || item.plate || "N/A"}</td>
                     <td>{item.status || "Success"}</td>
                     <td>
