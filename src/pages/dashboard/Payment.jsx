@@ -168,7 +168,16 @@ const Payment = () => {
             {isCreatingOrder ? "Processing..." : "Choose Your payment method"}
           </p>
 
-          <div className="flex items-center gap-6 bg-[#F2F2F2] p-4 py-6 min-w-[380px] min-h-[93px] rounded-lg [&>*]:cursor-pointer [&>*]:w-20 [&>*]:rounded border-2 border-gray-400/20 hover:border-[#1AABFE] transition-all duration-300">
+          <div
+            className={`flex items-center gap-6 bg-[#F2F2F2] p-4 py-6 min-w-[380px] min-h-[93px] rounded-lg [&>*]:cursor-pointer [&>*]:w-20 [&>*]:rounded border-2 border-gray-400/20 hover:border-[#1AABFE] transition-all duration-300 ${
+              isCreatingOrder
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
+            onClick={() =>
+              !isCreatingOrder && handlePaymentMethodSelect("card")
+            }
+          >
             <img
               src="/assets/card1.svg"
               alt=""

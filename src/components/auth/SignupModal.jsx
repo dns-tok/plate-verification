@@ -115,10 +115,72 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
       navigate("/");
     } catch (e) {
       console.log(e);
-      toast.error(
-        e.response.data.error ||
-          "Registration failed. Please check your details."
-      );
+
+      // API returns one error at a time with field information
+      // Format: { error: "Error message", field: "field_name" }
+      const errorResponse = e.response?.data;
+      if (errorResponse?.field && errorResponse?.error) {
+        // Map API field names to form field names
+        const fieldMapping = {
+          birth_date: "dateOfBirth",
+          data_nascimento: "dateOfBirth",
+          cpf: "id",
+          nome_completo: "fullName",
+          email: "email",
+          celular: "telephone",
+          phone: "telephone",
+          cep: "zipCode",
+          zipcode: "zipCode",
+          numero_residencia: "houseNumber",
+          password: "password",
+        };
+
+        const formFieldName = fieldMapping[errorResponse.field];
+
+        if (formFieldName) {
+          // Check which form the field belongs to
+          const step1Fields = [
+            "id",
+            "fullName",
+            "dateOfBirth",
+            "email",
+            "telephone",
+          ];
+          const step2Fields = [
+            "zipCode",
+            "houseNumber",
+            "password",
+            "confirmPassword",
+          ];
+
+          if (step1Fields.includes(formFieldName)) {
+            // Error is in step 1, navigate back and set error
+            setStep(1);
+            step1Form.setError(formFieldName, {
+              type: "server",
+              message: errorResponse.error,
+            });
+          } else if (step2Fields.includes(formFieldName)) {
+            // Error is in step 2, set error on current form
+            step2Form.setError(formFieldName, {
+              type: "server",
+              message: errorResponse.error,
+            });
+          }
+        } else {
+          // Field not mapped, show generic error
+          toast.error(
+            errorResponse.error ||
+              "Registration failed. Please check your details."
+          );
+        }
+      } else {
+        // No field information, show generic error
+        toast.error(
+          errorResponse?.error ||
+            "Registration failed. Please check your details."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
