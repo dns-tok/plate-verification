@@ -130,14 +130,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/report/:queryId"
-        element={
-          <PrivateRoute>
-            <ReportPage />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/report/:queryId" element={<ReportPage />} />
       <Route
         path="/my-recommendations"
         element={

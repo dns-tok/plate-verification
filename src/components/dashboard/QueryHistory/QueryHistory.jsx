@@ -57,7 +57,10 @@ const History = () => {
   const paginatedData = searches;
 
   const handleGetHistoryDetails = (queryId, planName) => {
-    navigate(`/report/${queryId}?planName=${encodeURIComponent(planName)}`);
+    window.open(
+      `/report/${queryId}?planName=${encodeURIComponent(planName)}`,
+      "_blank"
+    );
   };
 
   return (

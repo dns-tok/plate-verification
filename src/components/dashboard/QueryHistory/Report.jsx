@@ -13,7 +13,6 @@ import Gauge from "./components/Gauge";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas-pro";
 import { toast } from "react-toastify";
-import html2pdf from "html2pdf.js";
 const Report = ({ data, onClose, loading }) => {
   const reportRef = useRef(null);
 
@@ -569,7 +568,7 @@ const Report = ({ data, onClose, loading }) => {
   }
 
   return (
-    <div className="h-[calc(100vh-250px)]  overflow-auto rounded-xl ">
+    <div className="h-[100vh]  overflow-auto rounded-xl ">
       <div className=" mx-auto max-w-[1080px] ">
         <div
           ref={reportRef}
