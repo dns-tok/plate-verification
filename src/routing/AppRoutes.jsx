@@ -20,6 +20,7 @@ import Blogs from "../pages/dashboard/Blogs";
 import Contact from "../pages/dashboard/Contact";
 import QueryHistoryPage from "../pages/dashboard/QueryHistory";
 import PurchaseHistoryPage from "../pages/dashboard/PurchaseHistory";
+import ReportPage from "../pages/dashboard/ReportPage";
 
 // Layout components
 import PrivateRoute from "./PrivateRoute";
@@ -126,6 +127,14 @@ export default function AppRoutes() {
         element={
           <PrivateRoute>
             <QueryHistoryPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/report/:queryId"
+        element={
+          <PrivateRoute>
+            <ReportPage />
           </PrivateRoute>
         }
       />

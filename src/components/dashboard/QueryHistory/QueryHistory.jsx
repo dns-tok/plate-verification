@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Pagination from "../../common/Pagination";
-import {
-  getHistoryDetails,
-  getSearchHistory,
-} from "../../../services/plansService";
+import { getSearchHistory } from "../../../services/plansService";
 import { toast } from "react-toastify";
 
 const History = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searches, setSearches] = useState([]);
@@ -57,14 +56,8 @@ const History = () => {
 
   const paginatedData = searches;
 
-  const handleGetHistoryDetails = async (queryId) => {
-    try {
-      const response = await getHistoryDetails(queryId);
-      console.log(response);
-    } catch (error) {
-      console.error("Failed to get history details:", error);
-      toast.error("Failed to get history details. Please try again.");
-    }
+  const handleGetHistoryDetails = (queryId, planName) => {
+    navigate(`/report/${queryId}?planName=${encodeURIComponent(planName)}`);
   };
 
   return (
@@ -105,14 +98,19 @@ const History = () => {
                     <td>
                       {formatDate(item.date_of_conclusion || item.created_at)}
                     </td>
-                    <td className="capitalize">{item.plan_name || item.plan_code || "N/A"}</td>
+                    <td className="capitalize">
+                      {item.plan_name || item.plan_code || "N/A"}
+                    </td>
                     <td>{item.license_plate || item.plate || "N/A"}</td>
                     <td>{item.status || "Success"}</td>
                     <td>
                       <button
                         className="text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer"
                         onClick={() =>
-                          handleGetHistoryDetails(item.customer_query_id)
+                          handleGetHistoryDetails(
+                            item.customer_query_id,
+                            item.plan_name || item.plan_code || "N/A"
+                          )
                         }
                       >
                         Access your report
