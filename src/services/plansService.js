@@ -108,7 +108,7 @@ export async function criarOrder(placa, plano, cupom = "") {
   return data;
 }
 
-export async function checkPaymentStatus(chargeId) {
-  const { data } = await apiClient.get(`/payment/status/${chargeId}`);
+export async function checkPaymentStatus(orderId) {
+  const { data } = await apiClient.get(`/orders/${orderId}/payment-status`);
   return data;
 }

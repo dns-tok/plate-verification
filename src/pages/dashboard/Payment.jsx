@@ -91,6 +91,10 @@ const Payment = () => {
         setPaymentData(response);
         setSelectedPaymentMethod(method);
 
+        // Get order_id from response (order.id is the correct location based on API response)
+        const orderId =
+          response.order?.id || response.order_id || response.data?.order_id;
+
         if (method === "pix" && response.payment_options?.pix) {
           // Initialize countdown timer
           const expirationSeconds =
@@ -98,13 +102,31 @@ const Payment = () => {
           setTimeRemaining(expirationSeconds);
           setIsExpired(false);
           toast.success("PIX payment details retrieved!");
+
+          // Start polling payment status for PIX
+          if (orderId) {
+            setIsCheckingPayment(true);
+            startPaymentStatusCheck(orderId);
+          } else {
+            console.error("Order ID not found in response for PIX payment");
+            toast.error("Order ID not found. Please try again.");
+          }
         } else if (method === "card" && response.payment_options?.cartao) {
           // Open payment URL in new tab
           window.open(response.payment_options.cartao.payment_url, "_blank");
 
           // Start checking payment status
-          setIsCheckingPayment(true);
-          startPaymentStatusCheck(response.payment_options.cartao.charge_id);
+          if (orderId) {
+            setIsCheckingPayment(true);
+            startPaymentStatusCheck(orderId);
+          } else {
+            console.error("Order ID not found in response for card payment");
+            toast.error(
+              "Order ID not found. Payment status check may not work."
+            );
+            // Still show loading state even if order_id is missing
+            setIsCheckingPayment(true);
+          }
         }
       }
     } catch (error) {
@@ -167,11 +189,14 @@ const Payment = () => {
   };
 
   // Start polling payment status
-  const startPaymentStatusCheck = (chargeId) => {
-    if (!chargeId) {
+  const startPaymentStatusCheck = (orderId) => {
+    if (!orderId) {
+      console.error("Cannot start payment status check: orderId is missing");
       setIsCheckingPayment(false);
       return;
     }
+
+    console.log("Starting payment status polling for order_id:", orderId);
 
     // Clear any existing interval
     if (paymentCheckIntervalRef.current) {
@@ -181,16 +206,15 @@ const Payment = () => {
     // Poll every 3 seconds
     paymentCheckIntervalRef.current = setInterval(async () => {
       try {
-        const response = await checkPaymentStatus(chargeId);
+        console.log("Polling payment status for order_id:", orderId);
+        const response = await checkPaymentStatus(orderId);
+        console.log("Payment status response:", response);
 
-        // Check if payment is successful (adjust based on actual API response structure)
-        if (
-          response.status === "paid" ||
-          response.status === "succeeded" ||
-          response.payment_status === "paid" ||
-          response.success === true
-        ) {
+        // Check if payment is successful based on new API response structure
+        // Response structure: { order_id, order_number, paid, payment_type, status, total_amount }
+        if (response.paid === true || response.status === "approved") {
           // Payment successful
+          console.log("Payment successful!");
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
@@ -202,16 +226,19 @@ const Payment = () => {
         } else if (
           response.status === "failed" ||
           response.status === "cancelled" ||
-          response.payment_status === "failed"
+          response.paid === false
         ) {
           // Payment failed
+          console.log("Payment failed");
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
           toast.error("Payment failed. Please try again.");
           setSelectedPaymentMethod(null);
+        } else {
+          // Status is pending or unknown, continue polling
+          console.log("Payment status pending, continuing to poll...");
         }
-        // If status is pending, continue polling
       } catch (error) {
         console.error("Error checking payment status:", error);
         // Don't stop polling on error, might be temporary
@@ -221,6 +248,7 @@ const Payment = () => {
     // Stop polling after 10 minutes (600 seconds) to prevent infinite polling
     setTimeout(() => {
       if (paymentCheckIntervalRef.current) {
+        console.log("Payment status check timeout after 10 minutes");
         clearInterval(paymentCheckIntervalRef.current);
         paymentCheckIntervalRef.current = null;
         setIsCheckingPayment(false);
@@ -330,12 +358,17 @@ const Payment = () => {
             </div>
           </button>
           {(isCreatingOrder || isCheckingPayment) && (
-            <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-white/80 z-10">
+            <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-white/90 z-50 rounded-lg">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1AABFE]" />
               {isCheckingPayment && (
-                <p className="mt-4 text-sm text-gray-600">
+                <p className="mt-4 text-sm text-gray-600 text-center px-4">
                   Please complete the payment in the new tab. We're checking the
                   payment status...
+                </p>
+              )}
+              {isCreatingOrder && (
+                <p className="mt-4 text-sm text-gray-600 text-center px-4">
+                  Processing your order...
                 </p>
               )}
             </div>

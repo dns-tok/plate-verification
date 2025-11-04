@@ -67,6 +67,23 @@ export async function sendMessage(message) {
   return data;
 }
 
+export async function sendContactMessage({
+  message,
+  first_name,
+  last_name,
+  email,
+  phone_number,
+}) {
+  const { data } = await apiClient.post("/contact", {
+    message,
+    first_name,
+    last_name,
+    email,
+    phone_number,
+  });
+  return data;
+}
+
 export async function getCurrentAccount(page = 1, perPage = 10) {
   const { data } = await apiClient.get("/current-account", {
     params: { page, per_page: perPage },
