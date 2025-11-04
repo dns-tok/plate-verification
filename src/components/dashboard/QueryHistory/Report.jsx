@@ -2053,7 +2053,7 @@ const Report = ({ data, onClose, loading }) => {
               )}
 
             {/* Comparativo Especificações */}
-            {reportData.comparativoEspecificacoes?.veiculoComparativo &&
+            {/* {reportData.comparativoEspecificacoes?.veiculoComparativo &&
               reportData.comparativoEspecificacoes.veiculoComparativo.length >
                 0 && (
                 <ReportSection title="Comparativo Especificações">
@@ -2124,7 +2124,7 @@ const Report = ({ data, onClose, loading }) => {
                     )}
                   </div>
                 </ReportSection>
-              )}
+              )} */}
 
             {/* Custo Médio */}
             {reportData.custoMedio && (
