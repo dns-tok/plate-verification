@@ -575,9 +575,9 @@ const Report = ({ data, onClose, loading }) => {
         >
           {/* Header Section */}
           <div className="bg-[#194D9A] border-b-6 border-yellow-300 flex justify-between items-center gap-2 h-[210px] text-white p-2 mb-6">
-            <div className="w-[25%] h-full relative p-2">
-              <img src="/reportLogo.png" alt="" className="h-full" />
-              <span className="text-yellow-300 absolute bottom-7 right-0 left-0 mx-auto w-fit text-[2.5rem]">
+            <div className="w-[25%] h-full relative p-2 ">
+              <img src="/reportLogo.png" alt="" className="h-full mx-auto" />
+              <span className="text-yellow-300 absolute bottom-7 right-0 left-0 mx-auto w-fit text-[2.5rem] ">
                 {plate}
               </span>
             </div>
@@ -671,7 +671,7 @@ const Report = ({ data, onClose, loading }) => {
                 {renderStatusBox(
                   "Alerta de Gravame",
                   hasAlertaGravame,
-                  "/report/warning.png"
+                  "/report/alert.webp"
                 )}
                 {renderStatusBox(
                   "Historico de Roubo",
