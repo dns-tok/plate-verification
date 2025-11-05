@@ -23,26 +23,32 @@ const ScoreBar = ({ score, label = "Score" }) => {
       ? "lowerMiddle"
       : "bottom";
 
-  // Get score description based on value
+  // Get score description based on value - mapping legend
   const getScoreDescription = (score) => {
     switch (score) {
       case 1:
         return {
-          title: "Pequenos Danos",
+          title: "1 – Aparentemente inteiro",
           description:
-            "Veículos com este score possuem indícios de pequenos danos, como arranhões, pequenos amassados e avarias leves no momento do leilão.",
+            "Veículos que não possuem indícios de avarias ou problemas mecânicos no ato do leilão. As principais origens desses veículos são: Veículos recuperados de financiamento em que o comprador não cumpriu com o pagamento junto ao banco. Veículos de frota de empresas privadas. Veículos penhorados pela justiça por penas, dívidas vencidas e não pagas, entre outros.",
         };
       case 2:
         return {
-          title: "Médios Danos",
+          title: "2 – Pequenos danos",
           description:
-            "Veículos com este score possuem indícios de médios danos, como amassados grandes, partes quebradas e problemas mecânicos no momento do leilão. Origem comum: veículos de acidentes, enchentes, recuperados de roubo com médios danos, de empresas públicas/privadas com danos ou avaria, e de seguradoras.",
+            "Veículos recuperados de financiamento em que o comprador não cumpriu com o pagamento junto ao banco. Veículos de frota de empresas privadas. Veículos penhorados pela justiça por penas, dívidas vencidas e não pagas, entre outros. Veículos oriundos de seguradoras.",
         };
       case 3:
         return {
-          title: "Grandes Danos",
+          title: "3 – Médios danos",
           description:
-            "Veículos com este score possuem indícios de grandes danos, como estrutura comprometida, danos extensos e problemas mecânicos graves no momento do leilão.",
+            "Veículos com indícios de danos médios como: grandes amassados e peças quebradas, além de itens mecânicos com problemas de funcionamento no ato do leilão. As principais origens desses veículos são: Veículos que sofreram uma batida ou tiveram algum problema mecânico ocasionado, por exemplo, por uma enchente. Veículos recuperados de Roubo e Furto com avarias médias. Veículos oriundos de empresas ou órgãos públicos com avarias ou mau funcionamento. Veículos oriundos de seguradoras.",
+        };
+      case 4:
+        return {
+          title: "4 – Grandes danos",
+          description:
+            "Veículos com grandes avarias e problemas mecânicos significativos no ato do leilão. As principais origens desses veículos são: Veículos que sofreram uma batida onde o valor para conserto do veículo foi maior que 75% do seu valor de tabela. Veículos recuperados de Roubo e Furto com grandes avarias. Veículos oriundos de empresas ou órgãos públicos com grandes avarias ou sem funcionamento.",
         };
       default:
         return {
@@ -55,9 +61,9 @@ const ScoreBar = ({ score, label = "Score" }) => {
   const scoreInfo = getScoreDescription(scoreValue);
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 items-start rounded-xl h-35">
+    <div className="flex flex-col md:flex-row gap-6 rounded-xl h-[130px]">
       {/* Score Number and Bar */}
-      <div className=" h-full flex items-center justify-center bg-white border-2 border-[#1AABFE]/80 rounded-2xl px-8 py-2 w-fit">
+      <div className=" h-full flex items-center justify-center bg-white border-2 border-[#1AABFE]/80 rounded-2xl px-8 py-1 w-fit">
         {/* Left: Score number */}
         <div className="text-[6rem] font-extrabold text-orange-500 leading-none mr-4">
           {clampedScore}

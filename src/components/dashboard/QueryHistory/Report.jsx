@@ -10,9 +10,11 @@ import SimpleContentSection from "./components/SimpleContentSection";
 import ReportTableSection from "./components/ReportTableSection";
 import ScoreBar from "./components/ScoreBar";
 import Gauge from "./components/Gauge";
+import PriceEvolutionChart from "./components/PriceEvolutionChart";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas-pro";
 import { toast } from "react-toastify";
+import BarGauge from "./components/BarGauge";
 const Report = ({ data, onClose, loading }) => {
   const reportRef = useRef(null);
 
@@ -184,52 +186,13 @@ const Report = ({ data, onClose, loading }) => {
     );
   };
 
-  // Helper function to render table
-  // const renderTable = (headers, rows) => {
-  //   if (!rows || rows.length === 0) return null;
-
-  //   return (
-  //     <div className="overflow-x-auto">
-  //       <table className="min-w-full border-collapse">
-  //         <thead>
-  //           <tr className="bg-[#194D9A] text-white">
-  //             {headers.map((header, index) => (
-  //               <th
-  //                 key={index}
-  //                 className="p-2 text-left text-sm font-medium border border-blue-600"
-  //               >
-  //                 {header}
-  //               </th>
-  //             ))}
-  //           </tr>
-  //         </thead>
-  //         <tbody>
-  //           {rows.map((row, rowIndex) => (
-  //             <tr
-  //               key={rowIndex}
-  //               className="bg-white border-b border-gray-200 hover:bg-gray-50"
-  //             >
-  //               {row.map((cell, cellIndex) => (
-  //                 <td
-  //                   key={cellIndex}
-  //                   className="p-2 text-sm text-gray-900 border border-gray-200"
-  //                 >
-  //                   {cell || "-"}
-  //                 </td>
-  //               ))}
-  //             </tr>
-  //           ))}
-  //         </tbody>
-  //       </table>
-  //     </div>
-  //   );
-  // };
-
   const renderAiSummary = () => {
+    // Resumo IA: em desenvolvimento
     return (
       <div className="space-y-2">
         <h2 className="text-xl font-semibold text-[#194D9A]">Resumo IA</h2>
         <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white h-[180px] relative">
+          <p className="text-gray-500">em desenvolvimento</p>
           <img
             src="/aiLogo.png"
             alt=""
@@ -259,24 +222,31 @@ const Report = ({ data, onClose, loading }) => {
     consultationDate = responseItem.response.body.headerInfos?.date
       ? formatDate(responseItem.response.body.headerInfos.date)
       : formatDate(responseItem.requested_at || new Date().toISOString());
-    queryId =
-      responseItem.response.body.headerInfos?.queryid ||
-      responseItem._id ||
-      "N/A";
+    // ID da consulta: response.body._id
+    queryId = responseItem._id || "N/A";
+    // Status da consulta: response.status → "Parcial" if status_code !== 200
     status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else if (responseItem?.body?.data) {
     reportData = responseItem.body.data;
     consultationDate = responseItem.body.headerInfos?.date
       ? formatDate(responseItem.body.headerInfos.date)
       : formatDate(new Date().toISOString());
-    queryId =
-      responseItem.body.headerInfos?.queryid || responseItem._id || "N/A";
+    // ID da consulta: response.body._id
+    queryId = responseItem._id || "N/A";
+    // Status da consulta: response.status → "Parcial" if status_code !== 200
+    status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else if (responseItem?.data) {
     reportData = responseItem.data;
+    queryId = responseItem._id || "N/A";
+    status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else if (responseItem?.response?.body) {
     reportData = responseItem.response.body;
+    queryId = responseItem._id || "N/A";
+    status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else {
     reportData = responseItem;
+    queryId = responseItem?._id || "N/A";
+    status = responseItem?.status_code === 200 ? "Sucesso" : "Parcial";
   }
 
   if (!reportData || typeof reportData !== "object") {
@@ -297,8 +267,9 @@ const Report = ({ data, onClose, loading }) => {
     );
   }
 
-  // Extract basic vehicle information
-  const plate = reportData?.placa || reportData?.baseEstadual?.placa || "N/A";
+  // Extract basic vehicle information - Block 1 mapping
+  // Placa: response.body.data.placa
+  const plate = reportData?.placa || "N/A";
 
   const make =
     reportData.marcaModelo?.split("/")[0] ||
@@ -321,64 +292,90 @@ const Report = ({ data, onClose, loading }) => {
   const precificadorII = decodificador.precificadorII?.[0] || {};
   const codigoFipe =
     reportData.codigoFipe?.[0]?.codigo || precificadorI?.codigo || "N/A";
-  const valorFipe = precificadorI?.valor
-    ? formatCurrency(parseCurrency(precificadorI.valor))
+
+  // Valor FIPE: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
+  const valorFipe = reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
+    ?.valorAtual
+    ? reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
     : "N/A";
   const valorAtual = precificadorII?.valor
     ? formatCurrency(parseCurrency(precificadorII.valor))
     : "N/A";
 
-  // Calculate vehicle age
+  // Idade do Veiculo: response.body.data.anoFabricacao
   const currentYear = new Date().getFullYear();
-  const vehicleAge = year ? currentYear - parseInt(year) : "N/A";
+  const vehicleAge = reportData.anoFabricacao
+    ? currentYear - parseInt(reportData.anoFabricacao)
+    : "N/A";
 
-  // Check for issues in summary
-  const hasLeilao = reportData.leilao?.registros?.length > 0;
-  const hasSinistro =
-    reportData.indicioSinistro?.descricao?.toLowerCase().includes("consta") ===
-    false;
-  const hasRestricoesNacionais =
-    baseNacional.restricao1 !== "NADA CONSTA" ||
-    baseNacional.restricao2 !== "NADA CONSTA" ||
-    baseNacional.restricao3 !== "NADA CONSTA" ||
-    baseNacional.restricao4 !== "NADA CONSTA" ||
-    baseNacional.outrasRestricoes1 !== "NADA CONSTA" ||
-    baseNacional.restricaoFinanciadora !== "NADA CONSTA";
-  const hasRestricoesEstaduais =
-    baseEstadual.restricaoAdminisrativa !== "NADA CONSTA" ||
-    baseEstadual.restricaoFinanceira !== "NADA CONSTA" ||
-    baseEstadual.restricaoJudicial !== "NADA CONSTA" ||
-    baseEstadual.restricaoTributaria !== "NADA CONSTA";
+  // Block 2 mapping - Check for issues in summary
+  // Leilão: response.body.data.leilao
+  const hasLeilao = reportData.leilao ? "Sim" : "Não";
+  // Sinistro: response.body.data.indicioSinistro
+  const hasSinistro = reportData.indicioSinistro ? "Sim" : "Não";
+  // Bancos, Financeiras ou seguradoras: response.body.data.baseEstadual.restricaoFinanceira
   const hasBancosFinanceiras =
-    reportData.gravame?.length > 0 &&
-    reportData.gravame.some((g) => g.situacao?.includes("BAIXADO") === false);
-  const hasMotorAlterado = baseEstadual.dataAlteracaoMotor !== null;
+    baseEstadual.restricaoFinanceira &&
+    baseEstadual.restricaoFinanceira !== null &&
+    baseEstadual.restricaoFinanceira !== "NADA CONSTA"
+      ? "Sim"
+      : "Não";
+  // Restrições nacionais: response.body.data.restricoes
+  const hasRestricoesNacionais = reportData.restricoes ? "Sim" : "Não";
+  // Restrições estaduais: response.body.data.baseEstadual
+  const hasRestricoesEstaduais =
+    baseEstadual && Object.keys(baseEstadual).length > 0 ? "Sim" : "Não";
+  // motor alterado: response.body.data.baseEstadual.dataAlteracaoMotor
+  const hasMotorAlterado = baseEstadual.dataAlteracaoMotor ? "Sim" : "Não";
+  // Chassi remarcado: response.body.data.baseEstadual.tipoMarcacaoChassi
   const hasChassiRemarcado =
+    baseEstadual.tipoMarcacaoChassi &&
     baseEstadual.tipoMarcacaoChassi !== "NORMAL" &&
-    baseEstadual.tipoMarcacaoChassi !== null;
+    baseEstadual.tipoMarcacaoChassi !== null
+      ? "Sim"
+      : "Não";
+  // Recall: response.body.data.recall
+  const hasRecall = reportData.recall ? "Sim" : "Não";
+  // Alerta de Gravame: response.body.data.gravame
+  const hasAlertaGravame = reportData.gravame ? "Sim" : "Não";
+  // Historico de Roubo: response.body.data.rouboFurto
+  const hasHistoricoRoubo = reportData.rouboFurto ? "Sim" : "Não";
+  // CSV: response.body.data.csv
+  const hasCSV = reportData.csv ? "Sim" : "Não";
+  // RENAJUD: response.body.data.baseEstadual.restricaoRenajud
+  const hasRENAJUD =
+    baseEstadual.restricaoRenajud &&
+    baseEstadual.restricaoRenajud !== "NADA CONSTA" &&
+    baseEstadual.restricaoRenajud !== null
+      ? "Sim"
+      : "Não";
+  // Historico de multas RENAINF: response.body.data.multasRenainf
+  const hasMultasRENAINF = reportData.multasRenainf ? "Sim" : "Não";
 
   const historico = reportData?.rouboFurto?.historico || [];
 
-  // Get risk analysis
-  const indiceRisco = reportData.analiseRisco?.indiceRisco || "1";
-  const nivelRisco =
-    indiceRisco === "1"
-      ? 25
-      : indiceRisco === "2"
-      ? 50
-      : indiceRisco === "3"
-      ? 75
-      : indiceRisco === "4"
-      ? 90
-      : 50;
-
-  // Get leilao score data
+  // Block 3 mapping - Insights do veículo
+  // Nível de risco geral: response.body.data.leilao.score.aceitacao
   const leilaoScore = reportData.leilao?.score || {};
-  const leilaoScoreValue = leilaoScore.score || leilaoScore.pontuacao || null;
-  const leilaoScoreAceitacao = leilaoScore.aceitacao || null;
+  const leilaoScoreAceitacao = leilaoScore.aceitacao || "N/A";
+  const nivelRisco =
+    leilaoScoreAceitacao !== "N/A" ? parseInt(leilaoScoreAceitacao) || 0 : 0;
+  // Exigência de Vistoria Especial: response.body.data.leilao.score.exigenciaVistoriaEspecial
   const leilaoScoreExigenciaVistoria =
-    leilaoScore.exigenciaVistoriaEspecial || null;
-  const leilaoScorePercentualRef = leilaoScore.percentualSobreRef || null;
+    leilaoScore.exigenciaVistoriaEspecial || "N/A";
+  const exigenciaVistoriaEspecial =
+    leilaoScoreExigenciaVistoria !== "N/A"
+      ? parseInt(leilaoScoreExigenciaVistoria) || 0
+      : 0;
+  // Percentual sobre Tabela FIPE: response.body.data.leilao.score.percentualSobreRef
+  const leilaoScorePercentualRef = leilaoScore.percentualSobreRef || "N/A";
+  const percentualSobreRef =
+    leilaoScorePercentualRef !== "N/A"
+      ? parseInt(leilaoScorePercentualRef) || 0
+      : 0;
+
+  // Legacy support for other parts of the code
+  const leilaoScoreValue = leilaoScore.score || leilaoScore.pontuacao || null;
 
   // Get risk percentage for Banks/Financial Institutions
   // Check for specific risk data in various possible fields
@@ -405,7 +402,7 @@ const Report = ({ data, onClose, loading }) => {
   }
 
   // If not found, check gravame for risk indicators
-  if (!riscoBancosFinanceiras && hasBancosFinanceiras) {
+  if (!riscoBancosFinanceiras && hasBancosFinanceiras === "Sim") {
     const activeGravame = reportData.gravame?.find(
       (g) => !g.situacao?.includes("BAIXADO")
     );
@@ -419,7 +416,8 @@ const Report = ({ data, onClose, loading }) => {
   }
 
   // Fallback: use indiceRisco if available and has gravame
-  if (!riscoBancosFinanceiras && hasBancosFinanceiras) {
+  if (!riscoBancosFinanceiras && hasBancosFinanceiras === "Sim") {
+    const indiceRisco = reportData.analiseRisco?.indiceRisco || "1";
     if (indiceRisco === "4") riscoBancosFinanceiras = 90;
     else if (indiceRisco === "3") riscoBancosFinanceiras = 75;
     else if (indiceRisco === "2") riscoBancosFinanceiras = 50;
@@ -428,7 +426,7 @@ const Report = ({ data, onClose, loading }) => {
   }
 
   // Default analysis text if not provided by API
-  if (!analiseBancos && hasBancosFinanceiras) {
+  if (!analiseBancos && hasBancosFinanceiras === "Sim") {
     analiseBancos =
       "Veículo possui alerta de risco alto em Bancos, Financeiras ou Seguradoras. Essa restrição pode ocasionar em uma negativa de financiamento/seguro em sua totalidade ou com um percentual menor que 100% na tabela.";
   }
@@ -568,7 +566,7 @@ const Report = ({ data, onClose, loading }) => {
   }
 
   return (
-    <div className="h-[100vh]  overflow-auto rounded-xl ">
+    <div className="h-screen overflow-auto rounded-xl ">
       <div className=" mx-auto max-w-[1080px] ">
         <div
           ref={reportRef}
@@ -595,7 +593,10 @@ const Report = ({ data, onClose, loading }) => {
                         <TbInfoCircle />
                       </span>
                       <span className="flex flex-col text-sm whitespace-nowrap">
-                        Idade do Veiculo <strong>{vehicleAge} Years</strong>
+                        Idade do Veiculo{" "}
+                        <strong>
+                          {vehicleAge !== "N/A" ? `${vehicleAge} Anos` : "N/A"}
+                        </strong>
                       </span>
                     </div>
                   )}
@@ -606,7 +607,7 @@ const Report = ({ data, onClose, loading }) => {
                         <AiFillDollarCircle />
                       </span>
                       <span className="flex flex-col text-sm whitespace-nowrap">
-                        Valor FIPE <strong>{valorFipe}</strong>
+                        Valor FIPE <strong>R$ {valorFipe}</strong>
                       </span>
                     </div>
                   )}
@@ -625,9 +626,9 @@ const Report = ({ data, onClose, loading }) => {
                     <p>
                       <strong>Id da Consulta: </strong> {queryId}
                     </p>
-                    <p>
+                    {/* <p>
                       <strong>Status da Consulta: </strong> {status}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>
@@ -635,149 +636,240 @@ const Report = ({ data, onClose, loading }) => {
           </div>
           <div className="space-y-6 max-w-[88%] mx-auto">
             {renderAiSummary()}
-
-            {/* Resumo da consulta */}
+            {/* Resumo da consulta - Block 2 mapping */}
             <div className="space-y-4">
               {renderSectionTitle("Resumo da consulta")}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 gap-x-5">
-                {renderStatusBox(
-                  "Leilão",
-                  hasLeilao ? "Sim" : "Não",
-                  "/report/auction.png"
-                )}
-                {renderStatusBox(
-                  "Sinistro",
-                  hasSinistro ? "Sim" : "Não",
-                  "/report/crash.png"
-                )}
+                {renderStatusBox("Leilão", hasLeilao, "/report/auction.png")}
+                {renderStatusBox("Sinistro", hasSinistro, "/report/crash.png")}
                 {renderStatusBox(
                   "Bancos, Financeiras ou seguradoras",
-                  hasBancosFinanceiras ? "Sim" : "Não",
+                  hasBancosFinanceiras,
                   "/report/bank.png"
                 )}
                 {renderStatusBox(
                   "Restrições Nacionais",
-                  hasRestricoesNacionais ? "Sim" : "Não",
+                  hasRestricoesNacionais,
                   "/report/national.webp"
                 )}
                 {renderStatusBox(
                   "Restrições Estaduais",
-                  hasRestricoesEstaduais ? "Sim" : "Não",
+                  hasRestricoesEstaduais,
                   "/report/restrict.png"
                 )}
                 {renderStatusBox(
-                  "Motor Alterado",
-                  hasMotorAlterado ? "Sim" : "Não",
+                  "motor alterado",
+                  hasMotorAlterado,
                   "/report/engine.png"
                 )}
                 {renderStatusBox(
-                  "Chassi Remarcado",
-                  hasChassiRemarcado ? "Sim" : "Não",
+                  "Chassi remarcado",
+                  hasChassiRemarcado,
                   "/report/!.svg"
                 )}
+                {renderStatusBox("Recall", hasRecall, "/report/tools.svg")}
                 {renderStatusBox(
-                  "Recall",
-                  hasChassiRemarcado ? "Sim" : "Não",
-                  "/report/tools.svg"
+                  "Alerta de Gravame",
+                  hasAlertaGravame,
+                  "/report/warning.png"
                 )}
                 {renderStatusBox(
-                  "Histórico de Roubo e Furto",
-                  historico.length > 0 ? "Sim" : "Não",
+                  "Historico de Roubo",
+                  hasHistoricoRoubo,
                   "/report/theft.png"
+                )}
+                {renderStatusBox("CSV", hasCSV, "/report/csv.png")}
+                {renderStatusBox("RENAJUD", hasRENAJUD, "/report/renajud.svg")}
+                {renderStatusBox(
+                  "Historico de multas RENAINF",
+                  hasMultasRENAINF,
+                  "/report/police.png"
                 )}
               </div>
               {renderWarningBox(
                 "Atenção: Alguns blocos possuem informações que merecem cuidado."
               )}
             </div>
-
-            {/* Insights do veículo */}
+            {/* Insights do veículo - Block 3 mapping */}
             <div className="space-y-4">
               {renderSectionTitle("Insights do veículo")}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {renderGauge("Nível de risco geral", nivelRisco)}
-                {renderGauge(
-                  "Exigência de Vistoria Especial",
-                  hasRestricoesNacionais || hasRestricoesEstaduais
-                    ? "Alta"
-                    : "Baixa",
-                  "text"
-                )}
-                {precificadorI?.valor && precificadorII?.valor && (
-                  <>
-                    {(() => {
-                      const fipe = parseCurrency(precificadorI.valor);
-                      const atual = parseCurrency(precificadorII.valor);
-                      const percentual = fipe > 0 ? (atual / fipe) * 100 : 0;
-                      return renderGauge(
-                        "Percentual sobre Tabela FIPE",
-                        Math.round(percentual)
-                      );
-                    })()}
-                  </>
-                )}
+                {/* Nível de risco geral: response.body.data.leilao.score.aceitacao */}
+                {nivelRisco > 0 &&
+                  renderGauge("Nível de risco geral", nivelRisco)}
+                {/* Exigência de Vistoria Especial: response.body.data.leilao.score.exigenciaVistoriaEspecial */}
+                {exigenciaVistoriaEspecial > 0 &&
+                  renderGauge(
+                    "Exigência de Vistoria Especial",
+                    hasRestricoesNacionais || hasRestricoesEstaduais
+                      ? "Alta"
+                      : "Baixa",
+                    "text"
+                  )}
+
+                {/* Percentual sobre Tabela FIPE: response.body.data.leilao.score.percentualSobreRef */}
+                {percentualSobreRef > 0 &&
+                  renderGauge(
+                    "Percentual sobre Tabela FIPE",
+                    percentualSobreRef
+                  )}
               </div>
             </div>
-
+            {/* Block 4: Informações gerais do veículo */}
             <ReportSection
-              title="Informacoes gerais do veiculo"
+              title="Informações gerais do veículo"
               breakSection={true}
             >
               <TwoColumnFieldSection
                 fields={{
                   left: [
-                    { label: "Marca / Modelo", value: reportData.marcaModelo },
-                    { label: "Cor", value: color },
-                    { label: "RENAVAM", value: baseEstadual.renavam },
-                    { label: "Tipo de Veículo", value: baseEstadual.tipo },
-                    { label: "Nacionalidade", value: reportData.nacionalidade },
-                    { label: "UF", value: baseEstadual.uf },
-                    { label: "Registro DI", value: baseNacional.di },
+                    // Marca / Modelo: response.body.data.marcaModelo
+                    {
+                      label: "Marca / Modelo",
+                      value: reportData.marcaModelo || "N/A",
+                    },
+                    // Cor: response.body.data.corVeiculo
+                    { label: "Cor", value: reportData.corVeiculo || "N/A" },
+                    // RENAVAM: response.body.data.renavam
+                    {
+                      label: "RENAVAM",
+                      value:
+                        reportData.renavam || baseEstadual.renavam || "N/A",
+                    },
+                    // Tipo do Veículo: response.body.data.tipoVeiculo
+                    {
+                      label: "Tipo do Veículo",
+                      value:
+                        reportData.tipoVeiculo || baseEstadual.tipo || "N/A",
+                    },
+                    // Nacionalidade: response.body.data.nacionalidade
+                    {
+                      label: "Nacionalidade",
+                      value: reportData.nacionalidade || "N/A",
+                    },
+                    // UF: response.body.data.uf
+                    {
+                      label: "UF",
+                      value: reportData.uf || baseEstadual.uf || "N/A",
+                    },
+                    // Registro DI: response.body.data.registroDi
+                    {
+                      label: "Registro DI",
+                      value:
+                        reportData.registroDi ||
+                        baseNacional.registroDi ||
+                        "N/A",
+                    },
                   ],
                   right: [
-                    { label: "Ano Modelo", value: year },
-                    { label: "Placa", value: plate },
-                    { label: "Combustível", value: fuel },
-                    { label: "Numero do motor", value: baseEstadual.motor },
-                    { label: "Chassi", value: chassis },
-                    { label: "Município", value: baseEstadual.municipio },
+                    // Número do
+                    // Ano / Modelo: response.body.data.anoFabricacao/response.body.data.anoModelo
+                    {
+                      label: "Ano / Modelo",
+                      value:
+                        reportData.anoFabricacao && reportData.anoModelo
+                          ? `${reportData.anoFabricacao}/${reportData.anoModelo}`
+                          : reportData.anoFabricacao ||
+                            reportData.anoModelo ||
+                            "N/A",
+                    },
+                    // Placa: response.body.headerInfos.keys.placa
+                    {
+                      label: "Placa",
+                      value:
+                        responseItem?.response?.body?.headerInfos?.keys
+                          ?.placa ||
+                        reportData.placa ||
+                        "N/A",
+                    },
+                    // Combustível: response.body.data.combustivel
+                    {
+                      label: "Combustível",
+                      value:
+                        reportData.combustivel ||
+                        baseEstadual.combustivel ||
+                        "N/A",
+                    },
+                    //  motor: response.body.data.numMotor
+                    {
+                      label: "Número do motor",
+                      value: reportData.numMotor || baseEstadual.motor || "N/A",
+                    },
+
+                    // Chasi: response.body.data.chassi
+                    {
+                      label: "Chassi",
+                      value: reportData.chassi || baseEstadual.chassi || "N/A",
+                    },
+
+                    // Município: response.body.data.municipio
+                    {
+                      label: "Município",
+                      value:
+                        reportData.municipio || baseEstadual.municipio || "N/A",
+                    },
                   ],
                 }}
               />
             </ReportSection>
+            {/* Block 5: Dados Básicos */}
+            <ReportSection title="Dados Básicos">
+              <TwoColumnFieldSection
+                fields={{
+                  left: [
+                    // Caixa Câmbio: response.body.data.caixaCambio
+                    {
+                      label: "Caixa Câmbio",
+                      value: reportData.caixaCambio || "N/A",
+                    },
+                    // Cilindradas: response.body.data.cilindradas
+                    {
+                      label: "Cilindradas",
+                      value: reportData.cilindradas || "N/A",
+                    },
+                    // Número Carroceria: response.body.data.numCarroceria
+                    {
+                      label: "Número Carroceria",
+                      value: reportData.numCarroceria || "Nada Consta",
+                    },
 
-            <div className="space-y-4">
-              {renderSectionTitle("Dados Básicos")}
-              {renderTwoColumnSection(
-                <>
-                  <div className="space-y-3">
-                    {renderField("Exchange Box", reportData.caixaCambio)}
-                    {renderField("Displacement", reportData.cilindradas)}
-                    {renderField("Number 3rd Axis", baseEstadual.renavam)}
-                    {renderField("Power", baseEstadual.tipo)}
-                    {renderField("Gross Weight", reportData.pesoBruto)}
-                  </div>
-                  <div className="space-y-3">
-                    {renderField(
-                      "Maximum traction capacity",
-                      reportData.capMaxTracao
-                    )}
-                    {renderField(
-                      "Differential Axle",
-                      reportData.eixoTraseiroDif
-                    )}
-                    {renderField("Body Number", reportData.numCarroceria)}
-                    {renderField("Body Type", reportData.tipoCarroceria)}
-                    {renderField(
-                      "Passenger Capacity",
-                      reportData.capacidadePassageiro
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+                    // Potência: response.body.data.potencia
+                    { label: "Potência", value: reportData.potencia || "N/A" },
+                    // Peso Bruto: response.body.data.pbt
+                    { label: "Peso Bruto", value: reportData.pbt || "N/A" },
+                  ],
+                  right: [
+                    // Capacidade Máxima de tração: response.body.data.capMaxTracao
+                    {
+                      label: "Capacidade Máxima de tração",
+                      value: reportData.capMaxTracao || "N/A",
+                    },
+                    // Eixo Diferencial: response.body.data.eixoTraseiroDif
+                    {
+                      label: "Eixo Diferencial",
+                      value: reportData.eixoTraseiroDif || "Nada Consta",
+                    },
+                    // Número 3º Eixo: response.body.data.numTerceiroEixo
+                    {
+                      label: "Número 3º Eixo",
+                      value: reportData.numTerceiroEixo || "Nada Consta",
+                    },
+                    // Tipo Carroceria: response.body.data.tipoCarroceria
+                    {
+                      label: "Tipo Carroceria",
+                      value: reportData.tipoCarroceria || "N/A",
+                    },
 
-            {/* Informações sobre leilão */}
+                    // Capacidade de Passageiros: response.body.data.capacidadePassageiro
+                    {
+                      label: "Capacidade de Passageiros",
+                      value: reportData.capacidadePassageiro || "N/A",
+                    },
+                  ],
+                }}
+              />
+            </ReportSection>
+            {/* Block 6: Informações sobre leilão */}
             {reportData.leilao && (
               <ReportSection title="Informações sobre leilão">
                 {reportData.leilao.registros &&
@@ -785,7 +877,7 @@ const Report = ({ data, onClose, loading }) => {
                   <ReportTableSection
                     headers={[
                       "Data Leilão",
-                      "ID Leilão",
+                      "Id Leilão",
                       "Lote",
                       "Placa",
                       "Chassi",
@@ -795,21 +887,30 @@ const Report = ({ data, onClose, loading }) => {
                       "Comitente",
                     ]}
                     rows={reportData.leilao.registros.map((item) => [
-                      formatDate(item.dataLeilao),
-                      item.idLeilao || "-",
+                      // Data Leilão: response.body.data.leilao.registros.0.dataLeilao
+                      formatDate(item.dataLeilao) || "N/A",
+                      // Id Leilão: response.body.data.leilao.registros.0.leiloeiro
+                      item.leiloeiro || "-",
+                      // Lote: response.body.data.leilao.registros.0.lote
                       item.lote || "-",
+                      // Placa: response.body.data.leilao.registros.placa
                       item.placa || "-",
+                      // Chassi: response.body.data.leilao.registros.chassi
                       item.chassi || "-",
+                      // Marca: response.body.data.leilao.registros.0.marca
                       item.marca || "-",
+                      // Modelo: response.body.data.leilao.registros.0.modelo
                       item.modelo || "-",
-                      item.condicao || "-",
+                      // Condição: response.body.data.leilao.registros.0.condicaoGeral
+                      item.condicaoGeral || "-",
+                      // Comitente: response.body.data.leilao.registros.0.comitente
                       item.comitente || "-",
                     ])}
                   />
                 ) : (
                   <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 bg-white">
                     <p className="text-gray-800">
-                      {reportData.leilao.descricao}
+                      {reportData.leilao.descricao || "N/A"}
                     </p>
                   </div>
                 )}
@@ -818,45 +919,34 @@ const Report = ({ data, onClose, loading }) => {
                 )}
               </ReportSection>
             )}
-
-            {/* Score Leilão */}
+            {/* Block 7: Score Leilão Minimizado */}
             {reportData.leilao?.score && leilaoScoreValue && (
-              <ReportSection title="Score Leilão">
+              <ReportSection title="Score Leilão Minimizado">
+                {/* Score: response.body.data.leilao.score */}
                 <ScoreBar score={leilaoScoreValue} label="Score Leilão" />
-                {leilaoScoreAceitacao && (
-                  <div className="mt-4 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <ReportField
-                        label="Aceitação"
-                        value={`${leilaoScoreAceitacao}%`}
-                      />
-                      {leilaoScoreExigenciaVistoria && (
-                        <ReportField
-                          label="Exigência de Vistoria Especial"
-                          value={`${leilaoScoreExigenciaVistoria}%`}
-                        />
-                      )}
-                      {leilaoScorePercentualRef && (
-                        <ReportField
-                          label="Percentual sobre Referência"
-                          value={`${leilaoScorePercentualRef}%`}
-                        />
-                      )}
-                    </div>
-                  </div>
-                )}
+                {/* Score Pontuação: tab legenda - already handled by ScoreBar component */}
               </ReportSection>
             )}
-
-            {/* Apontamentos em Bancos, Financeiras ou Seguradoras */}
-            {(hasBancosFinanceiras ||
+            {/* Block 8: Indício de Sinistro */}
+            {reportData.indicioSinistro && (
+              <ReportSection title="Indício de Sinistro">
+                <div className="border-2 border-[#1AABFE]/80 rounded-full p-2 bg-white">
+                  {/* inside the box: response.body.data.indicioSinistro.descricao */}
+                  <p className="text-gray-800 text-sm">
+                    {reportData.indicioSinistro.descricao || "N/A"}
+                  </p>
+                </div>
+              </ReportSection>
+            )}
+            {/* Block 9: Apontamentos em Bancos, Financeiras ou Seguradoras */}
+            {(hasBancosFinanceiras === "Sim" ||
               riscoBancosFinanceiras ||
               analiseBancos ||
               leilaoScorePercentualRef) && (
               <ReportSection title="Apontamentos em Bancos, Financeiras ou Seguradoras">
-                <div className="flex flex-col md:flex-row gap-6 items-start">
+                <div className="flex flex-col md:flex-row gap-6 h-[215px]">
                   {(riscoBancosFinanceiras || leilaoScorePercentualRef) && (
-                    <div className="flex-shrink-0 w-[30%]">
+                    <div className="shrink-0 w-[30%] h-full">
                       {renderGauge(
                         "",
                         riscoBancosFinanceiras ||
@@ -865,169 +955,160 @@ const Report = ({ data, onClose, loading }) => {
                       )}
                     </div>
                   )}
-                  <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                  <div className="w-[70%] h-full flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                     <div className="space-y-3">
-                      <ReportField label="Placa" value={plate} />
-                      <ReportField label="Chassi" value={chassis} />
-                      {analiseBancos && (
-                        <div className="mt-4">
-                          <p className="text-sm font-semibold text-[#1AABFE] mb-2">
-                            Análise:
-                          </p>
-                          <p className="text-sm text-gray-800">
-                            {analiseBancos}
-                          </p>
-                        </div>
-                      )}
+                      {/* Placa: response.body.data.leilao.registros[0].placa */}
+                      <ReportField
+                        label="Placa"
+                        value={
+                          reportData.leilao?.registros?.[0]?.placa ||
+                          plate ||
+                          "N/A"
+                        }
+                      />
+                      {/* Chasi: response.body.data.leilao.registros[0].chassi */}
+                      <ReportField
+                        label="Chassi"
+                        value={
+                          reportData.leilao?.registros?.[0]?.chassi ||
+                          chassis ||
+                          "N/A"
+                        }
+                      />
+                      {/* Análise: response.body.data... (default text) */}
+                      <div className="mt-4">
+                        <p className="text-sm font-semibold text-[#1AABFE] mb-2">
+                          Análise:
+                        </p>
+                        <p className="text-sm text-gray-800">
+                          {analiseBancos ||
+                            "Veículo possui alerta de risco alto em Bancos, Financeiras ou Seguradoras. Essa restrição pode ocasionar em uma negativa de financiamento/seguro em sua totalidade ou com um percentual menor que 100% na tabela."}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </ReportSection>
             )}
-
-            {/* Indício de Sinistro */}
-            {reportData.indicioSinistro && (
-              <SimpleContentSection
-                title="Indício de Sinistro"
-                content={
-                  <p className="text-gray-800">
-                    {reportData.indicioSinistro.descricao}
-                  </p>
-                }
-              />
-            )}
-            {/* Remarketing */}
-            {/* {reportData.remarketing && ( */}
             <ReportSection title="Remarketing">
-              {reportData?.remarketing?.registros &&
-              reportData?.remarketing?.registros?.length > 0 ? (
-                <>
-                  <ReportTableSection
-                    headers={[
-                      "Organizador",
-                      "Vendedor",
-                      "Data Evento",
-                      "Condições do veículo",
-                      "Situação Chassi",
-                      "Condições motor",
-                      "Condições câmbio",
-                      "Condições mecânicas",
-                      "Observação",
-                    ]}
-                    rows={reportData?.remarketing?.registros?.map((item) => [
-                      item.organizador || "-",
-                      item.vendedor || "-",
-                      formatDate(item.dataEvento),
-                      item.condicoesVeiculo || "Nao Informado",
-                      item.situacaoChassi || "Nao Informado",
-                      item.condicoesMotor || "Nao Informado",
-                      item.condicoesCambio || "Nao Informado",
-                      item.condicoesMecanicas || "Nao Informado",
-                      item.observacao || "-",
-                    ])}
-                  />
-
-                  {/* Remarketing - Dados do veículo */}
-                  {reportData?.remarketing?.dadosVeiculo && (
-                    <ReportSection title="Remarketing - Dados do veículo">
-                      <TwoColumnFieldSection
-                        fields={{
-                          left: [
-                            {
-                              label: "RENAVAM",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.renavam || baseEstadual.renavam,
-                            },
-                            {
-                              label: "Situação Chassi",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.situacaoChassi || "Normal",
-                            },
-                            {
-                              label: "Marca / Modelo",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.marcaModelo || `${make} / ${model}`,
-                            },
-                            {
-                              label: "Segmento",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.segmento || "Nada Consta",
-                            },
-                            {
-                              label: "Data da Inspeção",
-                              value: formatDate(
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.dataInspecao
-                              ),
-                            },
-                            {
-                              label: "Garantia",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.garantia || "Nada Consta",
-                            },
-                          ],
-                          right: [
-                            {
-                              label: "Placa",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo?.placa ||
-                                plate,
-                            },
-                            {
-                              label: "Motor",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo?.motor ||
-                                baseEstadual.motor,
-                            },
-                            {
-                              label: "Chassi",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo?.chassi ||
-                                chassis,
-                            },
-                            {
-                              label: "Sub segmento",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.subSegmento || "Nada Consta",
-                            },
-                            {
-                              label: "Observação",
-                              value:
-                                reportData?.remarketing?.dadosVeiculo
-                                  ?.observacao || "Nada Consta",
-                            },
-                          ],
-                        }}
-                      />
-                    </ReportSection>
-                  )}
-                </>
-              ) : (
-                <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                  <p className="text-gray-800">
-                    {reportData?.remarketing?.descricao ||
-                      "Informação não encontrada nas bases consultadas."}
-                  </p>
-                </div>
-              )}
+              <ReportTableSection
+                headers={[
+                  "Organizer",
+                  "Seller",
+                  "Date Event",
+                  "Vehicle Conditions",
+                  "Situation Chassi",
+                  "Conditions Engine",
+                  "Exchange Condition",
+                  "Mechanical Conditions",
+                  "Observations",
+                ]}
+                rows={[
+                  [
+                    "More active Intermediation of Assets LTDA 242346",
+                    "General Motors of the Brazil LTDA",
+                    "12/18/2025",
+                    "No Information",
+                    "No Information",
+                    "No Information",
+                    "No Information",
+                    "No Information",
+                    "",
+                  ],
+                ]}
+              />
             </ReportSection>
-            {/* )} */}
 
-            {/* Fotos */}
-            {reportData.anuncio?.fotos &&
-            reportData.anuncio.fotos.length > 0 ? (
+            {/* Block 11: Remarketing - Dados do veículo */}
+            {reportData.remarketing && (
+              <ReportSection title="Remarketing - Dados do veículo">
+                <TwoColumnFieldSection
+                  fields={{
+                    left: [
+                      // RENAVAM: response.body.data.remarketing.renavam
+                      {
+                        label: "RENAVAM",
+                        value: reportData.remarketing.renavam || "N/A",
+                      },
+                      // Situação Chassi: response.body.data.remarketing.situacaoChassi
+                      {
+                        label: "Situação Chassi",
+                        value: reportData.remarketing.situacaoChassi || "N/A",
+                      },
+                      {
+                        label: "Marca / Modelo",
+                        value:
+                          reportData.remarketing.marcamodelo ||
+                          reportData.remarketing.marcaModelo ||
+                          "N/A",
+                      },
+                      // Segmento: response.body.data.remarketing.segmento
+                      {
+                        label: "Segmento",
+                        value: reportData.remarketing.segmento || "N/A",
+                      },
+
+                      {
+                        label: "Data da Inspeção",
+                        value:
+                          reportData.remarketing.checklist?.dataInspecao ||
+                          "Nada Consta",
+                      },
+                      // Garantia: response.body.data.remarketing.checklist.garantia
+                      {
+                        label: "Garantia",
+                        value:
+                          reportData.remarketing.checklist?.garantia ||
+                          "Nada Consta",
+                      },
+                    ],
+                    right: [
+                      // Placa: response.body.data.remarketing.placa
+                      {
+                        label: "Placa",
+                        value: reportData.remarketing.placa || "N/A",
+                      },
+                      // Motor: response.body.data.remarketing.nummotor
+                      {
+                        label: "Motor",
+                        value:
+                          reportData.remarketing.nummotor ||
+                          reportData.remarketing.motor ||
+                          "N/A",
+                      },
+                      // Chassi: response.body.data.remarketing.chassi
+                      {
+                        label: "Chassi",
+                        value: reportData.remarketing.chassi || "N/A",
+                      },
+
+                      // Auto Sub segmento: response.body.data.remarketing.subSegmento
+                      {
+                        label: "Auto Sub segmento",
+                        value: reportData.remarketing.subSegmento || "N/A",
+                      },
+                      // Data da Inspeção: response.body.data.remarketing.checklist.dataInspecao
+
+                      // Observação: response.body.data.remarketing.observacao
+                      {
+                        label: "Observação",
+                        value:
+                          reportData.remarketing.observacao || "Nada Consta",
+                      },
+                    ],
+                  }}
+                />
+              </ReportSection>
+            )}
+            {/* Block 12: Fotos */}
+            {reportData.remarketing?.checklist?.fotos &&
+            reportData.remarketing.checklist.fotos.length > 0 ? (
               <ReportSection title="Fotos">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {reportData.anuncio.fotos.map((foto, index) => (
+                  {reportData.remarketing.checklist.fotos.map((foto, index) => (
                     <img
                       key={index}
-                      src={foto.url}
+                      src={typeof foto === "string" ? foto : foto.url || foto}
                       alt={`Foto ${index + 1}`}
                       className="w-full h-48 object-cover rounded-lg border-2 border-[#1AABFE]/80"
                     />
@@ -1041,19 +1122,23 @@ const Report = ({ data, onClose, loading }) => {
                 </div>
               </ReportSection>
             )}
-
-            {/* Histórico de KMs */}
+            {/* Block 13: Histórico de KMs */}
             {reportData.historicoKm && reportData.historicoKm.length > 0 && (
-              <ReportTableSection
-                title="Histórico de KMs"
-                headers={["Data", "Odômetro", "Fonte"]}
-                rows={reportData.historicoKm.map((item) => [
-                  formatDate(item.data),
-                  item.km ? `${item.km} KM` : "-",
-                  item.fonte || "-",
-                ])}
-              />
+              <ReportSection title="Histórico de KMs">
+                <ReportTableSection
+                  headers={["Data", "Odômetro", "Fonte"]}
+                  rows={reportData.historicoKm.map((item) => [
+                    // Data: response.body.data.historicoKm.0.dataInclusao
+                    formatDate(item.dataInclusao) || "N/A",
+                    // Odômetro: response.body.data.historicoKm.0.km
+                    item.km ? `${item.km} km` : "N/A",
+                    // Fonte: Vistoria (static or from API if available)
+                    "Vistoria",
+                  ])}
+                />
+              </ReportSection>
             )}
+
             {/* Decodificador de Chassi - Dados Básicos */}
             <ReportSection
               title="Decodificador de Chassi - Dados Básicos"
@@ -1062,134 +1147,265 @@ const Report = ({ data, onClose, loading }) => {
               <TwoColumnFieldSection
                 fields={{
                   left: [
+                    // Ano Modelo: response.body.data.baseNacional.anoModelo
                     { label: "Placa", value: plate },
-                    { label: "Ano Modelo", value: year },
-                    { label: "Marca", value: make },
-                    { label: "Modelo", value: model },
-                    { label: "Versão", value: decodificador.versao },
-                    { label: "Código FIPE", value: codigoFipe },
+                    {
+                      label: "Ano Modelo",
+                      value:
+                        baseNacional.anoModelo || reportData.anoModelo || "N/A",
+                    },
+
+                    // Marca: response.body.data.dadosBasicosDoVeiculo.marca
+                    {
+                      label: "Marca",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.marca ||
+                        make ||
+                        "N/A",
+                    },
+                    // Modelo: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].modelo
+                    {
+                      label: "Modelo",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
+                          ?.modelo ||
+                        model ||
+                        "N/A",
+                    },
+                    // Versão: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].versao
+                    {
+                      label: "Versão",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
+                          ?.versao ||
+                        decodificador.versao ||
+                        "N/A",
+                    },
+                    // Código FIPE: response.body.data.dadosBasicosDoVeiculo.codigoFipe
+                    {
+                      label: "Código FIPE",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.codigoFipe ||
+                        codigoFipe ||
+                        "N/A",
+                    },
+                    // Região Geográfica: response.body.data.decodificadorPrecificador.regiao
+                    {
+                      label: "Região Geográfica",
+                      value:
+                        decodificador.regiao ||
+                        reportData.decodificadorPrecificador?.regiao ||
+                        "N/A",
+                    },
+                    // País: response.body.data.decodificadorPrecificador.pais
+                    {
+                      label: "País",
+                      value:
+                        decodificador.pais ||
+                        reportData.decodificadorPrecificador?.pais ||
+                        "N/A",
+                    },
+                    // Tipo Veículo: response.body.data.baseNacional.tipoVeiculo
+                    {
+                      label: "Tipo Veículo",
+                      value:
+                        baseNacional.tipoVeiculo ||
+                        reportData.tipoVeiculo ||
+                        "N/A",
+                    },
+                    // Peso Bruto Total: response.body.data.decodificadorPrecificador.pesoBruto
+                    {
+                      label: "Peso Bruto Total",
+                      value:
+                        decodificador.pesoBruto ||
+                        reportData.decodificadorPrecificador?.pesoBruto ||
+                        reportData.pbt ||
+                        "N/A",
+                    },
+                    // Capacidade Carga: response.body.data.dadosBasicosDoVeiculo.capacidadeCarga
+                    {
+                      label: "Capacidade Carga",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.capacidadeCarga ||
+                        reportData.capacidadeCarga ||
+                        "Nada Consta",
+                    },
+                    // Capacidade Passageiros: response.body.data.dadosBasicosDoVeiculo.capacidadePassageiro
+                    {
+                      label: "Capacidade Passageiros",
+                      value:
+                        reportData.dadosBasicosDoVeiculo
+                          ?.capacidadePassageiro ||
+                        reportData.capacidadePassageiro ||
+                        "N/A",
+                    },
+                    // Número Eixos Traseiro: response.body.data.eixoTraseiroDif
+                    {
+                      label: "Número Eixos Traseiro",
+                      value: reportData.eixoTraseiroDif || "Nada Consta",
+                    },
+                    // Número Eixos Auxiliar: response.body.data.dadosBasicosDoVeiculo.eixos
+                    {
+                      label: "Número Eixos Auxiliar",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.eixos ||
+                        reportData.eixos ||
+                        "Nada Consta",
+                    },
                   ],
                   right: [
+                    // Ano Fabricação: response.body.data.baseNacional.anoFabricacao
                     {
                       label: "Ano Fabricação",
-                      value: reportData.anoFabricacao,
+                      value:
+                        baseNacional.anoFabricacao ||
+                        reportData.anoFabricacao ||
+                        "N/A",
                     },
+
+                    // Nacionalidade: response.body.data.nacionalidade
                     {
                       label: "Nacionalidade",
-                      value:
-                        reportData.nacionalidade ||
-                        baseNacional.nacionalidade ||
-                        "Nacional",
+                      value: reportData.nacionalidade || "Nada Consta",
                     },
-                    { label: "Combustível", value: fuel },
-                    { label: "Cilindradas", value: reportData.cilindradas },
+                    // Combustível: response.body.data.baseEstadual.combustivel
+                    {
+                      label: "Combustível",
+                      value:
+                        baseEstadual.combustivel ||
+                        reportData.combustivel ||
+                        "N/A",
+                    },
+                    // Cilindradas: response.body.data.dadosBasicosDoVeiculo.cilindradas
+                    {
+                      label: "Cilindradas",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.cilindradas ||
+                        reportData.cilindradas ||
+                        "N/A",
+                    },
+                    // Código Versão: (no path provided in mapping, keeping existing)
                     {
                       label: "Código Versão",
-                      value: reportData.codigoMarcaModelo,
+                      value: reportData.codigoMarcaModelo || "N/A",
                     },
-                    { label: "Valor atual", value: valorAtual },
+                    // Valor atual: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].historicoPreco[0].valor
+                    {
+                      label: "Valor atual",
+                      value: reportData.dadosBasicosDoVeiculo
+                        ?.informacoesFipe?.[0]?.historicoPreco?.[0]?.valor
+                        ? formatCurrency(
+                            parseCurrency(
+                              reportData.dadosBasicosDoVeiculo
+                                .informacoesFipe[0].historicoPreco[0].valor
+                            )
+                          )
+                        : valorAtual || "N/A",
+                    },
+                    {
+                      label: "Tipo de Carroceria",
+                      value:
+                        decodificador.tipoCarroceria ||
+                        reportData.decodificadorPrecificador?.tipoCarroceria ||
+                        reportData.tipoCarroceria ||
+                        "Nada Consta",
+                    },
+                    // Número Carroceria: (no path provided in mapping)
+                    {
+                      label: "Número Carroceria",
+                      value: reportData.numCarroceria || "Nada Consta",
+                    },
+                    // Espécie Veículo: response.body.data.baseNacional.especieVeiculo
+                    {
+                      label: "Espécie Veículo",
+                      value:
+                        baseNacional.especieVeiculo ||
+                        reportData.especieVeiculo ||
+                        "N/A",
+                    },
+                    {
+                      label: "Potência",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.potencia ||
+                        reportData.potencia ||
+                        "N/A",
+                    },
+                    // Capacidade Máxima Tração: response.body.data.dadosBasicosDoVeiculo.capMaxTracao
+                    {
+                      label: "Capacidade Máxima Tração",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.capMaxTracao ||
+                        reportData.capMaxTracao ||
+                        "N/A",
+                    },
+                    // Eixos: response.body.data.dadosBasicosDoVeiculo.eixos
+                    {
+                      label: "Eixos",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.eixos ||
+                        reportData.eixos ||
+                        "Nada Consta",
+                    },
+                    // Caixa Câmbio: response.body.data.dadosBasicosDoVeiculo.caixaCambio
+                    {
+                      label: "Caixa Câmbio",
+                      value:
+                        reportData.dadosBasicosDoVeiculo?.caixaCambio ||
+                        reportData.caixaCambio ||
+                        "N/A",
+                    },
                   ],
                 }}
               />
             </ReportSection>
-
             {/* Decodificador de Chassi - Precificadores */}
             {precificadorI && (
               <ReportSection title="Decodificador de Chassi - Precificadores">
                 {/* Precificadores Info */}
-                <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white overflow-x-auto">
-                  <div className="text-sm text-gray-600 mb-2">
-                    <p>
-                      <strong>Precificador I:</strong> {precificadorI.marca}{" "}
-                      {precificadorI.modelo}
-                    </p>
-                    <p>
-                      <strong>Valor:</strong>{" "}
-                      {formatCurrency(parseCurrency(precificadorI.valor))}
-                    </p>
-                    {precificadorII && (
-                      <>
-                        <p className="mt-2">
-                          <strong>Precificador II:</strong>{" "}
-                          {precificadorII.marca} {precificadorII.modelo}
-                        </p>
-                        <p>
-                          <strong>Versão:</strong> {precificadorII.versao}
-                        </p>
-                        <p>
-                          <strong>Valor:</strong>{" "}
-                          {formatCurrency(parseCurrency(precificadorII.valor))}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
+                <ReportTableSection
+                  headers={[
+                    "Total Desde 0 KM",
+                    "06 Meses",
+                    "12 Meses",
+                    "2017",
+                    "2018",
+                    "2019",
+                    "2020",
+                    "2021",
+                    "2022",
+                    "2023",
+                    "2024",
+                    "2025",
+                  ]}
+                  rows={[
+                    [
+                      "+43,88%",
+                      "4,40%",
+                      "+16,68%",
+                      "-4,92%",
+                      "-4,56%",
+                      "-3,00%",
+                      "+8,63%",
+                      "+32,06%",
+                      "+10,99%",
+                      "-2,54%",
+                      "-2,20%",
+                      "+10,36%",
+                    ],
+                  ]}
+                />
 
-                {/* Percentage Change Table */}
-                {decodificador.evolucaoPreco && (
-                  <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white overflow-x-auto mt-4">
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full border-collapse">
-                        <thead>
-                          <tr className="bg-[#1AABFE] text-white">
-                            {[
-                              "Total Desde 0 KM",
-                              "06 Meses",
-                              "12 Meses",
-                              "2017",
-                              "2018",
-                              "2019",
-                              "2020",
-                              "2021",
-                              "2022",
-                              "2023",
-                              "2024",
-                              "2025",
-                            ].map((header, index) => (
-                              <th
-                                key={index}
-                                className="p-2 text-center text-xs font-medium border border-[#194D9A] whitespace-nowrap"
-                              >
-                                {header}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="bg-white border-b border-gray-200">
-                            {decodificador.evolucaoPreco.map((value, index) => (
-                              <td
-                                key={index}
-                                className={`p-2 text-sm text-center border border-gray-200 ${
-                                  value < 0 ? "text-red-600" : "text-gray-900"
-                                }`}
-                              >
-                                {value > 0 ? "+" : ""}
-                                {value.toFixed(2)}%
-                              </td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                {/* Price Evolution Chart */}
-                <div className="border-2 border-[#1AABFE]/80 rounded-xl p-6 bg-white mt-4">
-                  <h4 className="text-lg font-semibold text-[#194D9A] mb-4">
-                    Evolução de Preço
-                  </h4>
-                  <div className="h-64 bg-gray-50 rounded flex items-center justify-center">
-                    <p className="text-gray-500">
-                      Gráfico de evolução de preço (integrar biblioteca de
-                      gráficos)
-                    </p>
-                  </div>
-                </div>
+                <PriceEvolutionChart
+                  basePrice={
+                    precificadorII?.valor
+                      ? parseCurrency(precificadorII.valor)
+                      : precificadorI?.valor
+                      ? parseCurrency(precificadorI.valor)
+                      : 100000
+                  }
+                />
               </ReportSection>
             )}
-
             {/* Cadastro Nacional */}
             <ReportSection title="Cadastro Nacional">
               <TwoColumnFieldSection
@@ -1253,25 +1469,24 @@ const Report = ({ data, onClose, loading }) => {
                 }}
               />
             </ReportSection>
-
             {/* CSV-INMETRO */}
             <SimpleContentSection
               title="Certificado de Segurança Veicular (CSV-INMETRO)"
               content={
-                <p className="text-gray-800">
-                  Acesso a página de validação de CSV no site{" "}
+                <p className="text-[#194D9A] text-xs px-4">
+                  Acesse a página de validação do CSV no site:{" "}
                   <a
-                    href="https://www.gov.br/pt-br"
+                    href="https://www.inmetro.gov.br/portal/csv-inmetro"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#1AABFE] hover:underline"
                   >
-                    https://www.gov.br/pt-br
+                    https://www.inmetro.gov.br/portal/csv-inmetro
                   </a>
-                  .
                 </p>
               }
             />
+
             {/* Warning at bottom */}
             <div className="bg-yellow-50 border border-yellow-300 rounded-full px-1 ">
               <div className="flex items-start gap-2">
@@ -1286,96 +1501,101 @@ const Report = ({ data, onClose, loading }) => {
             </div>
 
             {/* Restrições Nacionais */}
-            {(baseNacional.restricao1 ||
-              baseNacional.restricao2 ||
-              baseNacional.restricao3 ||
-              baseNacional.restricao4 ||
-              baseNacional.restricaoFinanciadora ||
-              baseNacional.outrasRestricoes1) && (
-              <div className="space-y-4 page-break-after">
-                {renderSectionTitle("Restrições Nacionais")}
-                {renderTwoColumnSection(
-                  <>
-                    <div className="space-y-3">
-                      {renderField(
-                        "Comunicação de Venda",
-                        baseNacional.indicadorComunicacaoVendas === "SIM"
-                          ? "Sim"
-                          : "Não"
-                      )}
-                      {renderField(
-                        "Restrição Financiadora",
-                        baseNacional.restricaoFinanciadora,
-                        baseNacional.restricaoFinanciadora !== "NADA CONSTA"
-                      )}
-                      {renderField("Restrição 1", baseNacional.restricao1)}
-                      {renderField(
-                        "Restrição 3",
-                        baseNacional.restricao3,
-                        baseNacional.restricao3 !== "NADA CONSTA"
-                      )}
-                    </div>
+            <div className="space-y-4 page-break-after">
+              {renderSectionTitle("Restrições Nacionais")}
+              {renderTwoColumnSection(
+                <>
+                  <div className="space-y-3">
+                    {/* Restrição Financeira: response.body.data.restricoes.restricaoFinanceira */}
+                    {renderField(
+                      "Restrição Financeira",
+                      reportData?.restricoes?.restricaoFinanceira || "N/A"
+                    )}
+                    {/* Restrição 1: response.body.data.restricoes.restricao1 */}
+                    {renderField(
+                      "Restrição 1",
+                      reportData?.restricoes?.restricao1 || "Nada Consta"
+                    )}
+                    {/* Restrição 2: response.body.data.restricoes.restricao2 */}
+                    {renderField(
+                      "Restrição 2",
+                      reportData?.restricoes?.restricao2 || "Nada Consta"
+                    )}
+                    {/* Restrição 3: response.body.data.restricoes.restricao3 */}
+                    {renderField(
+                      "Restrição 3",
+                      reportData?.restricoes?.restricao3 || "Nada Consta"
+                    )}
+                  </div>
 
-                    <div className="space-y-3">
-                      {renderField(
-                        "Indicação Restrição Renajud",
-                        baseNacional.indicadorRestricaoRenajud === "SIM"
-                          ? "Sim"
-                          : "Não"
-                      )}
-                      {renderField("Ocorrência", baseNacional.ocorrencia)}
-                      {renderField("Restrição 2", baseNacional.restricao2)}
-                      {renderField(
-                        "Restrição 4",
-                        baseNacional.restricao4,
-                        baseNacional.restricao4 !== "NADA CONSTA"
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-
+                  <div className="space-y-3">
+                    {/* Restrição 4: response.body.data.restricoes.restricao4 */}
+                    {renderField(
+                      "Restrição 4",
+                      reportData?.restricoes?.restricao4 || "Nada Consta"
+                    )}
+                    {/* Indicação Restrição Renajud: response.body.data.restricoes.indicacaoRenajud */}
+                    {renderField(
+                      "Indicação Restrição Renajud",
+                      reportData?.restricoes?.indicacaoRenajud || "Não"
+                    )}
+                    {/* Ocorrência: response.body.data.restricoes.ocorrencia */}
+                    {renderField(
+                      "Ocorrência",
+                      reportData?.restricoes?.ocorrencia || "N/A"
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
             {/* Faturamento */}
-            {baseNacional.docFaturado && (
-              <div className="space-y-4">
-                {renderSectionTitle("Faturamento")}
-                {renderTwoColumnSection(
-                  <>
-                    <div className="space-y-3">
-                      {renderField(
-                        "Documento Faturado",
-                        baseNacional.docFaturado
-                      )}
-                      {renderField(
-                        "Tipo Documento Faturado",
-                        baseNacional.tipoDocFaturado || "Nada Consta"
-                      )}
-                      {renderField(
-                        "Nome Fantasia",
-                        baseNacional.nomeFantasia || "Nada Consta"
-                      )}
-                      {renderField("CEP", baseNacional.cep || "Nada Consta")}
-                    </div>
-                    <div className="space-y-3">
-                      {renderField(
-                        "UF Faturado",
-                        baseNacional.ufFaturado || "Nada Consta"
-                      )}
-                      {renderField(
-                        "Razão Social",
-                        baseNacional.razaoSocial || "Nada Consta"
-                      )}
-                      {renderField(
-                        "Cidade",
-                        baseNacional.cidade || "Nada Consta"
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-
+            <div className="space-y-4">
+              {renderSectionTitle("Faturamento")}
+              {renderTwoColumnSection(
+                <>
+                  <div className="space-y-3">
+                    {/* Documento Faturado: response.body.data.faturamento.documentoFaturado */}
+                    {renderField(
+                      "Documento Faturado",
+                      reportData?.faturamento?.documentoFaturado || "N/A"
+                    )}
+                    {/* Tipo Documento Faturado: response.body.data.faturamento.tipoDocumentoFaturado */}
+                    {renderField(
+                      "Tipo Documento Faturado",
+                      reportData?.faturamento?.tipoDocumentoFaturado ||
+                        "Nada Consta"
+                    )}
+                    {/* Razão Social: response.body.data.faturamento.razaoSocial */}
+                    {renderField(
+                      "Razão Social",
+                      reportData?.faturamento?.razaoSocial || "Nada Consta"
+                    )}
+                    {renderField(
+                      "Nome Fantasia",
+                      reportData?.baseNacional?.documentoFaturado
+                        ?.nomeFantasia || "Nada Consta"
+                    )}
+                  </div>
+                  <div className="space-y-3">
+                    {/* UF Faturado: response.body.data.faturamento.ufFaturado */}
+                    {renderField(
+                      "UF Faturado",
+                      reportData?.faturamento?.ufFaturado || "Nada Consta"
+                    )}
+                    {/* Cidade: response.body.data.faturamento.cidade */}
+                    {renderField(
+                      "Cidade",
+                      reportData?.faturamento?.cidade || "Nada Consta"
+                    )}
+                    {/* CEP: response.body.data.faturamento.cep */}
+                    {renderField(
+                      "CEP",
+                      reportData?.faturamento?.cep || "Nada Consta"
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
             {/* Cadastro Estadual */}
             <div className="space-y-4">
               {renderSectionTitle("Cadastro Estadual")}
@@ -1416,7 +1636,6 @@ const Report = ({ data, onClose, loading }) => {
                 </>
               )}
             </div>
-
             {/* Restrições Estaduais */}
             {(baseEstadual.restricaoAdminisrativa ||
               baseEstadual.restricaoFinanceira ||
@@ -1433,14 +1652,12 @@ const Report = ({ data, onClose, loading }) => {
                       )}
                       {renderField(
                         "Financeira",
-                        baseEstadual.restricaoFinanceira,
-                        baseEstadual.restricaoFinanceira !== "NADA CONSTA"
+                        baseEstadual.restricaoFinanceira
                       )}
                       {renderField("Guincho", baseEstadual.restricaoGuincho)}
                       {renderField(
                         "Restrição 1",
-                        baseEstadual.outrasRestricoes1,
-                        baseEstadual.outrasRestricoes1 !== "NADA CONSTA"
+                        baseEstadual.outrasRestricoes1
                       )}
                       {renderField(
                         "Restrição 2",
@@ -1469,8 +1686,7 @@ const Report = ({ data, onClose, loading }) => {
                       {renderField("Judicial", baseEstadual.restricaoJudicial)}
                       {renderField(
                         "Restrição 3",
-                        baseEstadual.outrasRestricoes3,
-                        baseEstadual.outrasRestricoes3 !== "NADA CONSTA"
+                        baseEstadual.outrasRestricoes3
                       )}
                       {renderField(
                         "Restrição 4",
@@ -1487,85 +1703,92 @@ const Report = ({ data, onClose, loading }) => {
               </div>
             )}
 
+            {/* Detalhamento Intenção de Gravame */}
+            <div className="space-y-4">
+              {renderSectionTitle("Detalhamento Intenção de Gravame")}
+              {renderTwoColumnSection(
+                <>
+                  <div className="space-y-3">
+                    {/* Restrições Financeira: response.body.data.gravame[0].restricaoFinanceira */}
+                    {renderField(
+                      "Restrições Financeira",
+                      reportData.gravame?.[0]?.restricaoFinanceira ||
+                        "Nada Consta"
+                    )}
+                    {/* Nome Financeira: response.body.data.gravame[0].financeira */}
+                    {renderField(
+                      "Nome Financeira",
+                      reportData.gravame?.[0]?.financeira || "Nada Consta"
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    {/* Data Intenção: response.body.data.gravame[0].intencao */}
+                    {renderField(
+                      "Data Intenção",
+                      reportData.gravame?.[0]?.intencao
+                        ? formatDate(reportData.gravame[0].intencao)
+                        : "Nada Consta"
+                    )}
+                    {/* Documento Financeira: response.body.data.gravame[0].documentoFinanceira */}
+                    {renderField(
+                      "Documento Financeira",
+                      reportData.gravame?.[0]?.documentoFinanceira ||
+                        "Nada Consta"
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
             {/* Alerta de Débitos */}
-            {(parseCurrency(baseEstadual.debitoDpvat || "0,00") > 0 ||
-              parseCurrency(baseEstadual.debitoLicenciamento || "0,00") > 0 ||
-              parseCurrency(baseEstadual.debitoIpva || "0,00") > 0 ||
-              parseCurrency(baseEstadual.debitoMultas || "0,00") > 0) && (
-              <ReportSection title="Alerta de Débitos">
-                {renderTwoColumnSection(
-                  <>
-                    <div className="space-y-3">
-                      <ReportField
-                        label="Débito DPVAT"
-                        value={
-                          parseCurrency(baseEstadual.debitoDpvat || "0,00") > 0
-                            ? formatCurrency(
-                                parseCurrency(
-                                  baseEstadual.debitoDpvat || "0,00"
-                                )
-                              )
-                            : "Nada Consta"
-                        }
-                        hasWarning={
-                          parseCurrency(baseEstadual.debitoDpvat || "0,00") > 0
-                        }
-                      />
-                      <ReportField
-                        label="Débitos Licenciamento"
-                        value={
-                          parseCurrency(
-                            baseEstadual.debitoLicenciamento || "0,00"
-                          ) > 0
-                            ? formatCurrency(
-                                parseCurrency(
-                                  baseEstadual.debitoLicenciamento || "0,00"
-                                )
-                              )
-                            : "Nada Consta"
-                        }
-                        hasWarning={
-                          parseCurrency(
-                            baseEstadual.debitoLicenciamento || "0,00"
-                          ) > 0
-                        }
-                      />
-                    </div>
+            <div className="space-y-4">
+              {renderSectionTitle("Alerta de Débitos")}
+              {renderTwoColumnSection(
+                <>
+                  <div className="space-y-3">
+                    {/* Débito DPVAT: response.body.data.baseEstadual.existeDebitoDpvat */}
+                    {renderField(
+                      "Débito DPVAT",
+                      baseEstadual.existeDebitoDpvat === "SIM"
+                        ? "Existe débito de DPVAT"
+                        : "Nada Consta",
+                      baseEstadual.existeDebitoDpvat === "SIM"
+                    )}
+                    {/* Débitos Licenciamento: response.body.data.baseEstadual.existeDebitoLicenciamento */}
+                    {renderField(
+                      "Débitos Licenciamento",
+                      baseEstadual.existeDebitoLicenciamento === "SIM"
+                        ? "Existe débito de Licenciamento"
+                        : "Nada Consta",
+                      baseEstadual.existeDebitoLicenciamento === "SIM"
+                    )}
+                  </div>
 
-                    <div className="space-y-3">
-                      <ReportField
-                        label="Débitos IPVA"
-                        value={
-                          parseCurrency(baseEstadual.debitoIpva || "0,00") > 0
-                            ? formatCurrency(
-                                parseCurrency(baseEstadual.debitoIpva || "0,00")
-                              )
-                            : "Nada Consta"
-                        }
-                        hasWarning={
-                          parseCurrency(baseEstadual.debitoIpva || "0,00") > 0
-                        }
-                      />
-                      <ReportField
-                        label="Débitos Multa"
-                        value={
-                          parseCurrency(baseEstadual.debitoMultas || "0,00") > 0
-                            ? "Existe débito de multa"
-                            : "Nada Consta"
-                        }
-                        hasWarning={
-                          parseCurrency(baseEstadual.debitoMultas || "0,00") > 0
-                        }
-                      />
-                    </div>
-                  </>
-                )}
-                {renderWarningBox(
-                  "Atenção! As informações de débitos e multas em nosso sistema são uma cortesia ao nosso cliente e podem não refletir o status atual do veículo consultado, podendo não trazer todos os débitos ou multas do veículo. Orientamos a todos a consultar o site do DETRAN e SECRETARIA DA FAZENDA da UF do veículo."
-                )}
-              </ReportSection>
-            )}
-
+                  <div className="space-y-3">
+                    {/* Débitos IPVA: response.body.data.baseEstadual.existeDebitoIpva */}
+                    {renderField(
+                      "Débitos IPVA",
+                      baseEstadual.existeDebitoIpva === "SIM"
+                        ? "Existe débito de IPVA"
+                        : "Nada Consta",
+                      baseEstadual.existeDebitoIpva === "SIM"
+                    )}
+                    {/* Débitos Multa: response.body.data.baseEstadual.existeDebitoMulta */}
+                    {renderField(
+                      "Débitos Multa",
+                      baseEstadual.existeDebitoMulta === "SIM"
+                        ? "Existe débito de multa"
+                        : "Nada Consta",
+                      baseEstadual.existeDebitoMulta === "SIM"
+                    )}
+                  </div>
+                </>
+              )}
+              {renderWarningBox(
+                "Atenção! As informações de débitos e multas em nosso sistema são uma cortesia ao nosso cliente e podem não refletir o status atual do veículo consultado, podendo não trazer todos os débitos ou multas do veículo. Orientamos a todos a consultar o site do DETRAN e SECRETARIA DA FAZENDA da UF do veículo."
+              )}
+            </div>
             {/* SEFAZ / SEF Link */}
             <SimpleContentSection
               title="SEFAZ (Secretária de Estado da Fazenda) - Link de Direcionamento"
@@ -1573,71 +1796,63 @@ const Report = ({ data, onClose, loading }) => {
                 <p className="text-[#194D9A] text-xs px-4">
                   Orientamos a todos a consultar o site da SECRETÁRIA DA FAZENDA
                   da UF do veículo -{" "}
-                  {baseEstadual.uf === "SP" && (
+                  {reportData?.sedaz?.link ? (
                     <a
-                      href="https://portal.fazenda.sp.gov.br/"
+                      href={reportData?.sedaz?.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#1AABFE] hover:underline"
                     >
-                      https://portal.fazenda.sp.gov.br/
+                      {reportData?.sedaz?.link}
                     </a>
+                  ) : (
+                    "N/A"
                   )}
-                  {baseEstadual.uf !== "SP" && (
-                    <span className="text-gray-600">
-                      (consulte o site oficial do estado {baseEstadual.uf})
-                    </span>
-                  )}{" "}
-                  ({baseEstadual.uf})
                 </p>
               }
             />
-
             {/* Detalhamento Débito e Multas */}
             <div className="space-y-4 page-break-after">
               {renderSectionTitle("Detalhamento Débito e Multas")}
               {renderTwoColumnSection(
                 <>
                   <div className="space-y-3">
+                    {/* CETESB: response.body.data.baseEstadual.debitoCetesb */}
                     {renderField(
                       "CETESB",
                       formatCurrency(
                         parseCurrency(baseEstadual.debitoCetesb || "0,00")
                       )
                     )}
-                    {renderField(
-                      "DETRAN",
-                      formatCurrency(
-                        parseCurrency(baseEstadual.debitoDetran || "0,00")
-                      ),
-                      parseCurrency(baseEstadual.debitoDetran || "0,00") > 0
-                    )}
+                    {/* DER: response.body.data.baseEstadual.debitoDer */}
                     {renderField(
                       "DER",
                       formatCurrency(
                         parseCurrency(baseEstadual.debitoDer || "0,00")
                       )
                     )}
+                    {/* DERSA: response.body.data.baseEstadual.debitoDersa */}
                     {renderField(
                       "DERSA",
                       formatCurrency(
                         parseCurrency(baseEstadual.debitoDersa || "0,00")
                       )
                     )}
+                    {/* DPVAT: response.body.data.baseEstadual.debitoDpvat */}
                     {renderField(
                       "DPVAT",
                       formatCurrency(
                         parseCurrency(baseEstadual.debitoDpvat || "0,00")
                       )
                     )}
+                    {/* IPVA: response.body.data.baseEstadual.debitoIpva */}
                     {renderField(
                       "IPVA",
                       formatCurrency(
                         parseCurrency(baseEstadual.debitoIpva || "0,00")
                       )
                     )}
-                  </div>
-                  <div className="space-y-3">
+                    {/* Licenciamento: response.body.data.baseEstadual.debitoLicenciamento */}
                     {renderField(
                       "Licenciamento",
                       formatCurrency(
@@ -1646,27 +1861,31 @@ const Report = ({ data, onClose, loading }) => {
                         )
                       )
                     )}
+                  </div>
+                  <div className="space-y-3">
+                    {/* Municipais: response.body.data.baseEstadual.debitoMunicipais */}
                     {renderField(
                       "Municipais",
                       formatCurrency(
                         parseCurrency(baseEstadual.debitoMunicipais || "0,00")
                       )
                     )}
+                    {/* PRF: response.body.data.baseEstadual.debitoPrf */}
                     {renderField(
                       "PRF",
                       formatCurrency(
-                        parseCurrency(
-                          baseEstadual.debitoPoliciaRodoviariaFederal || "0,00"
-                        )
+                        parseCurrency(baseEstadual.debitoPrf || "0,00")
                       )
                     )}
+                    {/* Multas: response.body.data.baseEstadual.debitoMulta */}
                     {renderField(
                       "Multas",
                       formatCurrency(
-                        parseCurrency(baseEstadual.debitoMultas || "0,00")
+                        parseCurrency(baseEstadual.debitoMulta || "0,00")
                       ),
-                      parseCurrency(baseEstadual.debitoMultas || "0,00") > 0
+                      parseCurrency(baseEstadual.debitoMulta || "0,00") > 0
                     )}
+                    {/* RENAINF: response.body.data.baseEstadual.debitoRenainf */}
                     {renderField(
                       "RENAINF",
                       formatCurrency(
@@ -1677,110 +1896,383 @@ const Report = ({ data, onClose, loading }) => {
                 </>
               )}
             </div>
-
             {/* Histórico de Proprietários */}
-            {reportData.historicoProprietarios &&
-              reportData.historicoProprietarios.length > 0 && (
-                <ReportTableSection
-                  title="Histórico de Proprietários"
-                  headers={[
-                    "Ocorrência",
-                    "Município",
-                    "UF",
-                    "Exercício",
-                    "Proprietário",
-                    "Data",
-                    "Motivo",
-                  ]}
-                  rows={reportData.historicoProprietarios.map((item) => [
-                    item.ocorrencia || "-",
-                    item.municipio || "-",
-                    item.uf || "-",
-                    item.anoExercicio || "-",
-                    item.proprietario || "-",
-                    formatDate(item.dataEmplacamento) !== "N/A"
-                      ? formatDate(item.dataEmplacamento)
-                      : "-",
-                    item.motivoTipoAutorizacao || "-",
-                  ])}
-                />
-              )}
-
+            <ReportTableSection
+              title="Histórico de Proprietários"
+              headers={[
+                "Município",
+                "UF",
+                "Exercício",
+                "Proprietário",
+                "Data",
+                "Motivo",
+              ]}
+              rows={reportData?.historicoProprietarios?.map((item) => [
+                // Hist. Proprietários - Município: response.body.data.historicoProprietarios[0].municipio
+                item?.municipio || "-",
+                // Hist. Proprietários - UF: response.body.data.historicoProprietarios[0].uf
+                item?.uf || "-",
+                // Hist. Proprietários - Exercício: response.body.data.historicoProprietarios[0].anoExercicio
+                item?.anoExercicio || "-",
+                // Hist. Proprietários - Proprietário: response.body.data.historicoProprietarios[0].proprietario
+                item?.proprietario || "-",
+                // Hist. Proprietários - Data: response.body.data.historicoProprietarios[0].data
+                item?.data ? formatDate(item?.data) : "-",
+                // Hist. Proprietários - Motivo: response.body.data.historicoProprietarios[0].motivo
+                item?.motivo || "-",
+              ])}
+            />
             {/* Informações de Parceiros */}
-            {reportData.historicoAnuncios &&
-              reportData.historicoAnuncios.length > 0 && (
-                <ReportTableSection
-                  title="Informações de Parceiros"
-                  headers={["Data", "KM", "Valor do Anúncio"]}
-                  rows={reportData.historicoAnuncios.map((item) => [
-                    formatDate(item.data),
-                    item.km ? `${item.km} KM` : "-",
-                    item.valor ? formatCurrency(item.valor) : "-",
-                  ])}
-                />
-              )}
+
+            <ReportTableSection
+              title="Informações de Parceiros"
+              headers={["Data", "KM", "Valor do Anúncio"]}
+              rows={[
+                [
+                  formatDate(reportData?.anuncio?.data) || "-",
+                  `${reportData?.anuncio?.km} KM` || "-",
+                  formatCurrency(reportData?.anuncio?.valor) || "-",
+                ],
+              ]}
+            />
             {/* Observação do Vendedor */}
-            {reportData.anuncio?.observacao && (
-              <div className="space-y-4">
-                <div className="bg-[#1AABFE] text-white px-4 py-1 rounded-full inline-block text-sm font-semibold">
-                  Observação do Vendedor
+            <ReportSection title="Observação do Vendedor">
+              <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 py-2 bg-white">
+                {/* Observação do Vendedor: response.body.data.anuncio.observacao */}
+                <p className="text-[#194D9A] leading-relaxed">
+                  {reportData?.anuncio?.observacao || "N/A"}
+                </p>
+              </div>
+            </ReportSection>
+
+            <ReportSection title="Opcionais:">
+              {reportData?.anuncio?.opcionais &&
+              reportData?.anuncio?.opcionais.length > 0 ? (
+                <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 rounded-lg p-4 py-2 bg-white">
+                  <div className="space-y-2">
+                    {reportData?.anuncio?.opcionais
+                      .slice(
+                        0,
+                        Math.ceil(reportData?.anuncio?.opcionais.length / 2)
+                      )
+                      .map((opcional, index) => {
+                        const actualIndex = index * 2;
+                        return (
+                          <div
+                            key={actualIndex}
+                            className="text-sm text-[#194D9A]"
+                          >
+                            {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
+                            {typeof opcional === "string"
+                              ? opcional
+                              : opcional.descricao || opcional || "N/A"}
+                          </div>
+                        );
+                      })}
+                  </div>
+                  <div className="space-y-2">
+                    {reportData.anuncio.opcionais
+                      .slice(
+                        Math.ceil(reportData?.anuncio?.opcionais.length / 2)
+                      )
+                      .map((opcional, index) => {
+                        const actualIndex = index * 2 + 1;
+                        return (
+                          <div
+                            key={actualIndex}
+                            className="text-sm text-[#194D9A]"
+                          >
+                            {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
+                            {typeof opcional === "string"
+                              ? opcional
+                              : opcional.descricao || opcional || "N/A"}
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
-                <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 py-2 bg-white">
-                  <p className="text-gray-800 leading-relaxed">
-                    {reportData.anuncio.observacao}
-                  </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-lg p-4 py-2 bg-white">
+                  N/A
+                </div>
+              )}
+            </ReportSection>
+
+            {/* Precificador - Valor de Mercado */}
+            <ReportSection title="Precificador - Valor de Mercado">
+              <ReportTableSection
+                headers={["Modelo", "Marca", "Versão", "Valor"]}
+                rows={[
+                  [
+                    // Precificador - Valor de Mercado - Modelo: response.body.data.decodificadorPrecificador.modelo
+                    reportData?.decodificadorPrecificador?.modelo || "N/A",
+                    // Precificador - Valor de Mercado - Marca: response.body.data.decodificadorPrecificador.marca
+                    reportData?.decodificadorPrecificador?.marca || "N/A",
+                    // Precificador - Valor de Mercado - Versão: response.body.data.decodificadorPrecificador.versao
+                    reportData?.decodificadorPrecificador?.versao || "N/A",
+                    // Precificador - Valor de Mercado - Valor: response.body.data.decodificadorPrecificador.valorMercado
+                    reportData?.decodificadorPrecificador?.valorMercado
+                      ? formatCurrency(
+                          parseCurrency(
+                            reportData.decodificadorPrecificador.valorMercado
+                          )
+                        )
+                      : "N/A",
+                  ],
+                ]}
+              />
+            </ReportSection>
+
+            {/* Precificador - FIPE */}
+            <ReportSection title="Precificador - FIPE">
+              <ReportTableSection
+                headers={[
+                  "Código FIPE",
+                  "Combustível",
+                  "Modelo",
+                  "Marca",
+                  "Valor",
+                  "Valor 0 KM",
+                ]}
+                rows={[
+                  [
+                    // FIPE - Código FIPE: response.body.data.dadosBasicosDoVeiculo.codigoFipe
+                    reportData?.dadosBasicosDoVeiculo?.codigoFipe || "N/A",
+                    // FIPE - Combustível: response.body.data.dadosBasicosDoVeiculo.combustivel
+                    reportData?.dadosBasicosDoVeiculo?.combustivel || "N/A",
+                    // FIPE - Modelo: response.body.data.dadosBasicosDoVeiculo.modelo
+                    reportData?.dadosBasicosDoVeiculo?.modelo || "N/A",
+                    // FIPE - Marca: response.body.data.dadosBasicosDoVeiculo.marca
+                    reportData?.dadosBasicosDoVeiculo?.marca || "N/A",
+                    // FIPE - Valor: response.body.data.cestaBasica.veiculosFipe[0].registros[0].valor
+                    reportData?.cestaBasica?.veiculosFipe?.[0]?.registros?.[0]
+                      ?.valor
+                      ? formatCurrency(
+                          parseCurrency(
+                            reportData.cestaBasica.veiculosFipe[0].registros[0]
+                              .valor
+                          )
+                        )
+                      : "N/A",
+                    // FIPE - Valor 0 KM: response.body.data.cestaBasica.veiculosFipe[0].registros[0].valorZeroKm
+                    reportData?.cestaBasica?.veiculosFipe?.[0]?.registros?.[0]
+                      ?.valorZeroKm
+                      ? formatCurrency(
+                          parseCurrency(
+                            reportData.cestaBasica.veiculosFipe[0].registros[0]
+                              .valorZeroKm
+                          )
+                        )
+                      : "-",
+                  ],
+                ]}
+              />
+            </ReportSection>
+
+            {/* Porcentagem sobre Tabela FIPE */}
+            <ReportSection title="Porcentagem sobre Tabela FIPE">
+              <div className="flex flex-col md:flex-row gap-6 ">
+                <div className="shrink-0 w-[30%]">
+                  {renderGauge("", percentualSobreRef)}
+                </div>
+                <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                  <div className="space-y-3">
+                    <div className="mt-4">
+                      <p className="text-sm  text-[#1AABFE] mb-2">
+                        Esse veículo poderá receber uma oferta máxima de{" "}
+                        {percentualSobreRef}% do preço do seu valor de tabela.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            )}
+            </ReportSection>
+
+            {/* Exigência de Vistoria Especial */}
+            <ReportSection title="Exigência de Vistoria Especial">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="shrink-0 w-[30%]">
+                  {/* {renderGauge("", exigenciaVistoriaEspecial)} */}
+                  <BarGauge
+                    value={exigenciaVistoriaEspecial}
+                    min={0}
+                    max={100}
+                    label="Exigência de Vistoria Especial"
+                  />
+                </div>
+                <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                  <div className="space-y-3">
+                    {/* Exigência de Vistoria Especial - Chance: response.body.data.leilao.score.exigenciaVistoriaEspecial */}
+                    <p className="text-sm text-[#1AABFE] mb-2">
+                      Este veículo possui uma chance de exigência de vistoria
+                      especial, para a realização do seguro.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </ReportSection>
+
+            {/* Recall */}
+
+            <ReportSection title="Recall">
+              <ReportTableSection
+                headers={["Data", "Defeito", "Risco"]}
+                rows={
+                  reportData?.recall?.detalhes &&
+                  reportData?.recall?.detalhes?.length > 0
+                    ? reportData?.recall?.detalhes?.map((item) => [
+                        item?.data ? formatDate(item?.data) : "-",
+                        item?.defeito || "-",
+                        item?.risco || "-",
+                      ])
+                    : [["N/A", "N/A", "N/A"]]
+                }
+              />
+            </ReportSection>
+
+            {/* Descrição Completa */}
+            <ReportSection title="Descrição Completa">
+              <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                <div className="space-y-3">
+                  {reportData?.recall?.detalhes &&
+                  reportData?.recall?.detalhes?.length > 0 ? (
+                    reportData?.recall?.detalhes?.map((item, index) => {
+                      const descricao =
+                        typeof item === "string"
+                          ? item
+                          : item?.descricaoCompleta ||
+                            item?.descricao ||
+                            item?.texto ||
+                            item?.textoCompleto ||
+                            item?.veiculo ||
+                            (item?.veiculo && item?.anoModelo && item?.chassis
+                              ? `veículo: ${item.veiculo} — ano/modelo: ${item.anoModelo} — chassis (não sequenciais): ${item.chassis};`
+                              : null) ||
+                            JSON.stringify(item) ||
+                            "N/A";
+
+                      return (
+                        <p
+                          key={index}
+                          className="text-sm text-gray-800 leading-relaxed"
+                        >
+                          {descricao}
+                        </p>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-gray-800 leading-relaxed">N/A</p>
+                  )}
+                </div>
+              </div>
+            </ReportSection>
+
+            {/* Recall Pendentes */}
+            <ReportSection title="Recall Pendentes">
+              <ReportTableSection
+                headers={["Descrição", "Identificador", "Situação"]}
+                rows={
+                  reportData?.recall?.recallsPendente &&
+                  reportData.recall.recallsPendente.length > 0
+                    ? reportData.recall.recallsPendente.map((item) => [
+                        // Recall Pendentes - Descrição: response.body.data.recall.recallsPendente[0].descricao
+                        item?.descricao || "N/A",
+                        // Recall Pendentes - Identificador: response.body.data.recall.recallsPendente[0].identificador
+                        item?.identificador || "N/A",
+                        // Recall Pendentes - Situação: response.body.data.recall.recallsPendente[0].situacao
+                        item?.situacao || "N/A",
+                      ])
+                    : [["N/A", "N/A", "N/A"]]
+                }
+              />
+            </ReportSection>
+
+            {/* Histórico Roubo e Furto */}
+            <ReportSection title="Histórico Roubo e Furto">
+              <ReportTableSection
+                headers={[
+                  "Data",
+                  "Ocorrência",
+                  "Município / Estado",
+                  "Número do B.O.",
+                  "Informante",
+                ]}
+                rows={
+                  reportData?.rouboFurto?.historico &&
+                  reportData.rouboFurto.historico.length > 0
+                    ? reportData.rouboFurto.historico.map((item) => [
+                        // Histórico Roubo e Furto - Data: response.body.data.rouboFurto.historico[0].data
+                        item?.data ? formatDate(item.data) : "N/A",
+                        // Histórico Roubo e Furto - Ocorrência: response.body.data.rouboFurto.historico[0].ocorrencia
+                        item?.ocorrencia || "N/A",
+                        // Histórico Roubo e Furto - Município/Estado: response.body.data.rouboFurto.historico[0].municipioUf
+                        item?.municipioUf || "N/A",
+                        // Histórico Roubo e Furto - Nº B.O.: response.body.data.rouboFurto.historico[0].numeroBo
+                        item?.numeroBo || "N/A",
+                        // Histórico Roubo e Furto - Informante: response.body.data.rouboFurto.historico[0].informante
+                        item?.informante || "N/A",
+                      ])
+                    : [["N/A", "N/A", "N/A", "N/A", "N/A"]]
+                }
+              />
+            </ReportSection>
 
             {/* Informações gerais do veículo */}
-            <ReportSection title="Informações gerais do veículo">
+            {/* <ReportSection title="Informações gerais do veículo">
               <TwoColumnFieldSection
                 fields={{
                   left: [
                     { label: "Marca / Modelo", value: `${make} / ${model}` },
-                    { label: "Cor", value: color },
+                    { label: "Cor", value: reportData?.corVeiculo || "N/A" },
                     {
                       label: "RENAVAM",
-                      value: baseEstadual.renavam || reportData.renavam,
+                      value:
+                        baseEstadual.renavam || reportData?.renavam || "N/A",
                     },
                     {
                       label: "Tipo do Veículo",
-                      value: baseEstadual.tipo || "Automovel",
+                      value: baseEstadual.tipo || "Automovel" || "N/A",
                     },
                     {
                       label: "Nacionalidade",
-                      value: reportData.nacionalidade || "Nacional",
+                      value: reportData?.nacionalidade || "Nacional" || "N/A",
                     },
-                    { label: "UF", value: baseEstadual.uf || reportData.uf },
+                    {
+                      label: "UF",
+                      value: baseEstadual.uf || reportData?.uf || "N/A",
+                    },
                     {
                       label: "Registro DI",
-                      value: baseNacional.di || "Nada Consta",
+                      value: baseNacional.di || "Nada Consta" || "N/A",
                     },
                   ],
                   right: [
                     {
                       label: "Ano / Modelo",
-                      value: `${reportData.anoFabricacao || year}/${year}`,
+                      value:
+                        `${reportData?.anoFabricacao || year}/${year}` || "N/A",
                     },
                     { label: "Placa", value: plate },
                     { label: "Combustível", value: fuel },
                     {
                       label: "Número do motor",
-                      value: baseEstadual.motor || reportData.numMotor,
+                      value:
+                        baseEstadual.motor || reportData?.numMotor || "N/A",
                     },
                     { label: "Chassi", value: chassis },
                     {
                       label: "Município",
-                      value: baseEstadual.municipio || reportData.municipio,
+                      value:
+                        baseEstadual.municipio ||
+                        reportData?.municipio ||
+                        "N/A",
                     },
                   ],
                 }}
               />
-            </ReportSection>
-
+            </ReportSection> */}
             {/* Dados Básicos */}
-            {(reportData.caixaCambio ||
+            {/* {(reportData.caixaCambio ||
               reportData.cilindradas ||
               reportData.numTerceiroEixo !== undefined ||
               reportData.potencia ||
@@ -1827,10 +2319,9 @@ const Report = ({ data, onClose, loading }) => {
                   </>
                 )}
               </div>
-            )}
-
+            )} */}
             {/* Informações do Anúncio */}
-            {reportData.anuncio &&
+            {/* {reportData.anuncio &&
               (reportData.anuncio.km ||
                 reportData.anuncio.valor ||
                 reportData.anuncio.data ||
@@ -1878,10 +2369,9 @@ const Report = ({ data, onClose, loading }) => {
                       )}
                   </div>
                 </ReportSection>
-              )}
-
+              )} */}
             {/* Opcionais */}
-            {reportData.acessoriosCategorizados?.acessorios &&
+            {/* {reportData.acessoriosCategorizados?.acessorios &&
               reportData.acessoriosCategorizados.acessorios.length > 0 && (
                 <div className="space-y-4">
                   <div className="bg-[#1AABFE] text-white px-4 py-2 rounded-lg inline-block">
@@ -1921,18 +2411,15 @@ const Report = ({ data, onClose, loading }) => {
                     </>
                   )}
                 </div>
-              )}
-
+              )} */}
             {/* Ficha Técnica */}
-            {reportData.fichaTecnica?.registros &&
+            {/* {reportData.fichaTecnica?.registros &&
               reportData.fichaTecnica.registros.length > 0 && (
                 <ReportSection title="Ficha Técnica">
                   <div className="space-y-4">
                     {reportData.fichaTecnica.registros.map((grupo, index) => {
-                      // Get the title from various possible fields - check all possible locations
                       let grupoTitle = null;
 
-                      // Try common field names
                       if (grupo.descricao) grupoTitle = grupo.descricao;
                       else if (grupo.nome) grupoTitle = grupo.nome;
                       else if (grupo.titulo) grupoTitle = grupo.titulo;
@@ -1942,7 +2429,6 @@ const Report = ({ data, onClose, loading }) => {
                       else if (grupo.name) grupoTitle = grupo.name;
                       else if (grupo.label) grupoTitle = grupo.label;
 
-                      // If still not found, search for any field that might contain the title
                       if (!grupoTitle) {
                         const titleKey = Object.keys(grupo).find(
                           (key) =>
@@ -1957,7 +2443,6 @@ const Report = ({ data, onClose, loading }) => {
                         if (titleKey) grupoTitle = grupo[titleKey];
                       }
 
-                      // Final fallback
                       if (!grupoTitle || grupoTitle.trim() === "") {
                         grupoTitle = `Seção ${index + 1}`;
                       }
@@ -1967,13 +2452,11 @@ const Report = ({ data, onClose, loading }) => {
                           key={index}
                           className="border-2 border-[#1AABFE]/80 rounded-xl overflow-hidden bg-white"
                         >
-                          {/* Blue Title Header - Always show */}
                           <div className="bg-[#1AABFE] text-white px-4 py-3">
                             <h4 className="text-lg font-semibold">
                               {grupoTitle}
                             </h4>
                           </div>
-                          {/* Content */}
                           <div className="p-4">
                             {grupo.especificacoes &&
                             Array.isArray(grupo.especificacoes) &&
@@ -2004,7 +2487,6 @@ const Report = ({ data, onClose, loading }) => {
                                 ))}
                               </div>
                             ) : (
-                              // Handle if especificacoes is not an array but direct properties
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {Object.entries(grupo)
                                   .filter(
@@ -2049,84 +2531,10 @@ const Report = ({ data, onClose, loading }) => {
                     })}
                   </div>
                 </ReportSection>
-              )}
-
-            {/* Comparativo Especificações */}
-            {/* {reportData.comparativoEspecificacoes?.veiculoComparativo &&
-              reportData.comparativoEspecificacoes.veiculoComparativo.length >
-                0 && (
-                <ReportSection title="Comparativo Especificações">
-                  <div className="space-y-4">
-                    {reportData.comparativoEspecificacoes.veiculoComparativo.map(
-                      (veiculo, index) => (
-                        <div
-                          key={index}
-                          className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white"
-                        >
-                          <div className="mb-4">
-                            <h4 className="text-lg font-semibold text-[#194D9A]">
-                              {veiculo.marca} {veiculo.modelo} ({veiculo.ano})
-                            </h4>
-                            {veiculo.descricao && (
-                              <div className="mt-2 space-y-1">
-                                {veiculo.descricao.posicao && (
-                                  <p className="text-sm text-gray-600">
-                                    Posição: {veiculo.descricao.posicao}
-                                  </p>
-                                )}
-                                {veiculo.descricao
-                                  .seisMesesPorcentagemDeIdade && (
-                                  <p className="text-sm text-gray-600">
-                                    Idade (%):{" "}
-                                    {
-                                      veiculo.descricao
-                                        .seisMesesPorcentagemDeIdade
-                                    }
-                                  </p>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          {veiculo.espesificacoes &&
-                            veiculo.espesificacoes.length > 0 && (
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {veiculo.espesificacoes.map(
-                                  (spec, specIndex) => (
-                                    <div
-                                      key={specIndex}
-                                      className="flex justify-between border-b border-gray-200 pb-2"
-                                    >
-                                      <span className="text-sm font-medium text-gray-700">
-                                        {spec.descricao}:
-                                      </span>
-                                      <span className="text-sm text-gray-900 font-semibold">
-                                        {spec.valor} (Posição: {spec.posicao})
-                                      </span>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            )}
-                          {veiculo.preco && (
-                            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                              <p className="text-sm font-medium text-[#194D9A]">
-                                Preço:{" "}
-                                {formatCurrency(
-                                  parseCurrency(veiculo.preco.preco)
-                                )}{" "}
-                                (Posição: {veiculo.preco.posicao})
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      )
-                    )}
-                  </div>
-                </ReportSection>
               )} */}
 
             {/* Custo Médio */}
-            {reportData.custoMedio && (
+            {/* {reportData.custoMedio && (
               <ReportSection title="Custo Médio">
                 <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2216,135 +2624,254 @@ const Report = ({ data, onClose, loading }) => {
                     )}
                 </div>
               </ReportSection>
-            )}
-
+            )} */}
             {/* Gravame */}
-            {reportData.gravame && reportData.gravame.length > 0 && (
-              <ReportSection title="Gravame">
-                {reportData.gravame.map((gravame, index) => (
+            <ReportSection title="Gravame">
+              {reportData?.gravame && reportData?.gravame?.length > 0 ? (
+                reportData?.gravame?.map((gravame, index) => (
                   <div key={index} className="mb-4">
-                    <div className="bg-[#1AABFE] text-white px-4 py-2 rounded-t-lg">
-                      <h4 className="font-semibold">Registro {index + 1}</h4>
+                    <div className="bg-[#1AABFE] text-white px-4 py-2 rounded-full w-fit mb-2">
+                      <h4 className="font-semibold px-8">
+                        Registro {index + 1}
+                      </h4>
                     </div>
-                    <div className="border-2 border-[#1AABFE]/80 rounded-b-lg border-t-0 p-4 bg-white">
+                    <div className=" rounded-lg  bg-white">
                       <TwoColumnFieldSection
                         fields={{
                           left: [
                             {
                               label: "Documento Agente",
-                              value: gravame.documentoAgente || "Nada Consta",
+                              // Gravame - Documento Agente: response.body.data.gravame[0].documentoAgente
+                              value: gravame?.documentoAgente || "N/A",
                             },
                             {
                               label: "Agente",
-                              value: gravame.agente || "Nada Consta",
+                              // Gravame - Agente: response.body.data.gravame[0].agente
+                              value: gravame?.agente || "N/A",
                             },
                             {
                               label: "Responsável",
-                              value: gravame.responsavel || "Nada Consta",
+                              // Gravame - Responsável: response.body.data.gravame[0].responsavel
+                              value: gravame?.responsavel || "N/A",
                             },
-                            { label: "Placa", value: gravame.placa || plate },
+                            {
+                              label: "Placa",
+                              // Gravame - Placa: response.body.data.gravame[0].placa
+                              value: gravame?.placa || "N/A",
+                            },
                             {
                               label: "Renavam",
-                              value: gravame.renavam || baseEstadual.renavam,
+                              // Gravame - Renavam: response.body.data.gravame[0].renavam
+                              value: gravame?.renavam || "N/A",
                             },
                             {
                               label: "Chassi",
-                              value: gravame.chassi || chassis,
+                              // Gravame - Chassi: response.body.data.gravame[0].chassi
+                              value: gravame?.chassi || "N/A",
                             },
                             {
                               label: "Contrato",
-                              value: gravame.contrato || "Nada Consta",
+                              // Gravame - Contrato: response.body.data.gravame[0].contrato
+                              value: gravame?.contrato || "N/A",
                             },
                           ],
                           right: [
                             {
-                              label: "Numero da Restrição",
-                              value: gravame.numeroRestricao || "Nada Consta",
+                              label: "Número da Restrição",
+                              // Gravame - Número da Restrição: response.body.data.gravame[0].numeroRestricao
+                              value: gravame?.numeroRestricao || "N/A",
                             },
                             {
                               label: "Documento Financiado",
-                              value:
-                                gravame.documentoFinanciado || "Nada Consta",
+                              // Gravame - Documento Financiado: response.body.data.gravame[0].documentoFinanciado
+                              value: gravame?.documentoFinanciado || "N/A",
                             },
                             {
                               label: "Data Situação",
-                              value: formatDate(gravame.dataSituacao),
+                              // Gravame - Data Situação: response.body.data.gravame[0].dataSituacao
+                              value: gravame?.dataSituacao
+                                ? formatDate(gravame.dataSituacao)
+                                : "N/A",
                             },
                             {
                               label: "Data Inclusão",
-                              value: formatDate(gravame.dataInclusao),
+                              // Gravame - Data Inclusão: response.body.data.gravame[0].dataInclusao
+                              value: gravame?.dataInclusao
+                                ? formatDate(gravame.dataInclusao)
+                                : "N/A",
                             },
                             {
                               label: "Vigência Contrato",
-                              value: formatDate(gravame.vigenciaContrato),
+                              // Gravame - Vigência Contrato: response.body.data.gravame[0].vigenciaContrato
+                              value: gravame?.vigenciaContrato
+                                ? formatDate(gravame.vigenciaContrato)
+                                : "N/A",
                             },
                             {
                               label: "Observações",
-                              value: gravame.observacoes || "Nada Consta",
+                              // Gravame - Observações: response.body.data.gravame[0].observacoes
+                              value: gravame?.observacoes || "N/A",
                             },
                             {
                               label: "Situação",
-                              value: gravame.situacao || "Nada Consta",
+                              // Gravame - Situação: response.body.data.gravame[0].situacao
+                              value: gravame?.situacao || "N/A",
                             },
                           ],
                         }}
                       />
                     </div>
                   </div>
-                ))}
-              </ReportSection>
-            )}
-
-            {/* Histórico Roubo e Furto */}
-            {reportData.rouboFurto &&
-              reportData.rouboFurto.historico &&
-              reportData.rouboFurto.historico.length > 0 && (
-                <ReportTableSection
-                  title="Histórico Roubo e Furto"
-                  headers={[
-                    "Data",
-                    "Ocorrência",
-                    "Município / Estado",
-                    "Número do B.O.",
-                    "Informante",
-                  ]}
-                  rows={reportData.rouboFurto.historico.map((item) => [
-                    formatDate(item.data),
-                    item.ocorrencia || "-",
-                    item.municipio && item.uf
-                      ? `${item.municipio}/${item.uf}`
-                      : "-",
-                    item.numeroBO || "-",
-                    item.informante || "-",
-                  ])}
-                />
+                ))
+              ) : (
+                <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white">
+                  <p className="text-sm text-gray-800 leading-relaxed ">N/A</p>
+                </div>
               )}
-
+            </ReportSection>
             {/* Registro em Locadora */}
             <ReportSection title="Registro em Locadora">
               <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                 <p className="text-gray-800">
-                  {reportData.registroEmLocadora?.registroEmLocadora
-                    ? "Veículo possui registro em locadora."
+                  {/* Registro em Locadora: response.body.data.registroEmLocadora */}
+                  {reportData?.registroEmLocadora
+                    ? reportData.registroEmLocadora.registroEmLocadora?.toString()
                     : "Informação não encontrada nas bases consultadas."}
                 </p>
               </div>
             </ReportSection>
 
-            {/* Recall Pendentes */}
-            {reportData.recall &&
-              reportData.recall.recallsPendente &&
-              reportData.recall.recallsPendente.length > 0 && (
-                <ReportTableSection
-                  title="Recall Pendentes"
-                  headers={["Descrição", "Identificador", "Situação"]}
-                  rows={reportData.recall.recallsPendente.map((item) => [
-                    item.descricao || "-",
-                    item.identificador || "-",
-                    item.situacao || "Pendente de atendimento",
-                  ])}
-                />
-              )}
+            {/* CSV */}
+            <ReportSection title="CSV">
+              <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                <p className="text-gray-800">
+                  {/* CSV: response.body.data.csv */}
+                  {reportData?.csv?.pdf
+                    ? reportData.csv.descricao
+                    : "Informação não encontrada nas bases consultadas."}
+                </p>
+              </div>
+            </ReportSection>
+
+            {/* Histórico de Multas RENAINF */}
+            <ReportSection title="Histórico de Multas RENAINF">
+              <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                <p className="text-gray-800">
+                  {/* Histórico de Multas RENAINF: response.body.data.multasRenainf */}
+                  {reportData?.multasRenainf &&
+                  (Array.isArray(reportData.multasRenainf)
+                    ? reportData.multasRenainf.length > 0
+                    : Object.keys(reportData.multasRenainf).length > 0)
+                    ? Array.isArray(reportData.multasRenainf)
+                      ? reportData.multasRenainf
+                          .map((item) =>
+                            typeof item === "string"
+                              ? item
+                              : item?.descricao || JSON.stringify(item)
+                          )
+                          .join(", ")
+                      : reportData.multasRenainf.descricao ||
+                        JSON.stringify(reportData.multasRenainf)
+                    : "Informação não encontrada nas bases consultadas."}
+                </p>
+              </div>
+            </ReportSection>
+
+            {/* Radar Secuntário */}
+            <ReportSection title="Radar Secuntário">
+              <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                <p className="text-gray-800">
+                  {/* Radar Secuntário: response.body.data.radarSecuritario */}
+                  {reportData?.radarSecuritario &&
+                  (Array.isArray(reportData.radarSecuritario)
+                    ? reportData.radarSecuritario.length > 0
+                    : Object.keys(reportData.radarSecuritario).length > 0)
+                    ? Array.isArray(reportData.radarSecuritario)
+                      ? reportData.radarSecuritario
+                          .map((item) =>
+                            typeof item === "string"
+                              ? item
+                              : item?.descricao || JSON.stringify(item)
+                          )
+                          .join(", ")
+                      : reportData.radarSecuritario.descricao ||
+                        JSON.stringify(reportData.radarSecuritario)
+                    : "Informação não encontrada nas bases consultadas."}
+                </p>
+              </div>
+            </ReportSection>
+
+            {/* Falhas do Veículo */}
+            <ReportSection title="Falhas do Veículo">
+              <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                <p className="text-gray-800">
+                  {/* Falhas do Veículo: response.body.data.diagnosticoDoVeiculo */}
+                  {reportData?.diagnosticoDoVeiculo &&
+                  (Array.isArray(reportData.diagnosticoDoVeiculo)
+                    ? reportData.diagnosticoDoVeiculo.length > 0
+                    : Object.keys(reportData.diagnosticoDoVeiculo).length > 0)
+                    ? Array.isArray(reportData.diagnosticoDoVeiculo)
+                      ? reportData.diagnosticoDoVeiculo
+                          .map((item) =>
+                            typeof item === "string"
+                              ? item
+                              : item?.descricao || JSON.stringify(item)
+                          )
+                          .join(", ")
+                      : reportData.diagnosticoDoVeiculo.descricao ||
+                        JSON.stringify(reportData.diagnosticoDoVeiculo)
+                    : "Informação não encontrada nas bases consultadas."}
+                </p>
+              </div>
+            </ReportSection>
+
+            {/* Histórico Laudo */}
+            <ReportSection title="Histórico Laudo">
+              <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                <p className="text-gray-800">
+                  {/* Histórico Laudo: response.body.data.historicoLaudo */}
+                  {reportData?.historicoLaudo &&
+                  (Array.isArray(reportData.historicoLaudo)
+                    ? reportData.historicoLaudo.length > 0
+                    : Object.keys(reportData.historicoLaudo).length > 0)
+                    ? Array.isArray(reportData.historicoLaudo)
+                      ? reportData.historicoLaudo
+                          .map((item) =>
+                            typeof item === "string"
+                              ? item
+                              : item?.descricao || JSON.stringify(item)
+                          )
+                          .join(", ")
+                      : reportData.historicoLaudo.descricao ||
+                        JSON.stringify(reportData.historicoLaudo)
+                    : "Informação não encontrada nas bases consultadas."}
+                </p>
+              </div>
+            </ReportSection>
+
+            {/* Histórico de Consulta */}
+            <ReportSection title="Histórico de Consulta">
+              <ReportTableSection
+                headers={[
+                  "Primeira Consulta",
+                  "Última Consulta",
+                  "Total de Consultas",
+                ]}
+                rows={[
+                  [
+                    // Histórico de Consulta - Primeira Consulta: response.body.data.historicoConsultas[0].primeiraConsulta
+                    reportData?.historicoConsultas?.[0]?.primeiraConsulta ||
+                      "N/A",
+                    // Histórico de Consulta - Última Consulta: response.body.data.historicoConsultas[0].ultimaConsulta
+                    reportData?.historicoConsultas?.[0]?.ultimaConsulta ||
+                      "N/A",
+                    // Histórico de Consulta - Total de Consultas: response.body.data.historicoConsultas[0].total
+                    reportData?.historicoConsultas?.[0]?.total?.toString() ||
+                      "N/A",
+                  ],
+                ]}
+              />
+            </ReportSection>
 
             {/* Análise de Risco */}
             {/* {reportData.analiseRisco && (
@@ -2370,7 +2897,6 @@ const Report = ({ data, onClose, loading }) => {
               </div>
             </div>
           )} */}
-
             {/* Warning at bottom */}
             {/* <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
             <div className="flex items-start gap-2">
@@ -2381,7 +2907,6 @@ const Report = ({ data, onClose, loading }) => {
               </p>
             </div>
           </div> */}
-
             {/* Footer with buttons */}
             <div className="border-t-2 border-gray-200 pt-6 mt-6">
               <div className="flex flex-col md:flex-row gap-4 justify-center">

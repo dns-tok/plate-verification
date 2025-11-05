@@ -9,34 +9,37 @@ const ReportTableSection = ({ title, headers, rows, className = "" }) => {
 
   const tableContent = (
     <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse">
-        <thead>
-          <tr className="bg-[#1AABFE] text-white">
-            {headers.map((header, index) => (
-              <th
-                key={index}
-                className="first:!rounded-l-full last:!rounded-r-full px-2 py-1 text-left text-xs font-medium  whitespace-nowrap"
-              >
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="">
+      <div className="min-w-full border-collapse space-y-2">
+        <div className="bg-[#1AABFE] text-white flex items-center justify-between px-2 py-1 rounded-full">
+          {headers.map((header, index) => (
+            <p
+              key={index}
+              className="px-2 py-1 text-[0.7rem] font-medium text-center w-[110px] !break-words "
+            >
+              {header}
+            </p>
+          ))}
+        </div>
+        <div className="space-y-2">
           {rows.map((row, rowIndex) => (
-            <tr key={rowIndex} className="bg-[#1AABFE]/10 ">
+            <div
+              key={rowIndex}
+              className="bg-[#1AABFE]/10 text-white flex items-center justify-between px-2 py-1 rounded-full"
+            >
               {row.map((cell, cellIndex) => (
-                <td
+                <p
                   key={cellIndex}
-                  className={`first:!rounded-l-full last:!rounded-r-full px-2 py-1 text-xs text-[#194D9A] whitespace-nowrap`}
+                  className={`${
+                    parseFloat(cell) < 0 ? "text-red-500" : "text-[#194D9A]"
+                  } px-2 py-1 text-[0.7rem] text-center w-[110px] break-words break-all`}
                 >
                   {cell || "-"}
-                </td>
+                </p>
               ))}
-            </tr>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   );
 
