@@ -691,7 +691,7 @@ const Report = ({ data, onClose, loading }) => {
               )}
             </div>
             {/* Insights do veículo - Block 3 mapping */}
-            <div className="space-y-4">
+            <div className="">
               {renderSectionTitle("Insights do veículo")}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Nível de risco geral: response.body.data.leilao.score.aceitacao */}
@@ -714,6 +714,15 @@ const Report = ({ data, onClose, loading }) => {
                     percentualSobreRef
                   )}
               </div>
+              {!nivelRisco &&
+                !exigenciaVistoriaEspecial &&
+                !percentualSobreRef && (
+                  <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white w-full">
+                    <p className="text-gray-800">
+                      Informação não encontrada nas bases consultadas.
+                    </p>
+                  </div>
+                )}
             </div>
             {/* Block 4: Informações gerais do veículo */}
             <ReportSection
@@ -1506,6 +1515,10 @@ const Report = ({ data, onClose, loading }) => {
               {renderTwoColumnSection(
                 <>
                   <div className="space-y-3">
+                    {renderField(
+                      "Comunicação de Venda",
+                      reportData?.restricoes?.comunicacaoVenda || "N/A"
+                    )}
                     {/* Restrição Financeira: response.body.data.restricoes.restricaoFinanceira */}
                     {renderField(
                       "Restrição Financeira",
@@ -1516,11 +1529,7 @@ const Report = ({ data, onClose, loading }) => {
                       "Restrição 1",
                       reportData?.restricoes?.restricao1 || "Nada Consta"
                     )}
-                    {/* Restrição 2: response.body.data.restricoes.restricao2 */}
-                    {renderField(
-                      "Restrição 2",
-                      reportData?.restricoes?.restricao2 || "Nada Consta"
-                    )}
+
                     {/* Restrição 3: response.body.data.restricoes.restricao3 */}
                     {renderField(
                       "Restrição 3",
@@ -1529,11 +1538,6 @@ const Report = ({ data, onClose, loading }) => {
                   </div>
 
                   <div className="space-y-3">
-                    {/* Restrição 4: response.body.data.restricoes.restricao4 */}
-                    {renderField(
-                      "Restrição 4",
-                      reportData?.restricoes?.restricao4 || "Nada Consta"
-                    )}
                     {/* Indicação Restrição Renajud: response.body.data.restricoes.indicacaoRenajud */}
                     {renderField(
                       "Indicação Restrição Renajud",
@@ -1543,6 +1547,16 @@ const Report = ({ data, onClose, loading }) => {
                     {renderField(
                       "Ocorrência",
                       reportData?.restricoes?.ocorrencia || "N/A"
+                    )}
+                    {/* Restrição 2: response.body.data.restricoes.restricao2 */}
+                    {renderField(
+                      "Restrição 2",
+                      reportData?.restricoes?.restricao2 || "Nada Consta"
+                    )}
+                    {/* Restrição 4: response.body.data.restricoes.restricao4 */}
+                    {renderField(
+                      "Restrição 4",
+                      reportData?.restricoes?.restricao4 || "Nada Consta"
                     )}
                   </div>
                 </>
@@ -1565,15 +1579,16 @@ const Report = ({ data, onClose, loading }) => {
                       reportData?.faturamento?.tipoDocumentoFaturado ||
                         "Nada Consta"
                     )}
-                    {/* Razão Social: response.body.data.faturamento.razaoSocial */}
-                    {renderField(
-                      "Razão Social",
-                      reportData?.faturamento?.razaoSocial || "Nada Consta"
-                    )}
+
                     {renderField(
                       "Nome Fantasia",
                       reportData?.baseNacional?.documentoFaturado
                         ?.nomeFantasia || "Nada Consta"
+                    )}
+                    {/* CEP: response.body.data.faturamento.cep */}
+                    {renderField(
+                      "CEP",
+                      reportData?.faturamento?.cep || "Nada Consta"
                     )}
                   </div>
                   <div className="space-y-3">
@@ -1582,15 +1597,16 @@ const Report = ({ data, onClose, loading }) => {
                       "UF Faturado",
                       reportData?.faturamento?.ufFaturado || "Nada Consta"
                     )}
+                    {/* Razão Social: response.body.data.faturamento.razaoSocial */}
+                    {renderField(
+                      "Razão Social",
+                      reportData?.faturamento?.razaoSocial || "Nada Consta"
+                    )}
+
                     {/* Cidade: response.body.data.faturamento.cidade */}
                     {renderField(
                       "Cidade",
                       reportData?.faturamento?.cidade || "Nada Consta"
-                    )}
-                    {/* CEP: response.body.data.faturamento.cep */}
-                    {renderField(
-                      "CEP",
-                      reportData?.faturamento?.cep || "Nada Consta"
                     )}
                   </div>
                 </>
