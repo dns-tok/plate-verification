@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import { parseCurrency } from "../../utils/currencyUtils";
+import { useWallet } from "../../context/WalletContext";
 
 const GoBackButton = ({ onClick, className }) => {
   return (
@@ -27,6 +28,7 @@ const GoBackButton = ({ onClick, className }) => {
 const Payment = () => {
   const navigate = useNavigate();
   const { cartItems, couponDiscount, appliedCoupon, clearCart } = useCart();
+  const { fetchWalletInfo } = useWallet();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [copyCode, setCopyCode] = useState(false);
   const [paymentData, setPaymentData] = useState(null);
@@ -55,8 +57,7 @@ const Payment = () => {
   // Calculate order value
   const calculateTotal = () => {
     const orderValue = cartItems.reduce(
-      (acc, item) =>
-        acc + parseCurrency(item.price),
+      (acc, item) => acc + parseCurrency(item.price),
       0
     );
     return orderValue - couponDiscount;
@@ -220,6 +221,8 @@ const Payment = () => {
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
           toast.success("Payment completed successfully!");
+          // Update wallet balance after successful payment
+          fetchWalletInfo();
           clearCart();
           setTimeout(() => {
             navigate("/buy-consultation");
