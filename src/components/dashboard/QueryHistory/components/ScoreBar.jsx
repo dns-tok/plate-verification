@@ -138,7 +138,17 @@ const ScoreBar = ({ score, label = "Score" }) => {
       {/* Score Number and Bar */}
       <div className="  flex items-center justify-center bg-white border-2 border-[#1AABFE]/80 rounded-2xl px-8 py-1 w-fit ">
         {/* Left: Score number */}
-        <div className="text-[6rem] font-extrabold text-orange-500 leading-none mr-4">
+        <div
+          className={`text-[6rem] font-extrabold ${
+            segmentPosition === "top"
+              ? "text-green-500"
+              : segmentPosition === "upperMiddle"
+              ? "text-yellow-400"
+              : segmentPosition === "lowerMiddle"
+              ? "text-orange-400"
+              : "text-red-500"
+          } leading-none mr-4`}
+        >
           {clampedScore}
         </div>
 
@@ -196,7 +206,19 @@ const ScoreBar = ({ score, label = "Score" }) => {
         <div className="space-y-2 text-[#1AABFE]">
           <p className="text-sm font-semibold ">
             Score Pontuação:{" "}
-            <span className="text-orange-500">{scoreInfo.title}</span>
+            <span
+              className={`${
+                segmentPosition === "top"
+                  ? "text-green-500"
+                  : segmentPosition === "upperMiddle"
+                  ? "text-yellow-400"
+                  : segmentPosition === "lowerMiddle"
+                  ? "text-orange-400"
+                  : "text-red-500"
+              }`}
+            >
+              {scoreInfo.title}
+            </span>
           </p>
           <p className="text-sm text-gray-800">{scoreInfo.description}</p>
         </div>

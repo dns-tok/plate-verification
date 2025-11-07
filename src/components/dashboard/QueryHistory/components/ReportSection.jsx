@@ -11,9 +11,9 @@ const ReportSection = ({
   breakSection = false,
 }) => {
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-2 ${className}`}>
       {title && (
-        <h3 className="text-xl text-[#194D9A] mb-4 font-semibold">{title}</h3>
+        <h3 className="text-xl text-[#194D9A]  font-semibold">{title}</h3>
       )}
       {breakSection ? (
         <div className="page-break-after">{children}</div>

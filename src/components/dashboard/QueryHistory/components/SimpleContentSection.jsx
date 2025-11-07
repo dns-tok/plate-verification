@@ -10,9 +10,9 @@ const SimpleContentSection = ({
   contentClassName = "",
 }) => {
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-2 ${className}`}>
       {title && (
-        <h3 className="text-xl text-[#194D9A] mb-4 font-semibold">{title}</h3>
+        <h3 className="text-xl text-[#194D9A] font-semibold">{title}</h3>
       )}
       <div
         className={`border-2 border-[#1AABFE]/80 rounded-full p-2 bg-white ${contentClassName}`}
