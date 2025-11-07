@@ -2164,9 +2164,15 @@ const Report = ({ data, onClose, loading }) => {
               headers={["Data", "KM", "Valor do Anúncio"]}
               rows={[
                 [
-                  formatDate(reportData?.anuncio?.data) || "-",
-                  `${reportData?.anuncio?.km} KM` || "-",
-                  formatCurrency(reportData?.anuncio?.valor) || "-",
+                  reportData?.anuncio?.data
+                    ? formatDate(reportData?.anuncio?.data)
+                    : "N/A",
+                  reportData?.anuncio?.km
+                    ? `${reportData?.anuncio?.km} KM`
+                    : "N/A",
+                  reportData?.anuncio?.valor
+                    ? formatCurrency(reportData?.anuncio?.valor)
+                    : "N/A",
                 ],
               ]}
             />
