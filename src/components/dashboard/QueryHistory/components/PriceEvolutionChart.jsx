@@ -24,65 +24,73 @@ ChartJS.register(
   Filler
 );
 
-const PriceEvolutionChart = ({ basePrice = 100000 }) => {
+const PriceEvolutionChart = ({ historicoPreco = [], valorAtual = null }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
-  // Yearly variations (%)
-  const variations = {
-    2017: -4.92,
-    2018: -4.56,
-    2019: -3.0,
-    2020: -8.63,
-    2021: 32.06,
-    2022: 10.99,
-    2023: -2.54,
-    2024: -2.2,
-    2025: 10.36,
-  };
+  // Month names in Portuguese
+  const monthNames = [
+    "Jan",
+    "Fev",
+    "Mar",
+    "Abr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Set",
+    "Out",
+    "Nov",
+    "Dez",
+  ];
 
-  // Compute cumulative prices year by year
-  const calculatePrices = () => {
-    const years = Object.keys(variations).map(Number);
-    const prices = [];
-    let currentPrice = basePrice;
+  // Get last 12 items from historicoPreco
+  const getLast12MonthsData = () => {
+    if (!historicoPreco || historicoPreco.length === 0) {
+      return [];
+    }
 
-    years.forEach((year) => {
-      const variation = variations[year];
-      currentPrice *= 1 + variation / 100;
-      prices.push({ year, price: currentPrice });
+    // Get last 12 items from historicoPreco
+    const last12Items = historicoPreco.slice(-12);
+
+    // Format the data for the chart
+    const monthlyData = last12Items.map((item) => {
+      const year = parseInt(item.ano);
+      const month = parseInt(item.mes);
+      const value = parseFloat(item.valor) || 0;
+      const monthLabel = `${monthNames[month - 1]}/${year}`;
+      return { month: monthLabel, price: value };
     });
 
-    return prices;
-  };
-
-  // Generate monthly interpolated prices between 2024–2025
-  const generateMonthlyData = () => {
-    return [
-      { month: "Out/2024", price: 100000 },
-      { month: "Nov/2024", price: 103000 },
-      { month: "Dez/2024", price: 106000 },
-      { month: "Jan/2025", price: 104000 },
-      { month: "Fev/2025", price: 107000 },
-      { month: "Mar/2025", price: 105000 },
-      { month: "Abr/2025", price: 112000 },
-      { month: "Mai/2025", price: 110000 },
-      { month: "Jun/2025", price: 108000 },
-      { month: "Jul/2025", price: 113000 },
-      { month: "Ago/2025", price: 113500 },
-      { month: "Set/2025", price: 115000 },
-    ];
+    return monthlyData;
   };
 
   useEffect(() => {
     if (!chartRef.current) return;
 
-    const monthlyData = generateMonthlyData();
+    const monthlyData = getLast12MonthsData();
+
+    if (monthlyData.length === 0) {
+      return;
+    }
+
     const labels = monthlyData.map((d) => d.month);
     const data = monthlyData.map((d) => d.price);
 
-    const minPrice = 100000; // fixed to match your reference Y-axis
-    const maxPrice = 115000;
+    // Calculate min and max prices dynamically
+    const prices = data.filter((p) => p > 0);
+    if (prices.length === 0) return;
+
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const priceRange = maxPrice - minPrice;
+    const padding = priceRange * 0.1; // 10% padding
+
+    const chartMinPrice = Math.max(0, minPrice - padding);
+    const chartMaxPrice = maxPrice + padding;
+
+    // Calculate step size based on range
+    const stepSize = Math.max(1000, Math.ceil(priceRange / 10 / 1000) * 1000);
 
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
@@ -133,10 +141,10 @@ const PriceEvolutionChart = ({ basePrice = 100000 }) => {
         },
         scales: {
           y: {
-            min: minPrice,
-            max: maxPrice,
+            min: chartMinPrice,
+            max: chartMaxPrice,
             ticks: {
-              stepSize: 5000,
+              stepSize: stepSize,
               callback: (value) =>
                 `R$ ${value.toLocaleString("pt-BR", {
                   minimumFractionDigits: 2,
@@ -166,7 +174,7 @@ const PriceEvolutionChart = ({ basePrice = 100000 }) => {
         chartInstanceRef.current = null;
       }
     };
-  }, [basePrice]);
+  }, [historicoPreco, valorAtual]);
 
   return (
     <div className="h-[500px] w-full">

@@ -1,4 +1,5 @@
 import { apiClient } from "./apiClient";
+import { formatCurrency } from "../utils/currencyUtils";
 
 /**
  * Fetch single plans from API
@@ -42,7 +43,7 @@ export const transformApiPlans = (apiPlans) => {
       return {
         id: index + 1, // Maintain same IDs as static data
         name: `${plan.name} Plan`,
-        price: `R$ ${plan.price.toFixed(2).replace(".", ",")}`,
+        price: formatCurrency(plan.price),
         desc: "Single consultation",
         features: plan.description
           ? plan.description.split("\n").filter((item) => item.trim() !== "")

@@ -3,6 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "../../context/WalletContext";
+import { formatCurrency } from "../../utils/currencyUtils";
 
 export const TopBar = () => {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ export const TopBar = () => {
           <div className="">
             <p className="text-white font-[400] text-md">Balance</p>
             <p className="text-white font-medium text-2xl whitespace-nowrap">
-              R${balance}
+              {formatCurrency(balance)}
             </p>
           </div>
           <button

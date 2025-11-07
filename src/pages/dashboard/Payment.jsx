@@ -8,6 +8,7 @@ import {
 } from "../../services/plansService";
 import { useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
+import { parseCurrency } from "../../utils/currencyUtils";
 
 const GoBackButton = ({ onClick, className }) => {
   return (
@@ -55,7 +56,7 @@ const Payment = () => {
   const calculateTotal = () => {
     const orderValue = cartItems.reduce(
       (acc, item) =>
-        acc + Number(item.price.replace("R$", "").replace(",", ".")),
+        acc + parseCurrency(item.price),
       0
     );
     return orderValue - couponDiscount;

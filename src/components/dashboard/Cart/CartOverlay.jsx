@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { FaSpinner } from "react-icons/fa6";
 import { BiArrowBack } from "react-icons/bi";
 import { BsCartX } from "react-icons/bs";
+import { formatCurrency, parseCurrency } from "../../../utils/currencyUtils";
 
 export default function CartOverlay() {
   const navigate = useNavigate();
@@ -29,15 +30,13 @@ export default function CartOverlay() {
 
   // Calculate order value
   const orderValue = cartItems.reduce(
-    (acc, item) =>
-      acc +
-      Number(item.price.replace("R$", "").replace(",", ".")) * item.quantity,
+    (acc, item) => acc + parseCurrency(item.price) * item.quantity,
     0
   );
 
   const handlePurchaseClick = () => {
     closeCart(); // Close the cart first
-    navigate("/new-consultation"); // Then navigate
+    navigate("/buy-consultation"); // Then navigate
   };
 
   const handleApplyCoupon = async () => {
@@ -203,7 +202,7 @@ export default function CartOverlay() {
                             Coupon: {appliedCoupon.code}
                           </span>
                           <span className="ml-2 text-green-600">
-                            -R$ {couponDiscount.toFixed(2)}
+                            {formatCurrency(-couponDiscount)}
                           </span>
                         </div>
                         <button
@@ -248,12 +247,9 @@ export default function CartOverlay() {
                       >
                         <p>{item.name}</p>
                         <p>
-                          R${" "}
-                          {(
-                            Number(
-                              item.price.replace("R$", "").replace(",", ".")
-                            ) * item.quantity
-                          ).toFixed(2)}
+                          {formatCurrency(
+                            parseCurrency(item.price) * item.quantity
+                          )}
                         </p>
                       </div>
                     ))}
@@ -265,16 +261,16 @@ export default function CartOverlay() {
                     {appliedCoupon && (
                       <>
                         <p className="text-sm text-gray-600 mb-1">
-                          Subtotal: R$ {orderValue.toFixed(2)}
+                          Subtotal: {formatCurrency(orderValue)}
                         </p>
                         <p className="text-sm text-green-600 mb-1">
-                          Discount: -R$ {couponDiscount.toFixed(2)}
+                          Discount: {formatCurrency(-couponDiscount)}
                         </p>
                       </>
                     )}
                     <p className="text-lg font-semibold text-[#194D9A] flex items-center justify-end gap-2">
                       Total:
-                      <span>R$ {calculateTotal().toFixed(2)}</span>
+                      <span>{formatCurrency(calculateTotal())}</span>
                     </p>
                   </div>
                   <div className="flex  gap-4 text-sm">
@@ -291,7 +287,7 @@ export default function CartOverlay() {
                       className="w-full bg-[#1AABFE] hover:bg-[#1AABFE]/80 text-white font-medium py-3 px-6 rounded-full transition-colors cursor-pointer mt-auto"
                       onClick={() => {
                         closeCart();
-                        navigate("/new-consultation");
+                        navigate("/buy-consultation");
                       }}
                     >
                       Add More Items

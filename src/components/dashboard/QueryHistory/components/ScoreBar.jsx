@@ -28,27 +28,100 @@ const ScoreBar = ({ score, label = "Score" }) => {
     switch (score) {
       case 1:
         return {
-          title: "1 – Aparentemente inteiro",
-          description:
-            "Veículos que não possuem indícios de avarias ou problemas mecânicos no ato do leilão. As principais origens desses veículos são: Veículos recuperados de financiamento em que o comprador não cumpriu com o pagamento junto ao banco. Veículos de frota de empresas privadas. Veículos penhorados pela justiça por penas, dívidas vencidas e não pagas, entre outros.",
+          title: "Aparentemente inteiro",
+          description: (
+            <div className="space-y-2">
+              <p>
+                Veículos que não possuem indícios de avarias ou problemas
+                mecânicos no ato do leilão. As principais origens desses
+                veículos são:
+              </p>
+              <ul>
+                <li>
+                  ⦁ Veículos recuperados de financiamento em que o comprador não
+                  cumpriu com o pagamento junto ao banco.
+                </li>
+                <li>⦁ Veículos de frota de empresas privadas.</li>
+                <li>
+                  ⦁ Veículos penhorados pela justiça por penas, dívidas vencidas
+                  e não pagas, entre outros.
+                </li>
+              </ul>
+            </div>
+          ),
         };
       case 2:
         return {
-          title: "2 – Pequenos danos",
-          description:
-            "Veículos recuperados de financiamento em que o comprador não cumpriu com o pagamento junto ao banco. Veículos de frota de empresas privadas. Veículos penhorados pela justiça por penas, dívidas vencidas e não pagas, entre outros. Veículos oriundos de seguradoras.",
+          title: "Pequenos danos",
+          description: (
+            <div className="space-y-2">
+              <ul>
+                <li>
+                  ⦁ Veículos recuperados de financiamento em que o comprador não
+                  cumpriu com o pagamento junto ao banco.
+                </li>
+                <li>⦁ Veículos de frota de empresas privadas.</li>
+                <li>
+                  ⦁ Veículos penhorados pela justiça por penas, dívidas vencidas
+                  e não pagas, entre outros.
+                </li>
+                <li>⦁ Veículos oriundos de seguradoras.</li>
+              </ul>
+            </div>
+          ),
         };
       case 3:
         return {
-          title: "3 – Médios danos",
-          description:
-            "Veículos com indícios de danos médios como: grandes amassados e peças quebradas, além de itens mecânicos com problemas de funcionamento no ato do leilão. As principais origens desses veículos são: Veículos que sofreram uma batida ou tiveram algum problema mecânico ocasionado, por exemplo, por uma enchente. Veículos recuperados de Roubo e Furto com avarias médias. Veículos oriundos de empresas ou órgãos públicos com avarias ou mau funcionamento. Veículos oriundos de seguradoras.",
+          title: "Médios danos",
+          description: (
+            <div className="space-y-2">
+              <p>
+                Veículos com indícios de danos médios como: grandes amassados e
+                peças quebradas, além de itens mecânicos com problemas de
+                funcionamento no ato do leilão. As principais origens desses
+                veículos são:
+              </p>
+              <ul>
+                <li>
+                  ⦁ Veículos que sofreram uma batida ou tiveram algum problema
+                  mecânico ocasionado, por exemplo, por uma enchente.
+                </li>
+                <li>
+                  ⦁ Veículos recuperados de Roubo e Furto com avarias médias.
+                </li>
+                <li>
+                  ⦁ Veículos oriundos de empresas ou órgãos públicos com avarias
+                  ou mau funcionamento. Veículos oriundos de seguradoras.
+                </li>
+              </ul>
+            </div>
+          ),
         };
       case 4:
         return {
-          title: "4 – Grandes danos",
-          description:
-            "Veículos com grandes avarias e problemas mecânicos significativos no ato do leilão. As principais origens desses veículos são: Veículos que sofreram uma batida onde o valor para conserto do veículo foi maior que 75% do seu valor de tabela. Veículos recuperados de Roubo e Furto com grandes avarias. Veículos oriundos de empresas ou órgãos públicos com grandes avarias ou sem funcionamento.",
+          title: "Grandes danos",
+          description: (
+            <div className="space-y-2">
+              <p>
+                Veículos com grandes avarias e problemas mecânicos
+                significativos no ato do leilão. As principais origens desses
+                veículos são:
+              </p>
+              <ul>
+                <li>
+                  ⦁ Veículos que sofreram uma batida onde o valor para conserto
+                  do veículo foi maior que 75% do seu valor de tabela.
+                </li>
+                <li>
+                  ⦁ Veículos recuperados de Roubo e Furto com grandes avarias.
+                </li>
+                <li>
+                  ⦁ Veículos oriundos de empresas ou órgãos públicos com grandes
+                  avarias ou sem funcionamento.
+                </li>
+              </ul>
+            </div>
+          ),
         };
       default:
         return {
@@ -61,9 +134,9 @@ const ScoreBar = ({ score, label = "Score" }) => {
   const scoreInfo = getScoreDescription(scoreValue);
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 rounded-xl h-[130px]">
+    <div className="flex  gap-6 rounded-xl min-h-[130px]">
       {/* Score Number and Bar */}
-      <div className=" h-full flex items-center justify-center bg-white border-2 border-[#1AABFE]/80 rounded-2xl px-8 py-1 w-fit">
+      <div className="  flex items-center justify-center bg-white border-2 border-[#1AABFE]/80 rounded-2xl px-8 py-1 w-fit ">
         {/* Left: Score number */}
         <div className="text-[6rem] font-extrabold text-orange-500 leading-none mr-4">
           {clampedScore}
@@ -120,9 +193,10 @@ const ScoreBar = ({ score, label = "Score" }) => {
 
       {/* Score Description */}
       <div className="flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
-        <div className="space-y-2">
-          <p className="text-sm font-semibold text-[#194D9A]">
-            Score Pontuação: {scoreInfo.title}
+        <div className="space-y-2 text-[#1AABFE]">
+          <p className="text-sm font-semibold ">
+            Score Pontuação:{" "}
+            <span className="text-orange-500">{scoreInfo.title}</span>
           </p>
           <p className="text-sm text-gray-800">{scoreInfo.description}</p>
         </div>
