@@ -19,7 +19,7 @@ export default function AboutSectionTwo() {
                     marginBottom: "48px"
                 }}
             >
-                Our Mission
+                Nossa missão
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-12 gap-8 items-start w-full px-8 lg:px-20">
@@ -90,10 +90,10 @@ export default function AboutSectionTwo() {
                         lineHeight: "24px",
                         marginTop: "16px"
                     }}>
-                        With just a license plate number, users can instantly generate a complete report with reliable information about the vehicle's history, risks, debts, auction participation, and even its market value estimate.
+                        Com apenas a placa do veículo, os usuários podem gerar instantaneamente um relatório completo com informações confiáveis ​​sobre o histórico, riscos, dívidas, participação em leilões e até mesmo uma estimativa do valor de mercado do carro.
                         <br />
                         <br />
-                        Just enter the license plate and get a full, reliable report — uncover the vehicle's history, risks, debts, auctions, and real market value.
+                        Basta inserir a placa e obter um relatório completo e confiável, descubra o histórico, os riscos, as dívidas, os leilões e o valor real de mercado do veículo.
                     </p>
 
                     <img 

@@ -181,10 +181,10 @@ export default function CartOverlay() {
                 </div>
 
                 <h3 className="text-[1.4rem] font-medium text-gray-800 mb-3">
-                  Your Cart is Empty
+                  Your Carrinho is Empty
                 </h3>
                 <p className="text-xs font-medium text-gray-500 text-center mb-8 leading-relaxed">
-                  Add items to your cart to get started.
+                  Add items to your Carrinho to get started.
                 </p>
               </div>
             )}
@@ -216,7 +216,7 @@ export default function CartOverlay() {
                       <>
                         <input
                           type="text"
-                          placeholder="Enter Coupon Code"
+                          placeholder="Digite o código do Cupom"
                           value={couponCode}
                           onChange={(e) => setCouponCode(e.target.value)}
                           className="w-full border border-[#194D9A] rounded-md p-2 text-sm placeholder-[#9F9F9F] font-[400] transition-colors duration-200 ease-in-out focus:outline-none focus:ring-0 focus:shadow-none bg-white"
@@ -232,14 +232,14 @@ export default function CartOverlay() {
                               <FaSpinner />
                             </span>
                           ) : (
-                            "Apply"
+                            "Aplicar"
                           )}
                         </button>
                       </>
                     )}
                   </div>
                   <div>
-                    <p className="text-md font-medium mb-1">Order Summary</p>
+                    <p className="text-md font-medium mb-1">Resumo da compra</p>
                     {cartItems.map((item) => (
                       <div
                         key={item.id}
@@ -269,7 +269,7 @@ export default function CartOverlay() {
                       </>
                     )}
                     <p className="text-lg font-semibold text-[#194D9A] flex items-center justify-end gap-2">
-                      Total:
+                      total:
                       <span>{formatCurrency(calculateTotal())}</span>
                     </p>
                   </div>
@@ -281,7 +281,7 @@ export default function CartOverlay() {
                         navigate("/payment");
                       }}
                     >
-                      Go to Payment
+                      Ir para pagamento
                     </button>
                     <button
                       className="w-full bg-[#1AABFE] hover:bg-[#1AABFE]/80 text-white font-medium py-3 px-6 rounded-full transition-colors cursor-pointer mt-auto"
@@ -290,7 +290,7 @@ export default function CartOverlay() {
                         navigate("/buy-consultation");
                       }}
                     >
-                      Add More Items
+                      Adicionar mais itens
                     </button>
                   </div>
                 </div>

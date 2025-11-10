@@ -311,7 +311,7 @@ const Payment = () => {
               ? "Processing..."
               : isCheckingPayment
               ? "Waiting for payment confirmation..."
-              : "Choose Your payment method"}
+              : "Escolha a forma de pagamento"}
           </p>
 
           <div

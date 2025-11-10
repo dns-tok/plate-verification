@@ -92,8 +92,7 @@ export default function AboutSectionThree() {
                 {/* Left side - Header text */}
                 <div className="lg:w-1/3 text-white flex items-center bg-[rgba(255,255,255,0.1)] p-6 sm:p-8 lg:p-10">
                   <h2 className="text-lg sm:text-xl lg:text-2xl font-normal leading-relaxed">
-                    Any question or remarks? Just write us a message!
-                  </h2>
+Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!                  </h2>
                 </div>
 
                 {/* Right side - Form fields */}

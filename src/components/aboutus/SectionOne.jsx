@@ -41,10 +41,9 @@ export default function AboutSectionOne() {
                         fontWeight: 400,
                         lineHeight: "26px" /* 108.333% */
                     }}>
-                        Placa Verificada was created with a simple and essential purpose: to protect those who buy or sell pre-owned vehicles.
+A Placa Verificada foi criada com um propósito simples e essencial: proteger quem compra ou vende veículos usados.                        <br/>
                         <br/>
-                        <br/>
-                        We know that behind the dream of owning a car, many Brazilians end up facing unpleasant surprises — vehicles with outstanding debts, hidden accidents, auction history, tampered data, or legal issues that only appear after the purchase                </p>
+Sabemos que por trás do sonho de ter um carro, muitos brasileiros acabam se deparando com surpresas desagradáveis ​​, veículos com dívidas pendentes, acidentes ocultos, histórico de leilão, dados adulterados ou problemas legais que só aparecem depois da compra                               </p>
                 </div>
             </div>
         </>
