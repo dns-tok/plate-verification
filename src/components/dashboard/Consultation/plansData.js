@@ -1,21 +1,21 @@
 const singlePlans = [
   {
     id: 1,
-    name: "Premium Plan",
+    name: "Relatório Premium",
     price: "R$ 58,00",
-    desc: "Single consultation",
+    desc: "Consulta única",
     features: [
       "Everything from the previous plan",
       "Renajud",
       "Renainf",
       "Query history",
-      "Rental company registration",
+      "Rental Empresa registration",
       "Complete Technical Sheet and much more",
     ],
   },
   {
     id: 2,
-    name: "Ultra Plan",
+    name: "Relatório Ultra",
     price: "R$ 44,90",
     desc: "Complete consultation",
     features: [
@@ -36,7 +36,7 @@ const singlePlans = [
       "Everything from the previous plan",
       "State restrictions",
       "National restrictions",
-      "Debts and Fines",
+      "Débitos e Multas",
       "Fipe Table",
       "Chassis Decoder",
     ],
@@ -48,7 +48,7 @@ const singlePlans = [
     desc: "Unlimited consultation",
     features: [
       "Vehicle Registration Data",
-      "KM History",
+      "*Histórico de KM",
       "Market price",
       "Loss Index",
     ],

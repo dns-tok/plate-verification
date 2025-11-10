@@ -5,31 +5,31 @@ import { smartScrollToSection } from "../../utils/scrollUtils";
 
 const navLinks = [
   {
-    name: "Plans",
-    href: "#plans",
+    name: "Plano",
+    href: "#plano",
   },
   {
-    name: "Advantages",
-    href: "#advantages",
+    name: "Vantagens",
+    href: "#vantagens",
   },
   {
-    name: "How it works",
-    href: "/how-it-works",
+    name: "Como Funciona",
+    href: "/como-funciona",
   },
   {
     name: "Contact",
     href: "#contact",
   },
   {
-    name: "Questions",
-    href: "#questions",
+    name: "Dúvidas",
+    href: "#dúvidas",
   },
   {
     name: "Blog",
     href: "/blogs",
   },
   {
-    name: "About Us",
+    name: "Sobre nós",
     href: "/about-us",
   },
 ];

@@ -150,7 +150,7 @@ const PrivacyPolicy = () => {
                           Contact and feedback
                         </td>
                         <td className="border border-gray-300 px-4 py-2">
-                          Name, email, phone number and consultation rating
+                          Name, email, Telefone and consultation rating
                           (grade from 1 to 10)
                         </td>
                       </tr>

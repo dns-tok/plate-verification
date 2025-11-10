@@ -46,7 +46,7 @@ const MultiConsultant = ({
               : "bg-white text-black hover:bg-[#1AABFE] hover:text-white transition-all duration-500"
           }`}
         >
-          Choose plan
+          Comprar Relatório
         </button>
       </div>
     </div>

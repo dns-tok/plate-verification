@@ -222,11 +222,10 @@ export const SideBar = () => {
           {/* Copyright */}
           <div className="text-center flex justify-between ps-4 mt-1">
             <div className="text-white text-[0.35rem] opacity-70">
-              Verified Plate. All rights reserved.
+              Placa verificada. Todos os direitos reservados.
             </div>
             <div className="text-white text-[0.35rem] opacity-70 ">
-              Security first - protecting your dream
-            </div>
+Segurança em primeiro lugar – protegendo o seu sonho.            </div>
           </div>
         </div>
       </div>

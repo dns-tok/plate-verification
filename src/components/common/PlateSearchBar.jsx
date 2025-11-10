@@ -161,7 +161,7 @@ const PlateSearchBar = ({
     >
       <input
         type="text"
-        placeholder={"License Plate..."}
+        placeholder={"Digite a placa…"}
         className={` resize-none  outline-none w-full  text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-0 focus:shadow-none bg-white ${
           planCard
             ? "h-8 border border-gray-300 rounded-full text-sm px-3 text-center focus:border-[#1AABFE]"
@@ -203,7 +203,7 @@ const PlateSearchBar = ({
           onClick={handleSearch}
           disabled={isSearchingPlate || !licensePlate.trim()}
         >
-          {isSearchingPlate ? "Searching..." : "Consult Now"}
+          {isSearchingPlate ? "Searching..." : "Consultar agora"}
         </button>
       )}
       {showSearchPlatePopup && (

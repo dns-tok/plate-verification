@@ -41,8 +41,8 @@ const Payment = () => {
   // Map plan names to API codes
   const getPlanCode = (planName) => {
     const codeMap = {
-      "Premium Plan": "premium",
-      "Ultra Plan": "ultra",
+      "Relatório Premium": "premium",
+      "Relatório Ultra": "ultra",
       "Plus Plan": "plus",
       "Light Plan": "light",
       "Always Present": "always_present",
@@ -442,7 +442,7 @@ const Payment = () => {
                   }}
                   className="bg-[#194D9A] text-white px-6 py-2 rounded hover:bg-[#1AABFE] transition-all"
                 >
-                  Go Back to Plans
+                  Go Back to Plano
                 </button>
               </div>
             )}

@@ -12,9 +12,9 @@ const HeroSection = () => {
       {/* Left Content */}
       <div className="w-full flex flex-col z-10 text-center md:text-start">
         <h1 className="text-white text-[2rem] md:text-[3.5rem] font-bold md:pb-[3rem]">
-          Before purchasing, consult.
+          Antes de comprar um carro semi-novo, consulte.
           <br />
-          <span className="text-[#1AABFE]">Protect your dream</span>
+          <span className="text-[#1AABFE]">Proteja o seu sonho.</span>
         </h1>
         <div className="md:hidden w-full  h-[60%]  flex items-end justify-center lg:justify-end z-0 p-6">
           <img
@@ -30,8 +30,7 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className="text-white text-[1rem] md:text-[1.2rem] pt-4 md:pt-[1rem] leading-relaxed">
-            Consult everything you need, ultimately want buy a car and not one
-            story to tell, report complete
+           Consulte tudo o que você precisa de um veículo semi-novo, afinal, o que você quer é comprar um carro e não ter uma história para contar. Temos o relatório mais completo.
           </p>
         </div>
 

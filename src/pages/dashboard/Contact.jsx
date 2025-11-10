@@ -40,12 +40,12 @@ const ContactPage = () => {
     <MainContent showMenu={false} bgImage="/assets/privacy.svg">
       <div className="space-y-4">
         <div className="flex flex-col gap-1 text-center justify-center items-center">
-          <p className="text-2xl font-semibold">Contact Us</p>
+          <p className="text-2xl font-semibold">Fale conosco</p>
           <p className="text-[0.8rem] font-[400] max-w-[85%]">
-            Our team is available to answer your questions and offer the best
+            Our team is available to answer your dúvidas and offer the best
             possible service.Before we continue, we need some basic information
             so we can get back to you quickly.If you prefer another channel, you
-            can also contact us through the options below:
+            can also Fale conosco through the options below:
           </p>
         </div>
         <div className="flex gap-4 justify-between items-center rounded-xl overflow-hidden">

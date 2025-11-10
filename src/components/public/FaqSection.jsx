@@ -14,62 +14,61 @@ const FaqSection = () => {
   const faqs = [
     {
       id: 1,
-      question: "What is Verified License Plate?",
+      question: "O que é a placa verificada?",
       answer:
-        "It's an online service that checks a vehicle's history using its license plate, so you can know before you buy.",
+        "É um serviço online que verifica o histórico completo de um veículo usando somente a placa, desta manteira será possível saber todos os detalhes antes de efetuar a compra, ou, em caso de venda, será um grande atributo apresentando-o para um futuro comprador que o histórico do carro está totalmente isento de qualquer problema.",
     },
     {
       id: 2,
-      question: "Why should I check the vehicle before purchasing?",
+      question: "Por que devo verificar o veículo antes de comprá-lo?",
       answer:
-        "Because you can find out if there are restrictions, claims, auctions, blocks, or debits, and avoid surprises. And if the report indicates a risk or irregularity, you have a stronger argument to request a discount or cancel the purchase.",
+        "Porque você pode descobrir se existem restrições, reclamações, leilões, bloqueios ou débitos, evitando surpresas. E se o relatório indicar um risco ou irregularidade, você terá um argumento mais forte para solicitar um desconto ou cancelar a compra.",
     },
     {
       id: 3,
-      question: "What does the report show?",
+      question: "O que o relatório mostra ?",
       answer:
-        "Depends on the plan: may include basic data, auction history, debts, owner, market value, and more.",
+        "Depende do plano: pode incluir dados básicos, histórico de leilões, dívidas, proprietário, valor de mercado e muito mais.",
     },
     {
       id: 4,
       question:
-        "What plans are available and what is the difference between them?",
+        "Quais relatórios estão disponíveis e qual a diferença entre eles?",
       answer: (
         <span>
-          Plans vary by price and depth of consultation: Light, Plus, Ultra,
-          Premium.{" "}
+          Os relatórios variam de acordo com o preço e a abrangência da consultoria: Light, Plus, Ultra e Premium.{" "}
           <button
             onClick={scrollToPlans}
             className="text-[#1AABFE] underline hover:text-[#1590d4] transition-colors duration-300 font-semibold cursor-pointer"
           >
-            Click here to see the plans
+            Clique aqui para ver os relatórios
           </button>
         </span>
       ),
     },
     {
       id: 5,
-      question: "How long does it take to receive the report after purchase?",
-      answer: "The report is sent immediately after payment confirmation.",
+      question: "Quanto tempo leva para receber o relatório após a compra?",
+      answer: "O relatório é enviado imediatamente após a confirmação do pagamento.",
     },
     {
       id: 6,
       question:
-        "Do I need any information other than the license plate to make the query?",
+        "Preciso de alguma informação além da placa do veículo para fazer a consulta ?",
       answer:
-        "No. Simply enter the vehicle's license plate number to perform the query.",
+        "Não. Basta inserir a placa do veículo para realizar a consulta.",
     },
     {
       id: 7,
-      question: "Is the data reliable? Where does it come from?",
+      question: "Os dados são confiáveis? De onde vêm ?",
       answer:
-        "Yes. The data is extracted from official databases, competent bodies, and certified suppliers.",
+        "Sim. Os dados são extraídos de bases de dados oficiais, órgãos competentes e fornecedores certificados.",
     },
     {
       id: 8,
-      question: "How does support work if I have questions or problems?",
+      question: "Como funciona o suporte se eu tiver dúvidas ou problemas?",
       answer:
-        "You can contact us via WhatsApp or email. Our team is ready to help.",
+        "Você pode entrar em contato conosco pelo WhatsApp ou por e-mail. Nossa equipe está pronta para ajudar.",
     },
   ];
 
@@ -81,7 +80,7 @@ const FaqSection = () => {
     <section className="text-center commonPadding bg-gradient-to-tr from-[#194D9A] via-white to-[#ffffff] ">
       {/* Title */}
       <h2 className="text-[#194D9A] text-[1.8rem] md:text-[2rem] lg:text-[2.8rem] font-bold mb-3 md:mb-6 lg:mb-10">
-        Frequently Asked Questions
+        Perguntas frequentes
       </h2>
 
       <div className="flex flex-col md:flex-row justify-between gap-6 lg:gap-10 xl:gap-12  mx-auto ">

@@ -63,7 +63,7 @@ const PlanCard = ({
               onClick={onClick}
               className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
             >
-              Choose Plan
+              Comprar Relatório
             </button>
           )}
         </div>
@@ -107,7 +107,7 @@ const PlanCard = ({
           {isMultiple ? plan.planNumber : plan.price}
         </p>
         <p className="text-white text-[0.85rem] md:text-[0.5rem] ">
-          {isMultiple ? plan.priceDesc : "Single Consultation"}
+          {isMultiple ? plan.priceDesc : "Consulta única"}
         </p>
       </div>
       {isMultiple ? (
@@ -144,7 +144,7 @@ const PlanCard = ({
             onClick={onClick}
             className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] text-black font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md cursor-pointer`}
           >
-            Choose Plan
+            Comprar Relatório
           </button>
         )}
       </div>

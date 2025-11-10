@@ -25,8 +25,8 @@ const History = () => {
       setPagination(response.pagination);
       setTotalItems(response.pagination?.total_count || 0);
     } catch (error) {
-      console.error("Failed to load search history:", error);
-      toast.error("Failed to load search history. Please try again.");
+      console.error("Failed to load Fotos do veículo:", error);
+      toast.error("Failed to load Fotos do veículo. Please try again.");
       setSearches([]);
       setTotalItems(0);
     } finally {
@@ -78,7 +78,7 @@ const History = () => {
           </div>
         ) : searches.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No search history found.
+            No Fotos do veículo found.
           </div>
         ) : (
           <div className="overflow-x-auto">

@@ -4,8 +4,8 @@ import Consultation from "../../components/dashboard/Consultation/Consultation";
 
 const DashboardPage = () => {
   const menuItems = [
-    { label: "Single Consultation", value: "single" },
-    { label: "Multiple Consultation", value: "multiple" },
+    { label: "Consulta única", value: "single" },
+    { label: "Multiplas consultas / Pacotes", value: "multiple" },
   ];
 
   const [activeMenu, setActiveMenu] = useState(menuItems[0]?.value);
