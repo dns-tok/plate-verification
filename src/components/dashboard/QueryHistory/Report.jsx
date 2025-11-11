@@ -62,7 +62,7 @@ const Report = ({ data, onClose, loading }) => {
 
   // Helper function to render field in two-column layout
   // NOTE: This is kept for backward compatibility with sections not yet converted to use ReportField component
-  const renderField = (label, value, hasWarning = false) => {
+  const renderField = (label, value, hasWarning = false, textColor = null) => {
     return (
       <div className="flex  gap-1">
         <div className="flex items-start gap-1 text-[#194D9A]">
@@ -71,7 +71,11 @@ const Report = ({ data, onClose, loading }) => {
           )}
           <span className="text-[0.875rem] font-semibold">{label}:</span>
         </div>
-        <span className={`text-[0.8rem] text-[#194D9A]`}>
+        <span
+          className={`text-[0.8rem] ${
+            hasWarning ? "text-red-600" : "text-[#194D9A]"
+          }`}
+        >
           {value || "Nada Consta"}
         </span>
       </div>
@@ -157,8 +161,7 @@ const Report = ({ data, onClose, loading }) => {
     if (type === "percentage") {
       percentage = typeof value === "string" ? parseInt(value) : value || 0;
     } else if (type === "text") {
-      // For text values like "Alta", "Baixa"
-      percentage = value === "Alta" || value === "ALTA" ? 75 : 25;
+      percentage = parseInt(value);
     }
 
     return (
@@ -173,15 +176,20 @@ const Report = ({ data, onClose, loading }) => {
   const renderAiSummary = () => {
     // Resumo IA: em desenvolvimento
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 ">
         <h2 className="text-xl font-semibold text-[#194D9A]">Resumo IA</h2>
-        <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white h-[180px] relative">
-          <p className="text-gray-500">em desenvolvimento</p>
-          <img
-            src="/aiLogo.png"
-            alt=""
-            className="size-9 object-contain aspect-square absolute bottom-2 right-1"
-          />
+        <div className="flex  ">
+          <img src="/plaquinha.png" alt="" className="w-[25%] h-full" />
+          <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white max-h-[350px] relative  w-full pb-10 before:content-[''] before:absolute before:left-[-1px] before:top-[20%] before:-translate-x-full before:w-0 before:h-0 before:border-t-[30px] before:border-t-transparent before:border-b-[30px] before:border-b-transparent before:border-r-[30px] before:border-r-[#1AABFE]/80 after:content-[''] after:absolute after:left-0 after:top-[20.2%] after:-translate-x-full after:w-0 after:h-0 after:border-t-[29px] after:border-t-transparent after:border-b-[29px] after:border-b-transparent after:border-r-[29px] after:border-r-white">
+            <p className="text-gray-500 overflow-auto h-full ">
+              {reportData.ia || "em desenvolvimento"}
+            </p>
+            <img
+              src="/aiLogo.png"
+              alt=""
+              className="size-9 object-contain aspect-square absolute bottom-2 right-2  ms-auto my-auto z-10 bg-white"
+            />
+          </div>
         </div>
       </div>
     );
@@ -440,49 +448,84 @@ const Report = ({ data, onClose, loading }) => {
     ? currentYear - parseInt(reportData.anoFabricacao)
     : "N/A";
 
+  // Helper function to check if value should be "Sim" or "Não"
+  // Returns "Não" if value is: "não" (case-insensitive), null, [], "n/a", empty string, or false
+  // Otherwise returns "Sim"
+  const checkSimNao = (value) => {
+    // Check for null or undefined
+    if (value === null || value === undefined) {
+      return "Não";
+    }
+    // Check for false
+    if (value === false) {
+      return "Não";
+    }
+    // Check for empty array
+    if (Array.isArray(value)) {
+      return value.length > 0 ? "Sim" : "Não";
+    }
+    // Check for empty string
+    if (typeof value === "string") {
+      const trimmed = value.trim().toLowerCase();
+      if (
+        trimmed === "" ||
+        trimmed === "n/a" ||
+        trimmed === "nao" ||
+        trimmed === "não" ||
+        trimmed === "null" ||
+        trimmed === "nada consta" ||
+        trimmed.includes("nao existe") ||
+        trimmed === "empty"
+      ) {
+        return "Não";
+      }
+    }
+    // Check for object (but not arrays)
+    if (typeof value === "object" && !Array.isArray(value)) {
+      // If object has no keys, it's effectively empty
+      if (Object.keys(value).length === 0) {
+        return "Não";
+      }
+    }
+    // Otherwise, it's "Sim"
+    return "Sim";
+  };
+
   // Block 2 mapping - Check for issues in summary
-  // Leilão: response.body.data.leilao
-  const hasLeilao = reportData.leilao ? "Sim" : "Não";
+  // Leilão: response.body.data.leilao.registros (empty or not empty)
+  const hasLeilao = checkSimNao(reportData.leilao?.registros);
   // Sinistro: response.body.data.indicioSinistro
-  const hasSinistro = reportData.indicioSinistro ? "Sim" : "Não";
+  const hasSinistro = checkSimNao(reportData.indicioSinistro);
   // Bancos, Financeiras ou seguradoras: response.body.data.baseEstadual.restricaoFinanceira
-  const hasBancosFinanceiras =
-    baseEstadual.restricaoFinanceira &&
-    baseEstadual.restricaoFinanceira !== null &&
-    baseEstadual.restricaoFinanceira !== "NADA CONSTA"
-      ? "Sim"
-      : "Não";
+  const hasBancosFinanceiras = checkSimNao(baseEstadual.restricaoFinanceira);
   // Restrições nacionais: response.body.data.restricoes
-  const hasRestricoesNacionais = reportData.restricoes ? "Sim" : "Não";
-  // Restrições estaduais: response.body.data.baseEstadual
-  const hasRestricoesEstaduais =
-    baseEstadual && Object.keys(baseEstadual).length > 0 ? "Sim" : "Não";
+  const hasRestricoesNacionais = checkSimNao(reportData.restricoes);
+  // Restrições estaduais: response.body.data.baseEstadual.existeDebitoMulta
+  const hasRestricoesEstaduais = checkSimNao(baseEstadual.existeDebitoMulta);
   // motor alterado: response.body.data.baseEstadual.dataAlteracaoMotor
-  const hasMotorAlterado = baseEstadual.dataAlteracaoMotor ? "Sim" : "Não";
+  const hasMotorAlterado = checkSimNao(baseEstadual.dataAlteracaoMotor);
   // Chassi remarcado: response.body.data.baseEstadual.tipoMarcacaoChassi
+  // Special case: should be "Não" if "NORMAL" or null/empty, otherwise "Sim"
   const hasChassiRemarcado =
     baseEstadual.tipoMarcacaoChassi &&
     baseEstadual.tipoMarcacaoChassi !== "NORMAL" &&
-    baseEstadual.tipoMarcacaoChassi !== null
+    checkSimNao(baseEstadual.tipoMarcacaoChassi) === "Sim"
       ? "Sim"
       : "Não";
-  // Recall: response.body.data.recall
-  const hasRecall = reportData.recall ? "Sim" : "Não";
+  // Recall: response.body.data.recall.recallsPendente
+  const hasRecall = checkSimNao(reportData.recall?.recallsPendente);
   // Alerta de Gravame: response.body.data.gravame
-  const hasAlertaGravame = reportData.gravame ? "Sim" : "Não";
-  // Historico de Roubo: response.body.data.rouboFurto
-  const hasHistoricoRoubo = reportData.rouboFurto ? "Sim" : "Não";
+  const hasAlertaGravame = checkSimNao(reportData.gravame);
+  // Historico de Roubo: response.body.data.rouboFurto.constaOcorrenciaAtiva
+  const hasHistoricoRoubo = checkSimNao(
+    reportData.rouboFurto?.constaOcorrenciaAtiva
+  );
   // CSV: response.body.data.csv
-  const hasCSV = reportData.csv ? "Sim" : "Não";
-  // RENAJUD: response.body.data.baseEstadual.restricaoRenajud
-  const hasRENAJUD =
-    baseEstadual.restricaoRenajud &&
-    baseEstadual.restricaoRenajud !== "NADA CONSTA" &&
-    baseEstadual.restricaoRenajud !== null
-      ? "Sim"
-      : "Não";
-  // Historico de multas RENAINF: response.body.data.multasRenainf
-  const hasMultasRENAINF = reportData.multasRenainf ? "Sim" : "Não";
+  const hasCSV = checkSimNao(reportData.csv);
+  // RENAJUD: response.body.data.baseNacional.indicadorRestricaoRenajud
+  const hasRENAJUD = checkSimNao(baseNacional.indicadorRestricaoRenajud);
+  // Historico de multas RENAINF: response.body.data.baseEstadual.debitoRenainf
+  const hasMultasRENAINF = checkSimNao(baseEstadual.debitoRenainf);
 
   const hasIssues =
     hasLeilao === "Sim" ||
@@ -507,13 +550,14 @@ const Report = ({ data, onClose, loading }) => {
   const leilaoScoreAceitacao = leilaoScore.aceitacao || "N/A";
   const nivelRisco =
     leilaoScoreAceitacao !== "N/A" ? parseInt(leilaoScoreAceitacao) || 0 : 0;
-  // Exigência de Vistoria Especial: response.body.data.leilao.score.exigenciaVistoriaEspecial
-  const leilaoScoreExigenciaVistoria =
-    leilaoScore.exigenciaVistoriaEspecial || "N/A";
+  // Exigência de Vistoria Especial (Barra exigencia de vistoria): response.body.data.leilao.score.percentualSobreRef
+  const leilaoScoreExigenciaVistoria = leilaoScore.percentualSobreRef || null;
+  // Convert to low/high: if value exists and is a number, use it; otherwise check if it's a string "low"/"high"
   const exigenciaVistoriaEspecial =
+    leilaoScoreExigenciaVistoria !== null &&
     leilaoScoreExigenciaVistoria !== "N/A"
       ? parseInt(leilaoScoreExigenciaVistoria) || 0
-      : 0;
+      : null;
   // Percentual sobre Tabela FIPE: response.body.data.leilao.score.percentualSobreRef
   const leilaoScorePercentualRef = leilaoScore.percentualSobreRef || "N/A";
   const percentualSobreRef =
@@ -773,16 +817,13 @@ const Report = ({ data, onClose, loading }) => {
                     <p>
                       <strong>Id da Consulta: </strong> {queryId}
                     </p>
-                    {/* <p>
-                      <strong>Status da Consulta: </strong> {status}
-                    </p> */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div className="space-y-6 max-w-[88%] mx-auto">
-            {/* {renderAiSummary()} */}
+            {reportData.ia && renderAiSummary()}
             {/* Resumo da consulta - Block 2 mapping */}
             <div className="space-y-4">
               {renderSectionTitle("Resumo da consulta")}
@@ -847,12 +888,10 @@ const Report = ({ data, onClose, loading }) => {
                 {nivelRisco > 0 &&
                   renderGauge("Nível de risco geral", nivelRisco)}
                 {/* Exigência de Vistoria Especial: response.body.data.leilao.score.exigenciaVistoriaEspecial */}
-                {exigenciaVistoriaEspecial > 0 &&
+                {exigenciaVistoriaEspecial !== null &&
                   renderGauge(
                     "Exigência de Vistoria Especial",
-                    hasRestricoesNacionais || hasRestricoesEstaduais
-                      ? "Alta"
-                      : "Baixa",
+                    exigenciaVistoriaEspecial,
                     "text"
                   )}
 
@@ -864,7 +903,7 @@ const Report = ({ data, onClose, loading }) => {
                   )}
               </div>
               {!nivelRisco &&
-                !exigenciaVistoriaEspecial &&
+                exigenciaVistoriaEspecial === null &&
                 !percentualSobreRef && (
                   <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white w-full">
                     <p className="text-gray-800">
@@ -1039,7 +1078,6 @@ const Report = ({ data, onClose, loading }) => {
                 <ReportTableSection
                   headers={[
                     "Data Leilão",
-                    "Id Leilão",
                     "Lote",
                     "Placa",
                     "Chassi",
@@ -1051,8 +1089,6 @@ const Report = ({ data, onClose, loading }) => {
                   rows={reportData.leilao.registros.map((item) => [
                     // Data Leilão: response.body.data.leilao.registros.0.dataLeilao
                     formatDate(item.dataLeilao) || "N/A",
-                    // Id Leilão: response.body.data.leilao.registros.0.leiloeiro
-                    item.leiloeiro || "N/A",
                     // Lote: response.body.data.leilao.registros.0.lote
                     item.lote || "N/A",
                     // Placa: response.body.data.leilao.registros.placa
@@ -1162,27 +1198,45 @@ const Report = ({ data, onClose, loading }) => {
             <ReportSection title="Remarketing">
               <ReportTableSection
                 headers={[
-                  "Organizer",
-                  "Seller",
-                  "Date Event",
-                  "Vehicle Conditions",
-                  "Situation Chassi",
-                  "Conditions Engine",
-                  "Exchange Condition",
-                  "Mechanical Conditions",
-                  "Observations",
+                  "Organizador",
+                  "Vendedor",
+                  "Data evento",
+                  "Condições do veículo",
+                  "Situação chassi",
+                  "Condições motor",
+                  "Condições câmbio",
+                  "Condições mecânicas",
+                  "Observação",
                 ]}
                 rows={[
                   [
-                    "More active Intermediation of Assets LTDA 242346",
-                    "General Motors of the Brazil LTDA",
-                    "12/18/2025",
-                    "N/A",
-                    "N/A",
-                    "N/A",
-                    "N/A",
-                    "N/A",
-                    "N/A",
+                    // Organizador: response.body.data.remarketing.leilao.organizador
+                    reportData?.remarketing?.leilao?.organizador ||
+                      "Nada consta",
+                    // Vendedor: response.body.data.remarketing.leilao.vendedor
+                    reportData?.remarketing?.leilao?.vendedor || "Nada consta",
+                    // Data evento: response.body.data.remarketing.leilao.dataEvento
+                    reportData?.remarketing?.leilao?.dataEvento
+                      ? formatDate(reportData?.remarketing?.leilao?.dataEvento)
+                      : "Nada consta",
+                    // Condições do veículo: response.body.data.remarketing.leilao.condicoesVeiculo
+                    reportData?.remarketing?.leilao?.condicoesVeiculo ||
+                      "Nada consta",
+                    // Situação chassi: response.body.data.remarketing.leilao.situacaoChassi
+                    reportData?.remarketing?.leilao?.situacaoChassi ||
+                      "Nada consta",
+                    // Condições motor: response.body.data.remarketing.leilao.condicoesMotor
+                    reportData?.remarketing?.leilao?.condicoesMotor ||
+                      "Nada consta",
+                    // Condições câmbio: response.body.data.remarketing.leilao.condicoesCambio
+                    reportData?.remarketing?.leilao?.condicoesCambio ||
+                      "Nada consta",
+                    // Condições mecânicas: response.body.data.remarketing.leilao.condicoesMecanica
+                    reportData?.remarketing?.leilao?.condicoesMecanica ||
+                      "Nada consta",
+                    // Observação: response.body.data.remarketing.leilao.observacao
+                    reportData?.remarketing?.leilao?.observacao ||
+                      "Nada consta",
                   ],
                 ]}
               />
@@ -1291,20 +1345,18 @@ const Report = ({ data, onClose, loading }) => {
             <ReportSection title="Histórico de KMs">
               {reportData?.historicoKm && reportData.historicoKm.length > 0 ? (
                 <ReportTableSection
-                  headers={["Data", "Odômetro", "Fonte"]}
+                  headers={["Data", "Odômetro"]}
                   rows={reportData.historicoKm.map((item) => [
                     // Data: response.body.data.historicoKm.0.dataInclusao
                     formatDate(item.dataInclusao) || "N/A",
                     // Odômetro: response.body.data.historicoKm.0.km
                     item.km ? `${item.km} km` : "N/A",
-                    // Fonte: Vistoria (static or from API if available)
-                    "Vistoria",
                   ])}
                 />
               ) : (
                 <ReportTableSection
-                  headers={["Data", "Odômetro", "Fonte"]}
-                  rows={[["N/A", "N/A", "N/A"]]}
+                  headers={["Data", "Odômetro"]}
+                  rows={[["N/A", "N/A"]]}
                 />
               )}
             </ReportSection>
@@ -1759,48 +1811,106 @@ const Report = ({ data, onClose, loading }) => {
                   {renderTwoColumnSection(
                     <>
                       <div className="space-y-3">
-                        {renderField(
-                          "Comunicação de Venda",
-                          reportData?.restricoes?.comunicacaoVenda || "N/A"
-                        )}
-                        {/* Restrição Financeira: response.body.data.restricoes.restricaoFinanceira */}
+                        {/* Comunicação de Venda: response.body.data.baseNacional.indicadorComunicacaoVendas */}
+                        {/* Inverted logic: "Não" = blue (ok), "Sim" = red (not ok) */}
+                        {(() => {
+                          const value =
+                            reportData?.baseNacional
+                              ?.indicadorComunicacaoVendas || "Nada consta";
+                          const lowerValue = value?.toLowerCase() || "";
+                          const isNotOk =
+                            lowerValue === "sim" || lowerValue === "yes";
+                          return renderField(
+                            "Comunicação de Venda",
+                            value,
+                            isNotOk
+                          );
+                        })()}
+                        {/* Restrição Financeira: response.body.data.baseNacional.restricaoFinanciadora */}
                         {renderField(
                           "Restrição Financeira",
-                          reportData?.restricoes?.restricaoFinanceira || "N/A"
+                          reportData?.baseNacional?.restricaoFinanciadora ||
+                            "Nada consta",
+
+                          reportData?.baseNacional?.restricaoFinanciadora &&
+                            !reportData?.baseNacional?.restricaoFinanciadora
+                              .toLowerCase()
+                              .trim()
+                              .includes("nada ")
                         )}
-                        {/* Restrição 1: response.body.data.restricoes.restricao1 */}
+                        {/* Restrição 1: response.body.data.baseNacional.restricao1 */}
                         {renderField(
                           "Restrição 1",
-                          reportData?.restricoes?.restricao1 || "Nada Consta"
+                          reportData?.baseNacional?.restricao1 || "Nada consta",
+                          reportData?.baseNacional?.restricao1 &&
+                            !reportData?.baseNacional?.restricao1
+                              .toLowerCase()
+                              .trim()
+                              .includes("nada")
                         )}
 
-                        {/* Restrição 3: response.body.data.restricoes.restricao3 */}
+                        {/* Restrição 3: response.body.data.baseNacional.restricao3 */}
                         {renderField(
                           "Restrição 3",
-                          reportData?.restricoes?.restricao3 || "Nada Consta"
+                          reportData?.baseNacional?.restricao3 || "Nada consta",
+                          reportData?.baseNacional?.restricao3 &&
+                            !reportData?.baseNacional?.restricao3
+                              .toLowerCase()
+                              .trim()
+                              .includes("nada ")
                         )}
                       </div>
 
                       <div className="space-y-3">
-                        {/* Indicação Restrição Renajud: response.body.data.restricoes.indicacaoRenajud */}
-                        {renderField(
-                          "Indicação Restrição Renajud",
-                          reportData?.restricoes?.indicacaoRenajud || "Não"
-                        )}
-                        {/* Ocorrência: response.body.data.restricoes.ocorrencia */}
+                        {/* Indicação Restrição Renajud: response.body.data.baseNacional.indicadorRestricaoRenajud */}
+                        {/* "Não" = blue (ok), "Sim" = red (not ok) */}
+                        {(() => {
+                          const value =
+                            reportData?.baseNacional
+                              ?.indicadorRestricaoRenajud || "Nada consta";
+                          const lowerValue = value?.toLowerCase() || "";
+                          const isNotOk = !lowerValue.includes("nao");
+                          return renderField(
+                            "Indicação Restrição Renajud",
+                            value,
+                            isNotOk
+                          );
+                        })()}
+                        {/* Ocorrência: response.body.data.baseNacional.ocorrencia */}
+                        {/* Red if different from "Veículo não indica ocorrência de Roubo/Furto" */}
                         {renderField(
                           "Ocorrência",
-                          reportData?.restricoes?.ocorrencia || "N/A"
+                          reportData?.baseNacional?.ocorrencia || "Nada consta",
+                          reportData?.baseNacional?.ocorrencia &&
+                            reportData?.baseNacional?.ocorrencia.toLowerCase() !==
+                              "veículo sem ocorrência de roubo/furto" &&
+                            !reportData?.baseNacional?.ocorrencia
+                              ?.toLowerCase()
+                              .includes("não") &&
+                            !reportData?.baseNacional?.ocorrencia
+                              ?.toLowerCase()
+                              .includes("nao")
                         )}
-                        {/* Restrição 2: response.body.data.restricoes.restricao2 */}
+
+                        {/* Restrição 2: response.body.data.baseNacional.restricao2 */}
                         {renderField(
                           "Restrição 2",
-                          reportData?.restricoes?.restricao2 || "Nada Consta"
+                          reportData?.baseNacional?.restricao2 || "Nada consta",
+                          reportData?.baseNacional?.restricao2 &&
+                            !reportData?.baseNacional?.restricao2
+                              .toLowerCase()
+                              .trim()
+                              .includes("nada")
                         )}
-                        {/* Restrição 4: response.body.data.restricoes.restricao4 */}
+                        {/* Restrição 4: response.body.data.baseNacional.restricao4 */}
                         {renderField(
                           "Restrição 4",
-                          reportData?.restricoes?.restricao4 || "Nada Consta"
+                          reportData?.baseNacional?.restricao4 || "Nada consta",
+                          reportData?.baseNacional?.restricao4 &&
+                            !reportData?.baseNacional?.restricao4
+                              .toLowerCase()
+                              .trim()
+                              .includes("nada")
                         )}
                       </div>
                     </>
@@ -1900,83 +2010,148 @@ const Report = ({ data, onClose, loading }) => {
                   )}
                 </div>
                 {/* Restrições Estaduais */}
-                {(baseEstadual.restricaoAdminisrativa ||
-                  baseEstadual.restricaoFinanceira ||
-                  baseEstadual.restricaoJudicial ||
-                  baseEstadual.restricaoTributaria) && (
-                  <div className="space-y-4">
-                    {renderSectionTitle("Restrições Estaduais")}
-                    {renderTwoColumnSection(
-                      <>
-                        <div className="space-y-3">
-                          {renderField(
-                            "Administrativa",
+                <div className="space-y-4">
+                  {renderSectionTitle("Restrições Estaduais")}
+                  {renderTwoColumnSection(
+                    <>
+                      <div className="space-y-3">
+                        {/* Administrativa: response.body.data.baseEstadual.restricaoAdminisrativa */}
+                        {renderField(
+                          "Administrativa",
+                          baseEstadual.restricaoAdminisrativa || "Nada consta",
+                          baseEstadual.restricaoAdminisrativa &&
                             baseEstadual.restricaoAdminisrativa
-                          )}
-                          {renderField(
-                            "Financeira",
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Financeira: response.body.data.baseEstadual.restricaoFinanceira */}
+                        {renderField(
+                          "Financeira",
+                          baseEstadual.restricaoFinanceira || "Nada consta",
+                          baseEstadual.restricaoFinanceira &&
                             baseEstadual.restricaoFinanceira
-                          )}
-                          {renderField(
-                            "Guincho",
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Guincho: response.body.data.baseEstadual.restricaoGuincho */}
+                        {renderField(
+                          "Guincho",
+                          baseEstadual.restricaoGuincho || "Nada consta",
+                          baseEstadual.restricaoGuincho &&
                             baseEstadual.restricaoGuincho
-                          )}
-                          {renderField(
-                            "Restrição 1",
-                            baseEstadual.outrasRestricoes1
-                          )}
-                          {renderField(
-                            "Restrição 2",
-                            baseEstadual.outrasRestricoes2
-                          )}
-                          {renderField(
-                            "Arrendamento",
-                            baseEstadual.restricaoArrendatario || "Nada Consta"
-                          )}
-                          {renderField(
-                            "Roubo",
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Restrição 1: response.body.data.baseEstadual.debitoRenainf */}
+                        {renderField(
+                          "Restrição 1",
+                          baseEstadual.debitoRenainf || "Nada consta",
+                          baseEstadual.debitoRenainf &&
+                            baseEstadual.debitoRenainf.toLowerCase().trim() !==
+                              "nada consta"
+                        )}
+                        {/* Restrição 2: response.body.data.baseEstadual.restricao2 */}
+                        {renderField(
+                          "Restrição 2",
+                          baseEstadual.restricao2 || "Nada consta",
+                          baseEstadual.restricao2 &&
+                            baseEstadual.restricao2.toLowerCase().trim() !==
+                              "nada consta"
+                        )}
+                        {/* Arrendamento: response.body.data.baseEstadual.restricaoArrendatario */}
+                        {renderField(
+                          "Arrendamento",
+                          baseEstadual.restricaoArrendatario || "Nada consta",
+                          baseEstadual.restricaoArrendatario &&
+                            baseEstadual.restricaoArrendatario
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Roubo: response.body.data.baseEstadual.restricaoRouboFurto */}
+                        {renderField(
+                          "Roubo",
+                          baseEstadual.restricaoRouboFurto || "Nada consta",
+                          baseEstadual.restricaoRouboFurto &&
                             baseEstadual.restricaoRouboFurto
-                          )}
-                          {renderField(
-                            "Observações",
-                            baseEstadual.observacoes || "Nada Consta"
-                          )}
-                        </div>
-                        <div className="space-y-3">
-                          {renderField(
-                            "Comunicação de Venda",
-                            baseEstadual.comunicacaoVenda
-                          )}
-                          {renderField(
-                            "Data Tributária",
-                            baseEstadual.dataLimiteRestricaoTributaria ||
-                              "Nada Consta"
-                          )}
-                          {renderField(
-                            "Judicial",
-                            baseEstadual.restricaoJudicial
-                          )}
-                          {renderField(
-                            "Restrição 3",
-                            baseEstadual.outrasRestricoes3
-                          )}
-                          {renderField(
-                            "Restrição 4",
-                            baseEstadual.outrasRestricoes4
-                          )}
-                          {renderField(
-                            "Renajud",
-                            baseEstadual.restricaoRenajud
-                          )}
-                          {renderField(
-                            "Tributária",
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Observações: response.body.data.baseEstadual.observacoes */}
+                        {renderField(
+                          "Observações",
+                          baseEstadual.observacoes || "Nada consta",
+                          baseEstadual.observacoes &&
+                            baseEstadual.observacoes.toLowerCase().trim() !==
+                              "nada consta"
+                        )}
+                      </div>
+                      <div className="space-y-3">
+                        {/* Comunicação de Venda: response.body.data.baseEstadual.comunicacaoVenda */}
+                        {renderField(
+                          "Comunicação de Venda",
+                          baseEstadual.comunicacaoVenda ||
+                            "Não consta comunicação de venda",
+                          baseEstadual.comunicacaoVenda &&
+                            baseEstadual.comunicacaoVenda !==
+                              "NAO CONSTA COMUNICACAO DE VENDAS"
+                        )}
+                        {/* Data Tributária: response.body.data.baseEstadual.restricaoTributaria */}
+                        {renderField(
+                          "Data Tributária",
+                          baseEstadual.restricaoTributaria || "Nada consta",
+                          baseEstadual.restricaoTributaria &&
                             baseEstadual.restricaoTributaria
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Judicial: response.body.data.baseEstadual.restricaoJudicial */}
+                        {renderField(
+                          "Judicial",
+                          baseEstadual.restricaoJudicial || "Nada consta",
+                          baseEstadual.restricaoJudicial &&
+                            baseEstadual.restricaoJudicial
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Restrição 3: response.body.data.baseEstadual.restricaoFinanceira */}
+                        {renderField(
+                          "Restrição 3",
+                          baseEstadual.restricaoFinanceira || "Nada consta",
+                          baseEstadual.restricaoFinanceira &&
+                            baseEstadual.restricaoFinanceira
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Restrição 4: response.body.data.baseEstadual.restricao4 */}
+                        {renderField(
+                          "Restrição 4",
+                          baseEstadual.restricao4 || "Nada consta",
+                          baseEstadual.restricao4 &&
+                            baseEstadual.restricao4.toLowerCase().trim() !==
+                              "nada consta"
+                        )}
+                        {/* Renajud: response.body.data.baseEstadual.restricaoRenajud */}
+                        {renderField(
+                          "Renajud",
+                          baseEstadual.restricaoRenajud || "Nada consta",
+                          baseEstadual.restricaoRenajud &&
+                            baseEstadual.restricaoRenajud
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                        {/* Tributária: response.body.data.baseEstadual.restricaoTributaria */}
+                        {renderField(
+                          "Tributária",
+                          baseEstadual.restricaoTributaria || "Nada consta",
+                          baseEstadual.restricaoTributaria &&
+                            baseEstadual.restricaoTributaria
+                              .toLowerCase()
+                              .trim() !== "nada consta"
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
 
                 {/* Detalhamento Intenção de Gravame */}
                 <div className="space-y-4">
@@ -2025,18 +2200,23 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débito DPVAT: response.body.data.baseEstadual.existeDebitoDpvat */}
                         {renderField(
                           "Débito DPVAT",
-                          baseEstadual.existeDebitoDpvat === "SIM"
-                            ? "Existe débito de DPVAT"
-                            : "Nada Consta",
-                          baseEstadual.existeDebitoDpvat === "SIM"
+                          baseEstadual.existeDebitoDpvat || "Nada consta",
+                          baseEstadual.existeDebitoDpvat &&
+                            !baseEstadual.existeDebitoDpvat
+                              .toLowerCase()
+                              .trim()
+                              .includes("nao")
                         )}
                         {/* Débitos Licenciamento: response.body.data.baseEstadual.existeDebitoLicenciamento */}
                         {renderField(
                           "Débitos Licenciamento",
-                          baseEstadual.existeDebitoLicenciamento === "SIM"
-                            ? "Existe débito de Licenciamento"
-                            : "Nada Consta",
-                          baseEstadual.existeDebitoLicenciamento === "SIM"
+                          baseEstadual.existeDebitoLicenciamento ||
+                            "Nada consta",
+                          baseEstadual.existeDebitoLicenciamento &&
+                            !baseEstadual.existeDebitoLicenciamento
+                              .toLowerCase()
+                              .trim()
+                              .includes("nao")
                         )}
                       </div>
 
@@ -2044,18 +2224,22 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débitos IPVA: response.body.data.baseEstadual.existeDebitoIpva */}
                         {renderField(
                           "Débitos IPVA",
-                          baseEstadual.existeDebitoIpva === "SIM"
-                            ? "Existe débito de IPVA"
-                            : "Nada Consta",
-                          baseEstadual.existeDebitoIpva === "SIM"
+                          baseEstadual.existeDebitoIpva || "Nada consta",
+                          baseEstadual.existeDebitoIpva &&
+                            !baseEstadual.existeDebitoIpva
+                              .toLowerCase()
+                              .trim()
+                              .includes("nao")
                         )}
                         {/* Débitos Multa: response.body.data.baseEstadual.existeDebitoMulta */}
                         {renderField(
                           "Débitos Multa",
-                          baseEstadual.existeDebitoMulta === "SIM"
-                            ? "Existe débito de multa"
-                            : "Nada Consta",
-                          baseEstadual.existeDebitoMulta === "SIM"
+                          baseEstadual.existeDebitoMulta || "Nada consta",
+                          baseEstadual.existeDebitoMulta &&
+                            !baseEstadual.existeDebitoMulta
+                              .toLowerCase()
+                              .trim()
+                              .includes("nao")
                         )}
                       </div>
                     </>
@@ -2093,82 +2277,130 @@ const Report = ({ data, onClose, loading }) => {
                     <>
                       <div className="space-y-3">
                         {/* CETESB: response.body.data.baseEstadual.debitoCetesb */}
-                        {renderField(
-                          "CETESB",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoCetesb || "0,00")
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoCetesb || "0,00"
+                          );
+                          return renderField("CETESB", value, numericValue > 0);
+                        })()}
+                        {/* DETRAN: response.body.data.baseEstadual.debitoDetran */}
+                        {(() => {
+                          const value = formatCurrency(
+                            parseCurrency(baseEstadual.debitoDetran || "0,00")
+                          );
+                          return renderField("DETRAN", value);
+                        })()}
                         {/* DER: response.body.data.baseEstadual.debitoDer */}
-                        {renderField(
-                          "DER",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoDer || "0,00")
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoDer || "0,00"
+                          );
+                          return renderField("DER", value, numericValue > 0);
+                        })()}
                         {/* DERSA: response.body.data.baseEstadual.debitoDersa */}
-                        {renderField(
-                          "DERSA",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoDersa || "0,00")
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoDersa || "0,00"
+                          );
+                          return renderField("DERSA", value, numericValue > 0);
+                        })()}
                         {/* DPVAT: response.body.data.baseEstadual.debitoDpvat */}
-                        {renderField(
-                          "DPVAT",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoDpvat || "0,00")
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoDpvat || "0,00"
+                          );
+                          return renderField("DPVAT", value, numericValue > 0);
+                        })()}
                         {/* IPVA: response.body.data.baseEstadual.debitoIpva */}
-                        {renderField(
-                          "IPVA",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoIpva || "0,00")
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoIpva || "0,00"
+                          );
+                          return renderField("IPVA", value, numericValue > 0);
+                        })()}
                         {/* Licenciamento: response.body.data.baseEstadual.debitoLicenciamento */}
-                        {renderField(
-                          "Licenciamento",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(
                               baseEstadual.debitoLicenciamento || "0,00"
                             )
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoLicenciamento || "0,00"
+                          );
+                          return renderField(
+                            "Licenciamento",
+                            value,
+                            numericValue > 0
+                          );
+                        })()}
                       </div>
                       <div className="space-y-3">
                         {/* Municipais: response.body.data.baseEstadual.debitoMunicipais */}
-                        {renderField(
-                          "Municipais",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(
                               baseEstadual.debitoMunicipais || "0,00"
                             )
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoMunicipais || "0,00"
+                          );
+                          return renderField(
+                            "Municipais",
+                            value,
+                            numericValue > 0
+                          );
+                        })()}
                         {/* PRF: response.body.data.baseEstadual.debitoPrf */}
-                        {renderField(
-                          "PRF",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoPrf || "0,00")
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoPrf || "0,00"
+                          );
+                          return renderField("PRF", value, numericValue > 0);
+                        })()}
                         {/* Multas: response.body.data.baseEstadual.debitoMulta */}
-                        {renderField(
-                          "Multas",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoMulta || "0,00")
-                          ),
-                          parseCurrency(baseEstadual.debitoMulta || "0,00") > 0
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoMulta || "0,00"
+                          );
+                          return renderField("Multas", value, numericValue > 0);
+                        })()}
                         {/* RENAINF: response.body.data.baseEstadual.debitoRenainf */}
-                        {renderField(
-                          "RENAINF",
-                          formatCurrency(
+                        {(() => {
+                          const value = formatCurrency(
                             parseCurrency(baseEstadual.debitoRenainf || "0,00")
-                          )
-                        )}
+                          );
+                          const numericValue = parseCurrency(
+                            baseEstadual.debitoRenainf || "0,00"
+                          );
+                          return renderField(
+                            "RENAINF",
+                            value,
+                            numericValue > 0
+                          );
+                        })()}
                       </div>
                     </>
                   )}
@@ -2374,15 +2606,15 @@ const Report = ({ data, onClose, loading }) => {
                 <ReportSection title="Porcentagem sobre Tabela FIPE">
                   <div className="flex flex-col md:flex-row gap-6 ">
                     <div className="shrink-0 w-[30%]">
-                      {renderGauge("", percentualSobreRef)}
+                      {/* Porcentagem sobre Tabela FIPE - Percentual Máximo de Oferta: response.body.data.leilao.score.aceitacao */}
+                      {renderGauge("", nivelRisco)}
                     </div>
                     <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                       <div className="space-y-3">
                         <div className="mt-4">
                           <p className="text-sm  text-[#1AABFE] mb-2">
                             Esse veículo poderá receber uma oferta máxima de{" "}
-                            {percentualSobreRef}% do preço do seu valor de
-                            tabela.
+                            {nivelRisco}% do preço do seu valor de tabela.
                           </p>
                         </div>
                       </div>
@@ -2404,7 +2636,7 @@ const Report = ({ data, onClose, loading }) => {
                     </div>
                     <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                       <div className="space-y-3">
-                        {/* Exigência de Vistoria Especial - Chance: response.body.data.leilao.score.exigenciaVistoriaEspecial */}
+                        {/* Exigência de Vistoria Especial (Barra exigencia de vistoria): response.body.data.leilao.score.percentualSobreRef */}
                         <p className="text-sm text-[#1AABFE] mb-2">
                           Este veículo possui uma chance de exigência de
                           vistoria especial, para a realização do seguro.
@@ -2415,7 +2647,6 @@ const Report = ({ data, onClose, loading }) => {
                 </ReportSection>
 
                 {/* Recall */}
-
                 <ReportSection title="Recall">
                   <ReportTableSection
                     headers={["Data", "Defeito", "Risco"]}
@@ -2423,11 +2654,24 @@ const Report = ({ data, onClose, loading }) => {
                       reportData?.recall?.detalhes &&
                       reportData?.recall?.detalhes?.length > 0
                         ? reportData?.recall?.detalhes?.map((item) => [
-                            item?.data ? formatDate(item?.data) : "-",
-                            item?.defeito || "-",
-                            item?.risco || "-",
+                            // Recall - Data: response.body.data.recall.detalhes[0].data
+                            item?.data
+                              ? formatDate(item?.data)
+                              : "Informação não encontrada nas bases consultadas",
+                            // Recall - Defeito: response.body.data.recall.detalhes[0].defeito
+                            item?.defeito ||
+                              "Informação não encontrada nas bases consultadas",
+                            // Recall - Risco: response.body.data.recall.detalhes[0].risco
+                            item?.risco ||
+                              "Informação não encontrada nas bases consultadas",
                           ])
-                        : [["N/A", "N/A", "N/A"]]
+                        : [
+                            [
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                            ],
+                          ]
                     }
                   />
                 </ReportSection>
@@ -2506,19 +2750,29 @@ const Report = ({ data, onClose, loading }) => {
                     rows={
                       reportData?.rouboFurto?.historico &&
                       reportData.rouboFurto.historico.length > 0
-                        ? reportData.rouboFurto.historico.map((item) => [
-                            // Histórico Roubo e Furto - Data: response.body.data.rouboFurto.historico[0].data
-                            item?.data ? formatDate(item.data) : "N/A",
-                            // Histórico Roubo e Furto - Ocorrência: response.body.data.rouboFurto.historico[0].ocorrencia
-                            item?.ocorrencia || "N/A",
-                            // Histórico Roubo e Furto - Município/Estado: response.body.data.rouboFurto.historico[0].municipioUf
-                            item?.municipioUf || "N/A",
-                            // Histórico Roubo e Furto - Nº B.O.: response.body.data.rouboFurto.historico[0].numeroBo
-                            item?.numeroBo || "N/A",
-                            // Histórico Roubo e Furto - Informante: response.body.data.rouboFurto.historico[0].informante
-                            item?.informante || "N/A",
+                        ? reportData.rouboFurto.historico.map((item, index) => [
+                            // Histórico Roubo e Furto - {index + 1} - Data: response.body.data.rouboFurto.historico[index].data
+                            item?.data
+                              ? formatDate(item.data)
+                              : "Informação não encontrada nas bases consultadas",
+                            // Histórico Roubo e Furto - {index + 1} - Ocorrência: response.body.data.rouboFurto.historico[index].ocorrencia
+                            item?.ocorrencia || "-",
+                            // Histórico Roubo e Furto - {index + 1} - Município/Estado: response.body.data.rouboFurto.historico[index].municipioUf
+                            item?.municipioUf || "-",
+                            // Histórico Roubo e Furto - {index + 1} - Nº B.O.: response.body.data.rouboFurto.historico[index].numeroBo
+                            item?.numeroBo || "-",
+                            // Histórico Roubo e Furto - {index + 1} - Informante: response.body.data.rouboFurto.historico[index].informante
+                            item?.informante || "-",
                           ])
-                        : [["N/A", "N/A", "N/A", "N/A", "N/A"]]
+                        : [
+                            [
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                            ],
+                          ]
                     }
                   />
                 </ReportSection>
@@ -2577,7 +2831,7 @@ const Report = ({ data, onClose, loading }) => {
                                 {
                                   label: "Número da Restrição",
                                   // Gravame - Número da Restrição: response.body.data.gravame[0].numeroRestricao
-                                  value: gravame?.numeroRestricao || "N/A",
+                                  value: gravame?.numero || "N/A",
                                 },
                                 {
                                   label: "Documento Financiado",
@@ -2674,19 +2928,23 @@ const Report = ({ data, onClose, loading }) => {
                         "UF Orgão Autuador",
                       ]}
                       rows={reportData.multasRenainf.map((multa) => [
-                        // Auto de Infração: response.body.data.multasRenainf[].autoInfracao
-                        multa?.autoInfracao || "N/A",
-                        // Data da Infração: response.body.data.multasRenainf[].dataInfracao
+                        // Auto de Infração: response.body.data.multasRenainf.autoInfracao
+                        multa?.autoInfracao ||
+                          "Informação não encontrada nas bases consultadas",
+                        // Data da Infração: response.body.data.multasRenainf.dataInfracao
                         multa?.dataInfracao
                           ? formatDate(multa.dataInfracao)
-                          : "N/A",
-                        // Orgão Autuador: response.body.data.multasRenainf[].orgaoAutuador
-                        multa?.orgaoAutuador || "N/A",
-                        // UF Orgão Autuador: response.body.data.multasRenainf[].ufOrgaoAutuador
-                        multa?.ufOrgaoAutuador || "N/A",
+                          : "-",
+                        // Orgão Autuador: response.body.data.multasRenainf.orgaoAutuador
+                        multa?.orgaoAutuador || "-",
+                        // UF Orgão Autuador: response.body.data.multasRenainf.ufOrgaoAutuador
+                        multa?.ufOrgaoAutuador || "-",
                       ])}
                       desc={reportData.multasRenainf.map(
-                        (multa) => multa?.descricao || "N/A"
+                        // Descrição: response.body.data.multasRenainf.descricao
+                        (multa) =>
+                          multa?.descricao ||
+                          "Informação não encontrada nas bases consultadas"
                       )}
                     />
                   ) : (
@@ -2712,17 +2970,14 @@ const Report = ({ data, onClose, loading }) => {
                             Array.isArray(radarData.cias) &&
                             radarData.cias.length > 0 && (
                               <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
-                                {/* <p className="text-gray-800 font-semibold mb-2">
-                              Seguradoras:
-                            </p> */}
                                 <div className="flex flex-wrap gap-2">
-                                  {/* seguradoras: response.body.data.radarSecuritario[0].cias */}
+                                  {/* seguradoras: response.body.data.radarSecuritario.cias */}
                                   {radarData.cias.map((cia, index) => (
                                     <span
                                       key={index}
                                       className="text-gray-800 text-sm"
                                     >
-                                      {cia?.Nome || cia?.nome || "N/A"}
+                                      {cia?.Nome || cia?.nome || "-"}
                                       {index < radarData.cias.length - 1 &&
                                         ", "}
                                     </span>
@@ -2731,8 +2986,9 @@ const Report = ({ data, onClose, loading }) => {
                               </div>
                             )}
 
-                          {/* Franquia Normal */}
-                          {radarData?.franquiaNormal && (
+                          {/* Franquia Normal e Reduzida */}
+                          {(radarData?.franquiaNormal ||
+                            radarData?.franquiaReduzida) && (
                             <ReportTableSection
                               headers={[
                                 "Tipo da Franquia",
@@ -2740,52 +2996,61 @@ const Report = ({ data, onClose, loading }) => {
                                 "Franquia Média",
                               ]}
                               rows={[
-                                [
-                                  // Tipo da franquia: response.body.data.radarSecuritario[0].franquiaNormal
-                                  "Franquia Normal",
-                                  // preço medio do seguro: response.body.data.radarSecuritario[0].franquiaNormal.valorPremio.media
-                                  radarData.franquiaNormal?.valorPremio?.media
-                                    ? formatCurrency(
-                                        parseCurrency(
-                                          radarData.franquiaNormal.valorPremio
-                                            .media
-                                        )
-                                      )
-                                    : "N/A",
-                                  // Franquia media: response.body.data.radarSecuritario[0].franquiaNormal.valorFranquia.media
-                                  radarData.franquiaNormal?.valorFranquia?.media
-                                    ? formatCurrency(
-                                        parseCurrency(
-                                          radarData.franquiaNormal.valorFranquia
-                                            .media
-                                        )
-                                      )
-                                    : "N/A",
-                                ],
-                                [
-                                  // tipo da franquia: response.body.data.radarSecuritario[0].franquiaReduzida
-                                  "Franquia Reduzida",
-                                  // preço medio do seguro: response.body.data.radarSecuritario[0].franquiaReduzida.valorPremio.media
-                                  radarData.franquiaReduzida?.valorPremio?.media
-                                    ? formatCurrency(
-                                        parseCurrency(
-                                          radarData.franquiaReduzida.valorPremio
-                                            .media
-                                        )
-                                      )
-                                    : "N/A",
-                                  // Franquia media: response.body.data.radarSecuritario[0].franquiaReduzida.valorFranquia.media
-                                  radarData.franquiaReduzida?.valorFranquia
-                                    ?.media
-                                    ? formatCurrency(
-                                        parseCurrency(
-                                          radarData.franquiaReduzida
-                                            .valorFranquia.media
-                                        )
-                                      )
-                                    : "N/A",
-                                ],
-                              ]}
+                                // Franquia Normal row
+                                radarData?.franquiaNormal
+                                  ? [
+                                      // Tipo da franquia: response.body.data.radarSecuritario.franquiaNormal
+                                      "Franquia Normal",
+                                      // preço medio do seguro: response.body.data.radarSecuritario.franquiaNormal.valorPremio.media
+                                      radarData.franquiaNormal?.valorPremio
+                                        ?.media
+                                        ? formatCurrency(
+                                            parseCurrency(
+                                              radarData.franquiaNormal
+                                                .valorPremio.media
+                                            )
+                                          )
+                                        : "-",
+                                      // Franquia media: response.body.data.radarSecuritario.franquiaNormal.valorFranquia.media
+                                      radarData.franquiaNormal?.valorFranquia
+                                        ?.media
+                                        ? formatCurrency(
+                                            parseCurrency(
+                                              radarData.franquiaNormal
+                                                .valorFranquia.media
+                                            )
+                                          )
+                                        : "-",
+                                    ]
+                                  : null,
+                                // Franquia Reduzida row
+                                radarData?.franquiaReduzida
+                                  ? [
+                                      // tipo da franquia: response.body.data.radarSecuritario.franquiaReduzida
+                                      "Franquia Reduzida",
+                                      // preço medio do seguro: response.body.data.radarSecuritario.franquiaReduzida.valorPremio.media
+                                      radarData.franquiaReduzida?.valorPremio
+                                        ?.media
+                                        ? formatCurrency(
+                                            parseCurrency(
+                                              radarData.franquiaReduzida
+                                                .valorPremio.media
+                                            )
+                                          )
+                                        : "-",
+                                      // Franquia media: response.body.data.radarSecuritario.franquiaReduzida.valorFranquia.media
+                                      radarData.franquiaReduzida?.valorFranquia
+                                        ?.media
+                                        ? formatCurrency(
+                                            parseCurrency(
+                                              radarData.franquiaReduzida
+                                                .valorFranquia.media
+                                            )
+                                          )
+                                        : "-",
+                                    ]
+                                  : null,
+                              ].filter(Boolean)}
                             />
                           )}
                         </div>
@@ -2857,6 +3122,84 @@ const Report = ({ data, onClose, loading }) => {
                   </div>
                 </div>
 
+                {/* Histórico de Anúncios */}
+                <ReportSection title="Histórico de Anúncios">
+                  {reportData?.historicoAnuncios &&
+                  (Array.isArray(reportData.historicoAnuncios)
+                    ? reportData.historicoAnuncios.length > 0
+                    : true) ? (
+                    <div className="space-y-4">
+                      {(Array.isArray(reportData.historicoAnuncios)
+                        ? reportData.historicoAnuncios
+                        : [reportData.historicoAnuncios]
+                      ).map((anuncio, index) => (
+                        <div key={index} className="space-y-4">
+                          <ReportTableSection
+                            headers={["KM", "Valor", "Data"]}
+                            rows={[
+                              [
+                                // KM: response.body.data.historicoAnuncios.km
+                                anuncio?.km
+                                  ? `${anuncio.km.toLocaleString("pt-BR")}`
+                                  : "-",
+                                // Valor: response.body.data.historicoAnuncios.valor
+                                anuncio?.valor
+                                  ? formatCurrency(parseCurrency(anuncio.valor))
+                                  : "-",
+                                // Data: response.body.data.historicoAnuncios.data
+                                anuncio?.data ? formatDate(anuncio.data) : "-",
+                              ],
+                            ]}
+                          />
+                          {/* Fotos Header and Display Area */}
+                          <div className="space-y-2">
+                            <p className="text-white bg-[#1AABFE] rounded-full p-2 px-6 w-fit font-semibold text-sm">
+                              Fotos
+                            </p>
+                            <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                              {/* fotos: response.body.data.historicoAnuncios.fotos */}
+                              {anuncio?.fotos &&
+                              (Array.isArray(anuncio.fotos)
+                                ? anuncio.fotos.length > 0
+                                : true) ? (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                  {(Array.isArray(anuncio.fotos)
+                                    ? anuncio.fotos
+                                    : [anuncio.fotos]
+                                  ).map((foto, fotoIndex) => (
+                                    <img
+                                      key={fotoIndex}
+                                      src={
+                                        typeof foto === "string"
+                                          ? foto
+                                          : foto.url || foto
+                                      }
+                                      alt={`Foto ${fotoIndex + 1}`}
+                                      className="w-full h-48 object-cover rounded-lg border-2 border-[#1AABFE]/80"
+                                    />
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="p-4 py-2 bg-white flex items-center justify-center min-h-[200px]">
+                                  <p className="text-gray-500">
+                                    Não consta fotos
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
+                      <p className="text-[#1AABFE]">
+                        Informação não encontrada nas bases consultadas.
+                      </p>
+                    </div>
+                  )}
+                </ReportSection>
+
                 {/* Histórico de Consulta */}
                 <ReportSection title="Histórico de Consulta">
                   <ReportTableSection
@@ -2867,15 +3210,15 @@ const Report = ({ data, onClose, loading }) => {
                     ]}
                     rows={[
                       [
-                        // Histórico de Consulta - Primeira Consulta: response.body.data.historicoConsultas[0].primeiraConsulta
-                        reportData?.historicoConsultas?.[0]?.primeiraConsulta ||
-                          "N/A",
-                        // Histórico de Consulta - Última Consulta: response.body.data.historicoConsultas[0].ultimaConsulta
-                        reportData?.historicoConsultas?.[0]?.ultimaConsulta ||
-                          "N/A",
-                        // Histórico de Consulta - Total de Consultas: response.body.data.historicoConsultas[0].total
-                        reportData?.historicoConsultas?.[0]?.total?.toString() ||
-                          "N/A",
+                        // Histórico de Consulta - Primeira Consulta: response.body.data.historicoConsultaVeicular.primeiraConsulta
+                        reportData?.historicoConsultaVeicular
+                          ?.primeiraConsulta || "-",
+                        // Histórico de Consulta - Última Consulta: response.body.data.historicoConsultaVeicular.ultimaConsulta
+                        reportData?.historicoConsultaVeicular?.ultimaConsulta ||
+                          "-",
+                        // Histórico de Consulta - Total de Consultas: response.body.data.historicoConsultaVeicular.total
+                        reportData?.historicoConsultaVeicular?.total?.toString() ||
+                          "-",
                       ],
                     ]}
                   />

@@ -14,7 +14,7 @@ const ReportTableSection = ({ title, headers, rows, desc, className = "" }) => {
           {headers.map((header, index) => (
             <p
               key={index}
-              className="px-2 py-1 text-[0.7rem] font-medium text-center w-[110px] !break-words "
+              className="px-2 py-1 text-[0.7rem] font-medium text-center  !break-words w-full "
             >
               {header}
             </p>
@@ -33,7 +33,7 @@ const ReportTableSection = ({ title, headers, rows, desc, className = "" }) => {
                     key={cellIndex}
                     className={`${
                       parseFloat(cell) < 0 ? "text-red-500" : "text-[#194D9A]"
-                    } px-2 py-1 text-[0.7rem] text-center w-[110px] break-words break-all`}
+                    } px-2 py-1 text-[0.7rem] text-center w-full break-words break-all`}
                   >
                     {cell || "-"}
                   </p>

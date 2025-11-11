@@ -11,10 +11,10 @@ const HeroSection = () => {
     <div className="min-h-[36rem] bg-[url('/heroBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden relative commonPadding flex flex-col lg:flex-row gap-10 lg:gap-0 items-end py-8">
       {/* Left Content */}
       <div className="w-full flex flex-col z-10 text-center md:text-start">
-        <h1 className="text-white text-[2rem] md:text-[3.5rem] font-bold md:pb-[3rem]">
-          Before purchasing, consult.
+        <h1 className="text-white text-[2rem] md:text-[3.5rem] font-bold md:pb-[3rem] max-w-[70vw]">
+          Antes de comprar um carro semi-novo, consulte.
           <br />
-          <span className="text-[#1AABFE]">Protect your dream</span>
+          <span className="text-[#1AABFE]">Proteja o seu sonho.</span>
         </h1>
         <div className="md:hidden w-full  h-[60%]  flex items-end justify-center lg:justify-end z-0 p-6">
           <img

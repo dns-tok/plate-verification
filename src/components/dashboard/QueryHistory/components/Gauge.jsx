@@ -186,8 +186,8 @@ const Gauge = ({
       <div
         className={`absolute bottom-8 flex justify-between text-[13px] text-[#0078d7] font-medium w-[70%]`}
       >
-        <span> {isPercentage ? `${min}%` : "Low"}</span>
-        <span> {isPercentage ? `${max}%` : "High"}</span>
+        <span> {isPercentage ? `${min}%` : "Baixa"}</span>
+        <span> {isPercentage ? `${max}%` : "Alta"}</span>
       </div>
     </div>
   );

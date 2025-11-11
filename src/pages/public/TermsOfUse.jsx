@@ -13,396 +13,429 @@ const TermsOfUse = () => {
     <PublicLayout>
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="bg-white rounded-lg shadow-lg p-8 px-12">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Terms and Conditions of Use of the Service
+                Termos e Condições de Uso do Serviço
               </h1>
             </div>
 
             <div className="prose prose-lg max-w-none">
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  1. Definitions
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  1. Definições
                 </h2>
-                <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <ul className="list-disc list-inside text-gray-800 space-y-2 ms-6">
                   <li>
-                    <strong>Electronic acceptance:</strong> Digital confirmation
-                    that the CONTRACTOR agrees to the terms of this contract.
+                    <strong>Aceite eletrônico:</strong> Confirmação digital de
+                    que o CONTRATANTE concorda com os termos deste contrato.
                   </li>
                   <li>
-                    <strong>Database:</strong> Structured set of information,
-                    personal or otherwise, stored in physical or electronic
-                    format.
+                    <strong>Banco de dados:</strong> Conjunto estruturado de
+                    informações, pessoais ou não, armazenadas em formato físico
+                    ou eletrônico.
                   </li>
                   <li>
-                    <strong>Personal data:</strong> Information that identifies
-                    or can identify a natural person.
+                    <strong>Dados pessoais:</strong> Informações que identificam
+                    ou podem identificar uma pessoa física.
                   </li>
                   <li>
-                    <strong>Electronic address:</strong> Email provided by the
-                    CONTRACTOR at the time of registration.
+                    <strong>Endereço eletrônico:</strong> E-mail fornecido pelo
+                    CONTRATANTE no momento do cadastro.
                   </li>
                   <li>
-                    <strong>Verified Plate System:</strong> Technological
-                    platform developed by the CONTRACTOR, which allows vehicle
-                    queries through a software usage license.
+                    <strong>Sistema Placa Verificada:</strong> Plataforma
+                    tecnológica desenvolvida pela CONTRATADA, que permite
+                    consultas veiculares mediante licença de uso de software.
                   </li>
                   <li>
-                    <strong>Electronic verification:</strong> Digital way for
-                    the CONTRACTOR to access information about vehicles.
+                    <strong>Verificação eletrônica:</strong> Forma digital de
+                    acesso às informações sobre veículos pelo CONTRATANTE.
                   </li>
                 </ul>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  2. Premises
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  2. Premissas
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>2.1.</strong> The CONTRACTOR developed the Verified
-                    License Plate System, which allows users to perform vehicle
-                    searches based on data obtained from public and private
-                    sources.
+                    <strong>2.1.</strong> A CONTRATADA desenvolveu o Sistema
+                    Placa Verificada, que permite aos usuários realizar
+                    consultas veiculares com base em dados obtidos de fontes
+                    públicas e privadas.
                   </p>
                   <p>
-                    <strong>2.2.</strong> The CONTRACTOR expresses interest in
-                    accessing the data made available by the platform.
+                    <strong>2.2.</strong> O CONTRATANTE manifesta interesse em
+                    acessar os dados disponibilizados pela plataforma.
                   </p>
                   <p>
-                    <strong>2.3.</strong> The PARTIES wish to formalize this
-                    SERVICE PROVISION AGREEMENT, which will be governed by the
-                    following clauses.
+                    <strong>2.3.</strong> As PARTES desejam formalizar o
+                    presente CONTRATO DE PRESTAÇÃO DE SERVIÇOS, que será regido
+                    pelas cláusulas a seguir.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  3. Of the Parties
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  3. Das Partes
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>3.1.</strong> The following are parties to this
-                    instrument:
+                    <strong>3.1.</strong> São partes deste instrumento:
                   </p>
                   <p>
-                    Prototyp3 Computer Services LTDA, registered with the
-                    CNPJ/ME under no. 62,718,731/0001-24, with registered office
-                    at AVENIDA PAULISTA, 1471 - CONJ 511, CEP 01311-927, BELA
-                    VISTA, SÃO PAULO – SP, hereinafter referred to as
-                    CONTRACTOR; and the individual identified as CONTRACTING
-                    PARTY, referred to individually as PARTY and jointly as
-                    PARTIES.
+                    <strong> Prototyp3 Serviços de Informática LTDA</strong>,
+                    inscrita no CNPJ/ME sob nº{" "}
+                    <strong>62.718.731/0001-24</strong>, com sede na{" "}
+                    <strong>
+                      AVENIDA PAULISTA, 1471 - CONJ 511, CEP 01311-927, BELA
+                      VISTA, SÃO PAULO – SP
+                    </strong>
+                    , doravante denominada <strong>CONTRATADA</strong>; e o
+                    indivíduo identificado como <strong>CONTRATANTE</strong>,
+                    referidos individualmente como PARTE e conjuntamente como
+                    PARTES.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  4. Declarations
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  4. Declarações
                 </h2>
-                <div className="text-gray-600 space-y-3">
-                  <p>
-                    The CONTRACTOR declares, under legal responsibility, that:
-                  </p>
+                <div className="text-gray-800 space-y-3 ms-6">
+                  <p>O CONTRATANTE declara, sob responsabilidade legal, que:</p>
                   <ul className="list-disc list-inside space-y-2">
                     <li>
-                      You are over 18 years of age and are eligible to hire and
-                      use the CONTRACTOR's services.
+                      Tem mais de 18 anos e está apto a contratar e utilizar os
+                      serviços da CONTRATADA.
                     </li>
                     <li>
-                      Electronic acceptance will be carried out at the time of
-                      registration and will be considered valid and binding.
+                      O aceite eletrônico será realizado no momento do cadastro,
+                      sendo considerado válido e vinculativo.
                     </li>
                     <li>
-                      You are solely responsible for your login and password and
-                      must keep them safe.
+                      É responsável exclusivo por seu login e senha, devendo
+                      mantê-los em segurança.
                     </li>
                     <li>
-                      You will use the services in accordance with the terms of
-                      this contract, the platform guidelines and current
-                      legislation.
+                      Utilizará os serviços conforme os termos deste contrato,
+                      as orientações da plataforma e a legislação vigente.
                     </li>
                     <li>
-                      You will provide true and up-to-date registration data,
-                      assuming responsibility for its veracity.
+                      Informará dados cadastrais verdadeiros e atualizados,
+                      assumindo responsabilidade por sua veracidade.
                     </li>
                     <li>
-                      Is financially responsible for the contracted services.
+                      É financeiramente responsável pelos serviços contratados.
                     </li>
                     <li>
-                      Acknowledges that the CONTRACTOR provides information
-                      about vehicles and is not responsible for decisions made
-                      based on this data.
+                      Reconhece que a CONTRATADA fornece informações sobre
+                      veículos, não se responsabilizando por decisões tomadas
+                      com base nesses dados.
                     </li>
                   </ul>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  5. Object
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  5. Objeto
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>5.1.</strong> The purpose of this contract is to
-                    grant the CONTRACTOR a license to use the software to access
-                    the Verified Plate System.
+                    <strong>5.1.</strong> Este contrato tem como finalidade
+                    conceder ao CONTRATANTE uma licença de uso do software para
+                    acesso ao Sistema Placa Verificada.
                   </p>
                   <p>
-                    <strong>5.1.1.</strong> Vehicle inquiries present data such
-                    as registration information, debts and various records,
-                    depending on the type of inquiry contracted.
+                    <strong>5.1.1.</strong> As consultas veiculares apresentam
+                    dados como informações cadastrais, débitos e registros
+                    diversos, conforme o tipo de consulta contratada.
                   </p>
                   <p>
-                    <strong>5.1.2.</strong> THE CONTRACTOR offers different
-                    consultation methods, with specific data and prices,
-                    available for viewing on the platform.
+                    <strong>5.1.2.</strong> A CONTRATADA oferece diferentes
+                    modalidades de consulta, com dados e preços específicos,
+                    disponíveis para visualização na plataforma.
                   </p>
                   <p>
-                    <strong>5.1.3.</strong> THE CONTRACTOR may create, modify or
-                    discontinue consultation types and their respective prices,
-                    without prior notice.
+                    <strong>5.1.3.</strong> A CONTRATADA poderá criar, modificar
+                    ou descontinuar tipos de consulta e seus respectivos preços,
+                    sem aviso prévio.
                   </p>
                   <p>
-                    <strong>5.2.</strong> THE CONTRACTOR has the right to use
-                    and distribute data obtained from third parties and is not
-                    responsible for its content or updates.
+                    <strong>5.2.</strong> A CONTRATADA possui direito de uso e
+                    distribuição de dados obtidos de terceiros, não se
+                    responsabilizando por seu conteúdo ou atualizações.
                   </p>
                   <p>
-                    <strong>5.2.1.</strong> Not all data is available for all
-                    vehicles. The lack of specific information does not
-                    guarantee a refund, except in the cases provided for.
+                    <strong>5.2.1.</strong> Nem todos os dados estão disponíveis
+                    para todos os veículos. A ausência de informações
+                    específicas não garante restituição, exceto nos casos
+                    previstos.
                   </p>
                   <p>
-                    <strong>5.2.2.</strong> In case of temporary unavailability,
-                    the CONTRACTOR may request reprocessing of the information
-                    within 24 hours.
+                    <strong>5.2.2.</strong> Em caso de indisponibilidade
+                    temporária, o CONTRATANTE poderá solicitar reprocessamento
+                    das informações em até 24 horas.
                   </p>
                   <p>
-                    <strong>5.2.3.</strong> Refund requests must be made through
-                    the CONTRACTOR's official channels.
+                    <strong>5.2.3.</strong> Solicitações de reembolso devem ser
+                    feitas pelos canais oficiais da CONTRATADA.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  6. Registration
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  6. Cadastro
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>6.1.</strong> The CONTRACTOR must register on the
-                    platform, providing mandatory data and creating a login and
-                    password.
+                    <strong>6.1.</strong> O CONTRATANTE deverá se cadastrar na
+                    plataforma, informando dados obrigatórios e criando login e
+                    senha.
                   </p>
                   <p>
-                    <strong>6.2.</strong> The password will be sent to the
-                    registered email address and can be changed in the logged-in
-                    area.
+                    <strong>6.2.</strong> A senha será enviada ao e-mail
+                    cadastrado e poderá ser alterada na área logada.
                   </p>
                   <p>
-                    <strong>6.3.</strong> Registration implies full acceptance
-                    of the terms of this agreement.
+                    <strong>6.3.</strong> O cadastro implica aceite integral dos
+                    termos deste contrato.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  7. Consultation Booking
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  7. Contratação de Consultas
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>7.1.</strong> Consultations may be free or paid.
+                    <strong>7.1.</strong> As consultas podem ser gratuitas ou
+                    pagas.
                   </p>
                   <p>
-                    <strong>7.2.</strong> Paid consultations require prior
-                    purchase of credits.
+                    <strong>7.2.</strong> As consultas pagas exigem aquisição
+                    prévia de créditos.
                   </p>
                   <p>
-                    <strong>7.2.1.</strong> Credits will be released after
-                    payment confirmation.
+                    <strong>7.2.1.</strong> Os créditos serão liberados após
+                    confirmação do pagamento.
                   </p>
                   <p>
-                    <strong>7.2.2.</strong> Validity of credits: 12 months.
+                    <strong>7.2.2.</strong> Validade dos créditos: 12 meses.
                   </p>
                   <p>
-                    <strong>7.2.3.</strong> Remaining credits can be used for
-                    new consultations or topped up.
+                    <strong>7.2.3.</strong> Créditos remanescentes podem ser
+                    usados em novas consultas ou complementados.
                   </p>
                   <p>
-                    <strong>7.2.4.</strong> THE CONTRACTOR may request a refund
-                    within 7 days, provided that the credits have not been used.
+                    <strong>7.2.4.</strong> O CONTRATANTE pode solicitar
+                    reembolso em até 7 dias, desde que os créditos não tenham
+                    sido utilizados.
                   </p>
                   <p>
-                    <strong>7.3.</strong> THE CONTRACTOR is responsible for the
-                    accuracy of the vehicle data provided.
+                    <strong>7.3.</strong> O CONTRATANTE é responsável pela
+                    veracidade dos dados do veículo informados.
                   </p>
                   <p>
-                    <strong>7.3.1.</strong> THE CONTRACTOR is not responsible
-                    for errors in the information provided.
+                    <strong>7.3.1.</strong> A CONTRATADA não se responsabiliza
+                    por erros nas informações fornecidas.
                   </p>
                   <p>
-                    <strong>7.4.</strong> After sending the data, queries will
-                    be processed and cannot be canceled.
+                    <strong>7.4.</strong> Após o envio dos dados, as consultas
+                    serão processadas e não poderão ser canceladas.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  8. Prices
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  8. Preços
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>8.1.</strong> Service prices are available on the
-                    platform.
+                    <strong>8.1.</strong> Os valores dos serviços estão
+                    disponíveis na plataforma.
                   </p>
                   <p>
-                    <strong>8.2.</strong> THE CONTRACTOR may purchase credits
-                    according to the value of the consultations or through
-                    packages.
+                    <strong>8.2.</strong> O CONTRATANTE pode adquirir créditos
+                    conforme o valor das consultas ou por meio de pacotes.
                   </p>
                   <p>
-                    <strong>8.2.1.</strong> The conversion will be made based on
-                    the current price of the consultation.
+                    <strong>8.2.1.</strong> A conversão será feita com base no
+                    preço vigente da consulta.
                   </p>
                   <p>
-                    <strong>8.3.</strong> THE CONTRACTOR may change prices at
-                    any time, without prior notice.
+                    <strong>8.3.</strong> A CONTRATADA pode alterar os preços a
+                    qualquer momento, sem aviso prévio.
                   </p>
                   <p>
-                    <strong>8.4.</strong> Promotions may be advertised on the
-                    website, and by participating, the CONTRACTOR accepts their
-                    rules.
+                    <strong>8.4.</strong> Promoções poderão ser divulgadas no
+                    site, e ao participar, o CONTRATANTE aceita suas regras.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  9. Responsibilities
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  9. Responsabilidades
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>9.1.</strong> Consultations are for personal use,
-                    focused on buying and selling vehicles.
+                    <strong>9.1.</strong> As consultas são para uso pessoal, com
+                    foco em compra e venda de veículos.
                   </p>
                   <p>
-                    <strong>9.1.1.</strong> It is prohibited to commercialize or
-                    pass on information obtained, under penalty of liability for
-                    damages to third parties.
+                    <strong>9.1.1.</strong> É proibido comercializar ou repassar
+                    informações obtidas, sob pena de responsabilidade por danos
+                    a terceiros.
                   </p>
                   <p>
-                    <strong>9.1.2.</strong> THE CONTRACTOR may suspend access in
-                    case of improper use.
+                    <strong>9.1.2.</strong> A CONTRATADA poderá suspender o
+                    acesso em caso de uso indevido.
                   </p>
                   <p>
-                    <strong>9.2.</strong> THE CONTRACTOR does not control the
-                    data in the databases used and is not responsible for errors
-                    or outdated information.
+                    <strong>9.2.</strong> A CONTRATADA não controla os dados das
+                    bases utilizadas, não sendo responsável por erros ou
+                    desatualizações.
                   </p>
                   <p>
-                    <strong>9.3.</strong> The CONTRACTOR must acquire and use
-                    the credits within the stipulated period.
+                    <strong>9.3.</strong> As análises e pareceres fornecidos
+                    pelo consultor automotivo virtual Plaquinha, baseados em
+                    inteligência artificial, são gerados a partir dos dados
+                    informados pelo usuário (como a placa), de fontes públicas
+                    disponíveis, de parceiros . Embora o sistema busque oferecer
+                    interpretações úteis e acessíveis, não há garantia de
+                    precisão, completude ou infalibilidade nas respostas
+                    apresentadas. Recomendamos fortemente que o usuário leia o
+                    relatório completo na íntegra e realize sua própria
+                    avaliação crítica antes de tomar qualquer decisão de compra.
+                    O Placa Verificada e a Prototyp3 não emitem qualquer
+                    julgamento, opinião ou recomendação definitiva sobre o
+                    veículo analisado, sendo a decisão final de responsabilidade
+                    exclusiva do comprador.
                   </p>
                   <p>
-                    <strong>9.4.</strong> THE CONTRACTOR does not guarantee
-                    continuous availability of the platform, and technical or
-                    connection failures may occur. THE CONTRACTOR acknowledges
-                    that there is no right to compensation for such failures.
+                    <strong>9.4.</strong> O CONTRATANTE deve adquirir e utilizar
+                    os créditos dentro do prazo estipulado.
+                  </p>
+                  <p>
+                    <strong>9.5.</strong> A CONTRATADA não garante
+                    disponibilidade contínua da plataforma, podendo haver falhas
+                    técnicas ou de conexão. O CONTRATANTE reconhece que não há
+                    direito a ressarcimento por tais falhas.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  10. Cancellation
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  10. Cancelamento
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>10.1.</strong> The CONTRACTOR may delete his/her
-                    account at any time, losing access to the contracted
-                    services.
+                    <strong>10.1.</strong> O CONTRATANTE pode excluir sua conta
+                    a qualquer momento, perdendo acesso aos serviços
+                    contratados.
                   </p>
                   <p>
-                    <strong>10.1.1.</strong> Remaining credits will only be
-                    refunded in accordance with clause 7.2.4.
+                    <strong>10.1.1.</strong> Créditos remanescentes só serão
+                    reembolsados conforme cláusula 7.2.4.
                   </p>
                   <p>
-                    <strong>10.1.2.</strong> It is possible to cancel only one
-                    service, keeping the account active.
+                    <strong>10.1.2.</strong> É possível cancelar apenas um
+                    serviço, mantendo a conta ativa.
                   </p>
                   <p>
-                    <strong>10.2.</strong> Credits can be cancelled within 7
-                    days, provided they have not been used.
+                    <strong>10.2.</strong> O cancelamento de créditos pode ser
+                    feito em até 7 dias, desde que não utilizados.
                   </p>
                 </div>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  11. General Provisions
+                <h2 className="text-[1.4rem] font-semibold text-gray-900 mb-4">
+                  11. Disposições Gerais
                 </h2>
-                <div className="text-gray-600 space-y-3">
+                <div className="text-gray-800 space-y-3 ms-6">
                   <p>
-                    <strong>11.1.</strong> THE CONTRACTOR may change, suspend or
-                    terminate platform features as required or as required by
-                    law.
+                    <strong>11.1.</strong> A CONTRATADA pode alterar, suspender
+                    ou encerrar funcionalidades da plataforma conforme
+                    necessidade ou decisão legal.
                   </p>
                   <p>
-                    <strong>11.2.</strong> In case of violation of the terms or
-                    legislation, the CONTRACTOR may apply sanctions, including
-                    suspension or deletion of the account.
+                    <strong>11.2.</strong> Em caso de violação dos termos ou da
+                    legislação, a CONTRATADA poderá aplicar sanções, incluindo
+                    suspensão ou exclusão da conta.
                   </p>
                   <p>
-                    <strong>11.3.</strong> Customer service is available via
-                    WhatsApp (11 5555-5555), website www.placaverificada.com.br
-                    or email contato@placaverificada.com.br.
+                    <strong>11.3.</strong> O atendimento ao cliente está
+                    disponível via WhatsApp (11 5555-5555), site{" "} 
+                    <a
+                      href="https://www.placaverificada.com.br"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      www.placaverificada.com.br
+                    </a>{" "}
+                    ou e-mail{" "}
+                    <a
+                      href="mailto:contato@placaverificada.com.br"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      contato@placaverificada.com.br
+                    </a>
+                    .
                   </p>
                   <p>
-                    <strong>11.4.</strong> THE CONTRACTOR is responsible for the
-                    personal data provided, which will be processed in
-                    accordance with the LGPD (Law No. 13,709/2018).
+                    <strong>11.4.</strong> O CONTRATANTE é responsável pelos
+                    dados pessoais fornecidos, que serão tratados conforme a
+                    LGPD (Lei nº 13.709/2018).
                   </p>
                   <p>
-                    <strong>11.5.</strong> THE CONTRACTOR holds the intellectual
-                    property rights over the platform and its contents.
+                    <strong>11.5.</strong> A CONTRATADA detém os direitos de
+                    propriedade intelectual sobre a plataforma e seus conteúdos.
                   </p>
                   <p>
-                    <strong>11.5.1.</strong> This agreement does not transfer
-                    rights to trademarks, software, patents or trade secrets.
+                    <strong>11.5.1.</strong> Este contrato não transfere
+                    direitos sobre marcas, softwares, patentes ou segredos
+                    comerciais.
                   </p>
                   <p>
-                    <strong>11.5.2.</strong> THE CONTRACTOR authorizes the free
-                    use of his/her image and testimonials related to the
-                    platform.
+                    <strong>11.5.2.</strong> O CONTRATANTE autoriza o uso
+                    gratuito de sua imagem e depoimentos relacionados à
+                    plataforma.
                   </p>
                   <p>
-                    <strong>11.6.</strong> If any clause is considered invalid,
-                    the others will remain in force.
+                    <strong>11.6.</strong> Caso alguma cláusula seja considerada
+                    inválida, as demais permanecerão em vigor.
                   </p>
                   <p>
-                    <strong>11.7.</strong> The CONTRACTOR's tolerance does not
-                    imply waiver of rights.
+                    <strong>11.7.</strong> A tolerância da CONTRATADA não
+                    implica renúncia de direitos.
                   </p>
                   <p>
-                    <strong>11.8.</strong> THE CONTRACTOR may transfer its
-                    rights in the event of technology transfer, without the need
-                    for authorization from the CONTRACTOR.
+                    <strong>11.8.</strong> A CONTRATADA pode transferir seus
+                    direitos em caso de cessão de tecnologia, sem necessidade de
+                    autorização do CONTRATANTE.
                   </p>
                   <p>
-                    <strong>11.9.</strong> This agreement is governed by
-                    Brazilian laws, including the Internet Civil Rights
-                    Framework, LGPD, Consumer Protection Code and Civil Code.
+                    <strong>11.9.</strong> Este contrato é regido pelas leis
+                    brasileiras, incluindo o Marco Civil da Internet, LGPD,
+                    Código de Defesa do Consumidor e Código Civil.
                   </p>
                   <p>
-                    <strong>11.10.</strong> The jurisdiction of the District of
-                    the Capital of the State of São Paulo is elected for the
-                    resolution of conflicts.
+                    <strong>11.10.</strong> Fica eleito o foro da Comarca da
+                    Capital do Estado de São Paulo para resolução de conflitos.
                   </p>
                 </div>
               </section>
