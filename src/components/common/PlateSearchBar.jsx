@@ -161,7 +161,7 @@ const PlateSearchBar = ({
     >
       <input
         type="text"
-        placeholder={"IQQ-3D55"}
+        placeholder={"Digite a placa…"}
         className={` resize-none  outline-none w-full  text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-0 focus:shadow-none bg-white ${
           planCard
             ? "h-8 border border-gray-300 rounded-full text-sm px-3 text-center focus:border-[#1AABFE]"
@@ -217,7 +217,7 @@ const PlateSearchBar = ({
             onSubmit={handleFormSubmit}
             showCancelButton={planCard ? true : false}
             onCancel={handleModalClose}
-            buttonText={planCard ? "Confirm" : "Release All Information"}
+            buttonText={planCard ? "Confirm" : "Liberar todas as informações"}
             isSearching={isSearchingPlate || isCreatingOrder}
           />
         </Modal>
