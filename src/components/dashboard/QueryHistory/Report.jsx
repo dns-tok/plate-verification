@@ -156,19 +156,24 @@ const Report = ({ data, onClose, loading }) => {
   };
 
   // Helper function to render gauge chart placeholder
-  const renderGauge = (label, value, type = "percentage") => {
+  const renderGauge = ({
+    label,
+    value,
+    type = "percentage",
+    invertColors = false,
+  }) => {
     let percentage = 0;
     if (type === "percentage") {
       percentage = typeof value === "string" ? parseInt(value) : value || 0;
     } else if (type === "text") {
       percentage = parseInt(value);
     }
-
     return (
       <Gauge
         value={percentage}
         label={label}
         isPercentage={type === "percentage"}
+        invertColors={invertColors}
       />
     );
   };
@@ -207,7 +212,7 @@ const Report = ({ data, onClose, loading }) => {
   let reportData = null;
   let consultationDate = formatDate(new Date().toISOString());
   let queryId = "N/A";
-  let status = "N/A";
+  // let status = "N/A";
 
   if (responseItem?.response?.body?.data) {
     reportData = responseItem.response.body.data;
@@ -505,17 +510,22 @@ const Report = ({ data, onClose, loading }) => {
   // motor alterado: response.body.data.baseEstadual.dataAlteracaoMotor
   const hasMotorAlterado = checkSimNao(baseEstadual.dataAlteracaoMotor);
   // Chassi remarcado: response.body.data.baseEstadual.tipoMarcacaoChassi
-  // Special case: should be "Não" if "NORMAL" or null/empty, otherwise "Sim"
+  // Returns the actual value: "remarcado" (red), "normal" or "null" (blue)
+  const chassiRemarcadoValue = baseEstadual.tipoMarcacaoChassi
+    ? baseEstadual.tipoMarcacaoChassi.toLowerCase().trim()
+    : null;
   const hasChassiRemarcado =
-    baseEstadual.tipoMarcacaoChassi &&
-    baseEstadual.tipoMarcacaoChassi !== "NORMAL" &&
-    checkSimNao(baseEstadual.tipoMarcacaoChassi) === "Sim"
+    chassiRemarcadoValue === "remarcado"
       ? "Sim"
-      : "Não";
+      : chassiRemarcadoValue === "normal" || chassiRemarcadoValue === null
+      ? "Não"
+      : "Não"; // Default to "normal" for any other value
   // Recall: response.body.data.recall.recallsPendente
   const hasRecall = checkSimNao(reportData.recall?.recallsPendente);
   // Alerta de Gravame: response.body.data.gravame
-  const hasAlertaGravame = checkSimNao(reportData.gravame);
+  const hasAlertaGravame = checkSimNao(
+    reportData?.gravame?.[0]?.observacoes === "Atual" ? "Sim" : "Não"
+  );
   // Historico de Roubo: response.body.data.rouboFurto.constaOcorrenciaAtiva
   const hasHistoricoRoubo = checkSimNao(
     reportData.rouboFurto?.constaOcorrenciaAtiva
@@ -523,7 +533,20 @@ const Report = ({ data, onClose, loading }) => {
   // CSV: response.body.data.csv
   const hasCSV = checkSimNao(reportData.csv);
   // RENAJUD: response.body.data.baseNacional.indicadorRestricaoRenajud
-  const hasRENAJUD = checkSimNao(baseNacional.indicadorRestricaoRenajud);
+  // "no" or "null" or "VEICULO NAO INDICA OCORRENCIA DE ROUBO/FURTO" = "Não" (ok), otherwise "Sim" (not ok)
+  const renajudValue = baseNacional.indicadorRestricaoRenajud;
+  const renajudLowerValue = renajudValue?.toLowerCase()?.trim() || "";
+  const hasRENAJUD =
+    renajudLowerValue === "no" ||
+    renajudLowerValue === "não" ||
+    renajudLowerValue === "null" ||
+    renajudLowerValue === "" ||
+    renajudLowerValue === "nao" ||
+    renajudValue === "VEICULO NAO INDICA OCORRENCIA DE ROUBO/FURTO" ||
+    renajudValue?.toUpperCase() ===
+      "VEICULO NAO INDICA OCORRENCIA DE ROUBO/FURTO"
+      ? "Não"
+      : "Sim";
   // Historico de multas RENAINF: response.body.data.baseEstadual.debitoRenainf
   const hasMultasRENAINF = checkSimNao(baseEstadual.debitoRenainf);
 
@@ -542,7 +565,7 @@ const Report = ({ data, onClose, loading }) => {
     hasMultasRENAINF === "Sim" ||
     hasCSV === "Sim";
 
-  const historico = reportData?.rouboFurto?.historico || [];
+  // const historico = reportData?.rouboFurto?.historico || [];
 
   // Block 3 mapping - Insights do veículo
   // Nível de risco geral: response.body.data.leilao.score.aceitacao
@@ -551,7 +574,8 @@ const Report = ({ data, onClose, loading }) => {
   const nivelRisco =
     leilaoScoreAceitacao !== "N/A" ? parseInt(leilaoScoreAceitacao) || 0 : 0;
   // Exigência de Vistoria Especial (Barra exigencia de vistoria): response.body.data.leilao.score.percentualSobreRef
-  const leilaoScoreExigenciaVistoria = leilaoScore.percentualSobreRef || null;
+  const leilaoScoreExigenciaVistoria =
+    leilaoScore.exigenciaVistoriaEspecial || null;
   // Convert to low/high: if value exists and is a number, use it; otherwise check if it's a string "low"/"high"
   const exigenciaVistoriaEspecial =
     leilaoScoreExigenciaVistoria !== null &&
@@ -882,25 +906,31 @@ const Report = ({ data, onClose, loading }) => {
             </div>
             {/* Insights do veículo - Block 3 mapping */}
             <div className="">
-              {renderSectionTitle("Insights do veículo")}
+              {renderSectionTitle("Informacoes de Risco")}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Nível de risco geral: response.body.data.leilao.score.aceitacao */}
                 {nivelRisco > 0 &&
-                  renderGauge("Nível de risco geral", nivelRisco)}
+                  renderGauge({
+                    label: "Aceitacao de mercado",
+                    value: nivelRisco,
+                    invertColors: true,
+                  })}
                 {/* Exigência de Vistoria Especial: response.body.data.leilao.score.exigenciaVistoriaEspecial */}
                 {exigenciaVistoriaEspecial !== null &&
-                  renderGauge(
-                    "Exigência de Vistoria Especial",
-                    exigenciaVistoriaEspecial,
-                    "text"
-                  )}
+                  renderGauge({
+                    label: "Exigencia de vistoria especial",
+                    value: exigenciaVistoriaEspecial,
+                    type: "text",
+                  })}
 
                 {/* Percentual sobre Tabela FIPE: response.body.data.leilao.score.percentualSobreRef */}
                 {percentualSobreRef > 0 &&
-                  renderGauge(
-                    "Percentual sobre Tabela FIPE",
-                    percentualSobreRef
-                  )}
+                  renderGauge({
+                    label: "Percentual sobre tabela FIPE",
+                    value: percentualSobreRef,
+                    type: "percentage",
+                    invertColors: true,
+                  })}
               </div>
               {!nivelRisco &&
                 exigenciaVistoriaEspecial === null &&
@@ -1147,12 +1177,13 @@ const Report = ({ data, onClose, loading }) => {
               <div className="flex flex-col md:flex-row gap-6 h-[215px]">
                 {riscoBancosFinanceiras || leilaoScorePercentualRef ? (
                   <div className="shrink-0 w-[30%] h-full">
-                    {renderGauge(
-                      "",
-                      riscoBancosFinanceiras ||
+                    {renderGauge({
+                      label: "",
+                      value:
+                        riscoBancosFinanceiras ||
                         parseInt(leilaoScorePercentualRef) ||
-                        90
-                    )}
+                        90,
+                    })}
                   </div>
                 ) : (
                   <div className="shrink-0 w-[30%] h-full flex items-center justify-center border-2 border-[#1AABFE]/80 rounded-xl bg-white">
@@ -1164,20 +1195,12 @@ const Report = ({ data, onClose, loading }) => {
                     {/* Placa: response.body.data.leilao.registros[0].placa */}
                     <ReportField
                       label="Placa"
-                      value={
-                        reportData?.leilao?.registros?.[0]?.placa ||
-                        plate ||
-                        "N/A"
-                      }
+                      value={reportData?.placa || plate || "N/A"}
                     />
                     {/* Chasi: response.body.data.leilao.registros[0].chassi */}
                     <ReportField
                       label="Chassi"
-                      value={
-                        reportData?.leilao?.registros?.[0]?.chassi ||
-                        chassis ||
-                        "N/A"
-                      }
+                      value={reportData?.chassi || chassis || "N/A"}
                     />
                     {/* Análise: response.body.data... (default text) */}
                     <div className="mt-4">
@@ -1185,10 +1208,8 @@ const Report = ({ data, onClose, loading }) => {
                         Análise:
                       </p>
                       <p className="text-sm text-gray-800">
-                        {analiseBancos ||
-                          (hasBancosFinanceiras === "Sim"
-                            ? "Veículo possui alerta de risco alto em Bancos, Financeiras ou Seguradoras. Essa restrição pode ocasionar em uma negativa de financiamento/seguro em sua totalidade ou com um percentual menor que 100% na tabela."
-                            : "N/A")}
+                        {reportData?.analiseRisco?.parecer ||
+                          "Não consta informações nas bases consultadas."}
                       </p>
                     </div>
                   </div>
@@ -1863,19 +1884,12 @@ const Report = ({ data, onClose, loading }) => {
 
                       <div className="space-y-3">
                         {/* Indicação Restrição Renajud: response.body.data.baseNacional.indicadorRestricaoRenajud */}
-                        {/* "Não" = blue (ok), "Sim" = red (not ok) */}
-                        {(() => {
-                          const value =
-                            reportData?.baseNacional
-                              ?.indicadorRestricaoRenajud || "Nada consta";
-                          const lowerValue = value?.toLowerCase() || "";
-                          const isNotOk = !lowerValue.includes("nao");
-                          return renderField(
-                            "Indicação Restrição Renajud",
-                            value,
-                            isNotOk
-                          );
-                        })()}
+                        {/* "no" or "null" or "VEICULO NAO INDICA OCORRENCIA DE ROUBO/FURTO" = blue (ok), "yes" = red (not ok) */}
+                        {renderField(
+                          "Indicação Restrição Renajud",
+                          hasRENAJUD,
+                          hasRENAJUD === "Sim"
+                        )}
                         {/* Ocorrência: response.body.data.baseNacional.ocorrencia */}
                         {/* Red if different from "Veículo não indica ocorrência de Roubo/Furto" */}
                         {renderField(
@@ -2603,18 +2617,22 @@ const Report = ({ data, onClose, loading }) => {
                 </ReportSection>
 
                 {/* Porcentagem sobre Tabela FIPE */}
-                <ReportSection title="Porcentagem sobre Tabela FIPE">
+                <ReportSection title="Porcentagem sobre Tabela FIPE em caso de leilão">
                   <div className="flex flex-col md:flex-row gap-6 ">
                     <div className="shrink-0 w-[30%]">
                       {/* Porcentagem sobre Tabela FIPE - Percentual Máximo de Oferta: response.body.data.leilao.score.aceitacao */}
-                      {renderGauge("", nivelRisco)}
+                      {renderGauge({
+                        label: "",
+                        value: reportData?.leilao?.score?.percentualSobreRef,
+                      })}
                     </div>
                     <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                       <div className="space-y-3">
                         <div className="mt-4">
                           <p className="text-sm  text-[#1AABFE] mb-2">
                             Esse veículo poderá receber uma oferta máxima de{" "}
-                            {nivelRisco}% do preço do seu valor de tabela.
+                            {reportData?.leilao?.score?.percentualSobreRef}% do
+                            preço do seu valor de tabela.
                           </p>
                         </div>
                       </div>
@@ -2626,9 +2644,11 @@ const Report = ({ data, onClose, loading }) => {
                 <ReportSection title="Exigência de Vistoria Especial">
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="shrink-0 w-[30%]">
-                      {/* {renderGauge("", exigenciaVistoriaEspecial)} */}
                       <BarGauge
-                        value={exigenciaVistoriaEspecial}
+                        value={
+                          reportData?.leilao?.score
+                            ?.exigenciaVistoriaEspecial || 0
+                        }
                         min={0}
                         max={100}
                         label="Exigência de Vistoria Especial"
@@ -2726,13 +2746,22 @@ const Report = ({ data, onClose, loading }) => {
                       reportData.recall.recallsPendente.length > 0
                         ? reportData.recall.recallsPendente.map((item) => [
                             // Recall Pendentes - Descrição: response.body.data.recall.recallsPendente[0].descricao
-                            item?.descricao || "N/A",
+                            item?.descricao ||
+                              "Informação não encontrada nas bases consultadas",
                             // Recall Pendentes - Identificador: response.body.data.recall.recallsPendente[0].identificador
-                            item?.identificador || "N/A",
+                            item?.identificador ||
+                              "Informação não encontrada nas bases consultadas",
                             // Recall Pendentes - Situação: response.body.data.recall.recallsPendente[0].situacao
-                            item?.situacao || "N/A",
+                            item?.situacao ||
+                              "Informação não encontrada nas bases consultadas",
                           ])
-                        : [["N/A", "N/A", "N/A"]]
+                        : [
+                            [
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                              "Informação não encontrada nas bases consultadas",
+                            ],
+                          ]
                     }
                   />
                 </ReportSection>

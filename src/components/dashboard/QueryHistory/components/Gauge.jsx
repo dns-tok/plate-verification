@@ -14,6 +14,7 @@ const Gauge = ({
   max = 100,
   label = "Nível de risco geral",
   isPercentage = true,
+  invertColors = false,
 }) => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
@@ -38,11 +39,15 @@ const Gauge = ({
     // ✅ Dynamic color logic for center text
     const color =
       percent >= 75
-        ? "#f44336" // red
+        ? invertColors
+          ? "#00b050"
+          : "#f44336" // red
         : percent >= 50
         ? "#ffeb3b" // yellow
         : percent >= 25
         ? "#ff9800" // orange
+        : invertColors
+        ? "#f44336"
         : "#00b050"; // green
 
     // ✅ Chart setup - always show full gradient arc
@@ -90,9 +95,9 @@ const Gauge = ({
               cx + outerRadius,
               cy
             );
-            gradient.addColorStop(0, "#00b050"); // green at left
+            gradient.addColorStop(0, invertColors ? "#f44336" : "#00b050"); // green at left
             gradient.addColorStop(0.5, "#ffeb3b"); // yellow in middle
-            gradient.addColorStop(1, "#f44336"); // red at right
+            gradient.addColorStop(1, invertColors ? "#00b050" : "#f44336"); // red at right
 
             // Draw the semi-circular arc (bottom half, matching Chart.js rotation)
             // Start at 180° (left) and go to 0° (right) for bottom half
@@ -181,8 +186,8 @@ const Gauge = ({
 
   return (
     <div className="border-2 border-[#1AABFE]/80 rounded-xl  flex flex-col items-center justify-between p-4 relative">
-      <p className="mb-[-20px] text-[#1f4e79] font-medium me-auto ">{label}</p>
-      <canvas ref={canvasRef} className=" !w-[80%] !h-auto object-contain" />
+      <p className="mb-[-20px] text-[#194D9A] font-medium me-auto ">{label}</p>
+      <canvas ref={canvasRef} className="!w-[80%] !h-auto object-contain" />
       <div
         className={`absolute bottom-8 flex justify-between text-[13px] text-[#0078d7] font-medium w-[70%]`}
       >
