@@ -376,7 +376,7 @@ const TermsOfUse = () => {
                   </p>
                   <p>
                     <strong>11.3.</strong> O atendimento ao cliente está
-                    disponível via WhatsApp (11 5555-5555), site{" "} 
+                    disponível via WhatsApp (11 94222 - 7953), site{" "} 
                     <a
                       href="https://www.placaverificada.com.br"
                       target="_blank"

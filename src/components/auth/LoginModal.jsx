@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 const loginSchema = z.object({
   email: z
     .string()
-    .nonempty({ message: "Email is required" })
+    .nonempty({ message: "Por favor digite o seu e-mail" })
     .email({ message: "Invalid email address" }),
   password: z
     .string()
@@ -94,7 +94,7 @@ const LoginModal = ({
             }}
             className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
           >
-            Cadastra-se
+            cadatre-se
           </span>
         </p>
       </form>

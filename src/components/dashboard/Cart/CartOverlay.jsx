@@ -181,11 +181,10 @@ export default function CartOverlay() {
                 </div>
 
                 <h3 className="text-[1.4rem] font-medium text-gray-800 mb-3">
-                  Your Carrinho is Empty
-                </h3>
+Seu carrinho está vazio     
+           </h3>
                 <p className="text-xs font-medium text-gray-500 text-center mb-8 leading-relaxed">
-                  Add items to your Carrinho to get started.
-                </p>
+Adicione itens ao seu carrinho para iniciar a compra                </p>
               </div>
             )}
           </div>
@@ -301,7 +300,7 @@ export default function CartOverlay() {
                   className="w-full bg-[#194D9A] hover:bg-[#1AABFE]/90 text-white font-medium py-3 px-6 rounded-lg transition-colors cursor-pointer mt-auto"
                   onClick={handlePurchaseClick}
                 >
-                  Purchase Now
+                  Comprar
                 </button>
               </div>
             )}

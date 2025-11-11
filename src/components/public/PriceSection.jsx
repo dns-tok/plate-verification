@@ -92,7 +92,7 @@ const multiPlans = [
   },
   {
     id: 6,
-    name: "Eye on security",
+    name: "Olho na segurança",
     planNumber: "Pacote R$ 700,00",
     priceDesc: "Buy R$ 700,00 and pay R$500.00",
     discount: "-21%",
@@ -163,7 +163,7 @@ const PriceSection = () => {
               price={plan.price}
               description={plan.desc}
               features={plan.features}
-              buttonText="Comprar Relatórioo"
+              buttonText="Comprar Relatório"
               isUserChoice={plan.id === selectedCard}
             />
           ))}
@@ -181,7 +181,7 @@ const PriceSection = () => {
               priceDescription={plan.priceDesc}
               discount={plan.discount}
               description={plan.desc}
-              buttonText="Comprar Relatório"
+              buttonText="Compare Pacote"
               isUserChoice={plan.id === selectedCard}
             />
           ))}

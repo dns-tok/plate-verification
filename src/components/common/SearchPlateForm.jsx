@@ -7,7 +7,7 @@ const SearchPlateForm = ({
   onSubmit,
   showCancelButton = false,
   onCancel,
-  buttonText = "Release All Information",
+  buttonText = "Liberar todas as informações",
   labelClassName = "",
   isSearching = false,
 }) => {
@@ -50,7 +50,7 @@ const SearchPlateForm = ({
     <form className="flex flex-col " onSubmit={form.handleSubmit(onSubmit)}>
       <InputField
         form={form}
-        label="License Plate"
+        label="Placa do veículo"
         name="licensePlate"
         labelClassName={labelClass}
         inputClassName={inputClass}

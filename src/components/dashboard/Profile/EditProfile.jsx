@@ -17,7 +17,7 @@ const editProfileSchema = z.object({
   dateOfBirth: z.string().nonempty("Data de Nascimento is required"),
   email: z
     .string()
-    .nonempty("Email is required")
+    .nonempty("Por favor digite o seu e-mail")
     .email("Invalid email address"),
   zipCode: z
     .string()
