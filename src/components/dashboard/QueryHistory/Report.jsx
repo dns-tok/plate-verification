@@ -523,15 +523,35 @@ const Report = ({ data, onClose, loading }) => {
   // Recall: response.body.data.recall.recallsPendente
   const hasRecall = checkSimNao(reportData.recall?.recallsPendente);
   // Alerta de Gravame: response.body.data.gravame
-  const hasAlertaGravame = checkSimNao(
-    reportData?.gravame?.[0]?.observacoes === "Atual" ? "Sim" : "Não"
-  );
+  // Check all items in gravame array - if any has observacoes="Atual", show "Sim"
+  const hasAlertaGravame = reportData?.gravame?.some(
+    (g) => g?.observacoes === "Atual"
+  )
+    ? "Sim"
+    : "Não";
   // Historico de Roubo: response.body.data.rouboFurto.constaOcorrenciaAtiva
   const hasHistoricoRoubo = checkSimNao(
     reportData.rouboFurto?.constaOcorrenciaAtiva
   );
   // CSV: response.body.data.csv
-  const hasCSV = checkSimNao(reportData.csv);
+  // If null, show "Não" (blue). If has any information, show "Sim" (red).
+  const hasCSV = (() => {
+    const csv = reportData.csv;
+    // If null or undefined, show "Não" (blue)
+    if (csv === null || csv === undefined) {
+      return "Não";
+    }
+    // If it's an array, check if it has items
+    if (Array.isArray(csv)) {
+      return csv.length > 0 ? "Sim" : "Não";
+    }
+    // If it has any truthy value, show "Sim" (red)
+    if (csv) {
+      return "Sim";
+    }
+    // Otherwise (empty string, false, etc.), show "Não" (blue)
+    return "Não";
+  })();
   // RENAJUD: response.body.data.baseNacional.indicadorRestricaoRenajud
   // "no" or "null" or "VEICULO NAO INDICA OCORRENCIA DE ROUBO/FURTO" = "Não" (ok), otherwise "Sim" (not ok)
   const renajudValue = baseNacional.indicadorRestricaoRenajud;
