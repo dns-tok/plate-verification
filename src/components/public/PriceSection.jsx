@@ -44,7 +44,7 @@ const singlePlans = [
   {
     id: 3,
     name: "Plus Plan",
-    price: "R$ 33,90",
+    price: "R$ 55,90",
     desc: "Multi consultation",
     features: [
       "Vehicle registration details",
@@ -62,7 +62,7 @@ const singlePlans = [
   },
   {
     id: 4,
-    name: "Light Plan",
+    name: "Relatório Light",
     price: "R$ 27,90",
     desc: "Unlimited consultation",
     features: [
@@ -94,7 +94,7 @@ const multiPlans = [
     id: 6,
     name: "Eye on security",
     planNumber: "Pacote R$ 700,00",
-    priceDesc: "Buy R$700 and pay R$500.00",
+    priceDesc: "Buy R$ 700,00 and pay R$500.00",
     discount: "-21%",
     desc: "de economia",
   },

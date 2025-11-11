@@ -30,7 +30,7 @@ export const SideBar = () => {
   const navigationItems = [
     {
       id: "new-consultation",
-      label: "New consultation",
+      label: "Novas consultas",
       icon: "/assets/sidebar/consult.svg",
       hasDropdown: false,
       path: "/new-consultation",

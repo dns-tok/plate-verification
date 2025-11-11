@@ -27,7 +27,7 @@ const infoCards = [
   },
   {
     id: 2,
-    title: "**Histórico de KM​",
+    title: "*Histórico de KM​",
     img: "/meter.svg",
   },
 
@@ -181,14 +181,14 @@ const InfoSection = () => {
             O melhor para você
           </h1>
           <h2 className="text-black text-[1.5rem] md:text-[2rem] font-medium">
-            Complete Vehicle X-ray
+            Radiografia completa do veículo
           </h2>
           <p className="text-black text-[0.8rem] font-normal">
             Vai comprar um veículo e não quer descobrir problemas ocultos mais tarde? A Placa Verificada garante tranquilidade ao adquirir a inspeção do histórico vericular completo para o carro dos seus sonhos. Ela oferece proteção contra fraudes e prejuízos, validando automaticamente as informações sobre o histórico, os riscos e o estado do veículo para todos os itens registrados.
           </p>
         </div>
         <div className="font-bold text-[1rem] md:text-[1.1rem]">
-          28 pieces of information about your dream​
+          + de 28 informações sobre o veículo desejado.
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full mt-6 lg:mt-12 gap-4">
@@ -203,8 +203,7 @@ const InfoSection = () => {
         ))}
       </div>
       <p className="text-start w-full ms-2 mt-2 text-gray-600 text-[0.7rem] md:text-[0.8rem] font-normal">
-        *Information available according to the consulted public and private
-        databases
+        *Informações disponíveis de acordo com as bases de dados públicas e privadas consultadas
       </p>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mt-5 mb-4 md:mb-6">
         <button

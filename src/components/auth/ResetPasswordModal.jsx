@@ -73,7 +73,7 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
 
         <InputField
           form={form}
-          label="Confirm Password"
+          label="Confirmar nova senha"
           name="confirmPassword"
           placeholder="Confirmar a nova senha"
           icon={<MdLock />}
@@ -101,7 +101,7 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
             }}
             className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
           >
-            Log In
+            Entrar
           </span>
         </p>
       </form>

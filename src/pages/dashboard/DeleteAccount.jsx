@@ -111,7 +111,7 @@ const DeleteAccountPage = () => {
         <div className="flex flex-col gap-1 w-[70%]">
           <InputField
             form={form}
-            label="Password"
+            label="Senha atual"
             name="password"
             required
             isPassword={true}

@@ -104,7 +104,7 @@ export default function CartOverlay() {
                   className="hover:bg-gray-300 bg-gray-100 p-1 text-3xl rounded-full transition-all duration-300 cursor-pointer font-bold text-gray-700 "
                   onClick={closeCart}
                 />
-                <h2 className="text-xl font-semibold text-gray-800">Cart</h2>
+                <h2 className="text-xl font-semibold text-gray-800">Carrinho</h2>
               </div>
 
               <BsCartX

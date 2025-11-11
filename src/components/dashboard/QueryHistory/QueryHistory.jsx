@@ -70,7 +70,7 @@ const History = () => {
       }`}
     >
       <div className="space-y-4">
-        <p className="text-2xl font-semibold mb-4 text-center">Query History</p>
+        <p className="text-2xl font-semibold mb-4 text-center">Histórico de relatórios</p>
 
         {loading ? (
           <div className="flex items-center justify-center py-8">
@@ -87,9 +87,9 @@ const History = () => {
                 <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
                   <th className="!rounded-l-md">Data ce conclusão</th>
                   <th>Tipo de relatório escolhido</th>
-                  <th>Plate</th>
+                  <th>Histórico de relatórios</th>
                   <th>Status</th>
-                  <th className="!rounded-r-md">Purchase</th>
+                  <th className="!rounded-r-md">Compras</th>
                 </tr>
               </thead>
               <tbody>

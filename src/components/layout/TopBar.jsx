@@ -16,7 +16,7 @@ export const TopBar = () => {
       <div className="flex flex-col gap-2 p-6">
         <div className="flex items-center gap-1">
           <p className="text-white font-medium text-xl me-1">
-            Hi, {user?.full_name || user?.nome_completo || "User"}
+            Olá, usuário {user?.full_name || user?.nome_completo || "User"}
           </p>
           <div className="relative cursor-pointer" onClick={openCart}>
             <img
@@ -31,7 +31,7 @@ export const TopBar = () => {
         </div>
         <div className="flex items-end gap-8">
           <div className="">
-            <p className="text-white font-[400] text-md">Balance</p>
+            <p className="text-white font-[400] text-md">Saldo</p>
             <p className="text-white font-medium text-2xl whitespace-nowrap">
               {formatCurrency(balance)}
             </p>

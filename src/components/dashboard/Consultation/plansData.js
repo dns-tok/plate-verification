@@ -8,7 +8,7 @@ const singlePlans = [
       "Everything from the previous plan",
       "Renajud",
       "Renainf",
-      "Query history",
+      "Histórico de relatórios",
       "Rental Empresa registration",
       "Complete Technical Sheet and much more",
     ],
@@ -30,7 +30,7 @@ const singlePlans = [
   {
     id: 3,
     name: "Plus Plan",
-    price: "R$ 33,90",
+    price: "R$ 55,90",
     desc: "Multi consultation",
     features: [
       "Everything from the previous plan",
@@ -43,7 +43,7 @@ const singlePlans = [
   },
   {
     id: 4,
-    name: "Light Plan",
+    name: "Relatório Light",
     price: "R$ 27,90",
     desc: "Unlimited consultation",
     features: [
@@ -69,7 +69,7 @@ const multiPlans = [
     id: 6,
     name: "Olho na segurança",
     planNumber: "Pacote R$ 700,00",
-    priceDesc: "Buy R$700 and pay",
+    priceDesc: "Buy R$ 700,00 and pay",
     price: "R$500.00",
     discount: "-21%",
     desc: "de economia",

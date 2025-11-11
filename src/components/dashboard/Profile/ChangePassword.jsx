@@ -90,7 +90,7 @@ const ChangePassword = () => {
           />
           <InputField
             form={form}
-            label="Confirm Password"
+            label="Confirmar nova senha"
             name="confirmPassword"
             required
             placeholder="Confirmar a nova senha"

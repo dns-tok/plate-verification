@@ -22,7 +22,7 @@ const ContactSection = () => {
             <div className="flex flex-col md:flex-row gap-2 md:gap-6">
               <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="name" className={labelClass}>
-                  Name
+                  Nome
                 </label>
                 <input type="text" className={inputClass} />
               </div>

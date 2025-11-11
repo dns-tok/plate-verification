@@ -82,7 +82,7 @@ const Purchases = () => {
                   <th>Tipo de relatório escolhido</th>
                   <th>Placa do veículo</th>
                   <th>Status</th>
-                  <th className="!rounded-r-md">Purchase</th>
+                  <th className="!rounded-r-md">Compras</th>
                 </tr>
               </thead>
               <tbody>
@@ -105,7 +105,7 @@ const Purchases = () => {
                       >
                         {item.status === "settled" ||
                         item.transaction_status === "purchased"
-                          ? "Paid"
+                          ? "Pago"
                           : "Pending"}
                       </button>
                     </td>

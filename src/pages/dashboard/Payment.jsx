@@ -44,7 +44,7 @@ const Payment = () => {
       "Relatório Premium": "premium",
       "Relatório Ultra": "ultra",
       "Plus Plan": "plus",
-      "Light Plan": "light",
+      "Relatório Light": "light",
       "Always Present": "always_present",
       "Eye on security": "eye_on_security",
       Professional: "professional",

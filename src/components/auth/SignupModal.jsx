@@ -194,7 +194,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
   if (!isOpen) return null;
 
   return (
-    <Modal title="Sign Up" onClose={onClose} isAuthModal={true}>
+    <Modal title="Cadastrar-se" onClose={onClose} isAuthModal={true}>
       {step === 1 && (
         <form onSubmit={step1Form.handleSubmit(handleStep1Submit)}>
           <InputField
@@ -244,9 +244,9 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           {/* Privacy Notice */}
           <p className="text-xs mb-2 leading-relaxed text-white">
-           Para oferecer uma experiência de navegação mais segura e personalizada ao seu perfil, armazenamos alguns dados na sua conta. Dessa forma, você pode consultar seu histórico e informações sempre que desejar, além de receber notificações importantes por e-mail ou SMS. Para obter detalhes completos, consulte nossa Política de Privacidade.{" "}
+           Para oferecer uma experiência de navegação mais segura e personalizada ao seu perfil, armazenamos alguns dados na sua conta. Dessa forma, você pode consultar seu histórico e informações sempre que desejar, além de receber notificações importantes por e-mail ou SMS. Para obter detalhes completos, consulte nossa Política de {" "}
             <span className="text-[#1AABFE] cursor-pointer hover:underline">
-              <Link to="/privacy-policy">Privacy Policy</Link>
+              <Link to="/privacy-policy">Privacidade</Link>
             </span>
             .
           </p>

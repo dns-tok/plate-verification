@@ -107,7 +107,7 @@ const EditProfile = () => {
         <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
-            label="ID"
+            label="CEP"
             name="id"
             required
             placeholder="_ _ _ _ _ - _ _"
@@ -154,7 +154,7 @@ const EditProfile = () => {
         <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
-            label="CEP *"
+            label="CEP"
             name="zipCode"
             required
             placeholder="_ _ _ _ _ - _ _"
