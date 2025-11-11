@@ -111,7 +111,7 @@ disabled:opacity-50 disabled:cursor-not-allowed
           onClick={onForgotPassword}
           className="text-right text-[0.8rem] text-[#1AABFE] cursor-pointer hover:underline font-medium mt-1.5 w-fit ms-auto"
         >
-          Forgot Password?
+          Esqueceu a Senha?
         </p>
       )}
     </div>

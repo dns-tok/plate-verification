@@ -14,17 +14,17 @@ const step1Schema = z.object({
   id: z.string().nonempty("ID is required"),
   fullName: z
     .string()
-    .nonempty("Full name is required")
-    .min(2, "Full name must be at least 2 characters"),
-  dateOfBirth: z.string().nonempty("Date of birth is required"),
+    .nonempty("Nome completo is required")
+    .min(2, "Nome completo must be at least 2 characters"),
+  dateOfBirth: z.string().nonempty("Data de Nascimento is required"),
   email: z
     .string()
     .nonempty("Email is required")
-    .email("Invalid email address"),
+    .email("Endereço de e-mail inválido"),
   telephone: z
     .string()
-    .nonempty("Telephone is required")
-    .min(10, "Telephone must be at least 10 characters"),
+    .nonempty("Telefone is required")
+    .min(10, "Telefone must be at least 10 characters"),
 });
 
 // Step 2 Schema
@@ -32,12 +32,14 @@ const step2Schema = z
   .object({
     zipCode: z
       .string()
-      .min(5, { message: "ZIP code must be at least 5 characters" }),
-    houseNumber: z.string().min(1, { message: "House number is required" }),
+      .min(5, { message: "CEP * must be at least 5 characters" }),
+    houseNumber: z
+      .string()
+      .min(1, { message: "Número da residência is required" }),
     password: z
       .string()
-      .nonempty({ message: "Password is required" })
-      .min(6, { message: "Password must be at least 6 characters" }),
+      .nonempty({ message: "A senha é requerida" })
+      .min(6, { message: "A senha deve ter no mínimo 6 caracteres" }),
     confirmPassword: z
       .string()
       .min(1, { message: "Please confirm your password" }),
@@ -194,12 +196,12 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
   if (!isOpen) return null;
 
   return (
-    <Modal title="Sign Up" onClose={onClose} isAuthModal={true}>
+    <Modal title="Cadastrar-se" onClose={onClose} isAuthModal={true}>
       {step === 1 && (
         <form onSubmit={step1Form.handleSubmit(handleStep1Submit)}>
           <InputField
             form={step1Form}
-            label="ID"
+            label="CPF"
             name="id"
             placeholder="_ _ _ _ _ - _ _"
             required
@@ -207,7 +209,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           <InputField
             form={step1Form}
-            label="Full Name"
+            label="Nome completo"
             name="fullName"
             placeholder="John Doe"
             required
@@ -215,28 +217,28 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           {/* <InputField
             form={step1Form}
-            label="Date of Birth"
+            label="Data de Nascimento"
             name="dateOfBirth"
             placeholder="_ _ / _ _ / _ _ _ _"
             inputProps={{ type: "date" }}
           /> */}
           <DateInputField
             name="dateOfBirth"
-            label="Date of Birth"
+            label="Data de nascimento"
             required
             form={step1Form}
           />
           <InputField
             form={step1Form}
-            label="E-mail"
+            label="Email"
             name="email"
-            placeholder="you@example.com"
+            placeholder="yvoce@exemplo.com"
             required
           />
 
           <InputField
             form={step1Form}
-            label="Telephone"
+            label="Telefone"
             name="telephone"
             placeholder="(_ _) _ _ _ _ _ - _ _ _ _"
             required
@@ -244,13 +246,13 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           {/* Privacy Notice */}
           <p className="text-xs mb-2 leading-relaxed text-white">
-            To offer safer browsing experience tailored to your profile, we
-            record some data in your account. This way, you can review your
-            history and information whenever you want, in addition to receiving
-            important notifications via email or SMS. Full details are available
-            in our{" "}
+            Para oferecer uma experiência de navegação mais segura e
+            personalizada ao seu perfil, armazenamos alguns dados na sua conta.
+            Dessa forma, você pode consultar seu histórico e informações sempre
+            que desejar, além de receber notificações importantes por e-mail ou
+            SMS. Para obter detalhes completos, consulte nossa Política de{" "}
             <span className="text-[#1AABFE] cursor-pointer hover:underline">
-              <Link to="/privacy-policy">Privacy Policy</Link>
+              <Link to="/privacy-policy">Privacidade</Link>
             </span>
             .
           </p>
@@ -260,7 +262,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             type="submit"
             className="w-full bg-[#1AABFE] hover:bg-[#1AABFE]/70 text-white font-medium py-3 rounded-md transition mt-2 shadow-lg cursor-pointer"
           >
-            Follow
+            Continuar
           </button>
 
           {/* <p className="text-center text-[0.8rem]  mt-5 text-white flex justify-center">
@@ -281,7 +283,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
           </p> */}
 
           <p className="text-center text-[0.8rem] mt-4 md:mt-3">
-            Already have an account?{" "}
+            Já possui uma conta ?{" "}
             <span
               onClick={() => {
                 onClose();
@@ -289,7 +291,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
               }}
               className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
             >
-              Log In
+              Entrar
             </span>
           </p>
         </form>
@@ -299,7 +301,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
         <form onSubmit={step2Form.handleSubmit(handleStep2Submit)}>
           <InputField
             form={step2Form}
-            label="ZIP Code"
+            label="CEP"
             name="zipCode"
             placeholder="_ _ _ _ _ - _ _"
             required
@@ -307,7 +309,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           <InputField
             form={step2Form}
-            label="House Number"
+            label="Número da residência"
             name="houseNumber"
             placeholder="_ _ _ _"
             required
@@ -315,7 +317,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           <InputField
             form={step2Form}
-            label="Password"
+            label="Senha"
             name="password"
             placeholder="Password"
             isPassword={true}
@@ -324,9 +326,9 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           <InputField
             form={step2Form}
-            label="Confirm Password"
+            label="Confirmar senha"
             name="confirmPassword"
-            placeholder="Confirm Password"
+            placeholder="Confirmar senha"
             isPassword={true}
             required
           />
@@ -365,7 +367,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
               onClick={handleBack}
               className="w-full bg-white hover:bg-gray-100 text-blue-700 font-medium py-3 rounded-md transition shadow-lg cursor-pointer"
             >
-              Back
+              Voltar
             </button>
             <button
               type="submit"
@@ -376,7 +378,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
                   : "bg-gray-400 text-gray-200 cursor-not-allowed"
               }`}
             >
-              {isLoading ? "Registering..." : "Register"}
+              {isLoading ? "Registering..." : "Cadastrar"}
             </button>
           </div>
 
@@ -389,19 +391,19 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
               onChange={handleTermsAccepted}
             />
             <span className="cursor-pointer" onClick={handleTermsAccepted}>
-              By following, you will accept our{" "}
+              Seguindo, você concorda com nossos{" "}
             </span>
             <span
               className="text-[#1AABFE] cursor-pointer hover:underline ms-1"
               onClick={handleTermsClick}
             >
-              terms of use
+              termos de uso
             </span>
             .
           </p>
 
           <p className="text-center text-[0.8rem] mt-4 md:mt-3">
-            Already have an account?{" "}
+            Já possui uma conta ?{" "}
             <span
               onClick={() => {
                 onClose();
@@ -409,7 +411,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
               }}
               className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
             >
-              Log In
+              Entrar
             </span>
           </p>
         </form>

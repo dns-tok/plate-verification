@@ -53,7 +53,7 @@ const LoginModal = ({
   if (!isOpen) return null;
 
   return (
-    <Modal title="Log In" onClose={onClose} isAuthModal={true}>
+    <Modal title="Entrar" onClose={onClose} isAuthModal={true}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <InputField
           form={form}
@@ -65,9 +65,9 @@ const LoginModal = ({
 
         <InputField
           form={form}
-          label="Password"
+          label="Senha"
           name="password"
-          placeholder="Password"
+          placeholder="*****"
           icon={<MdLock />}
           isPassword={true}
           onForgotPassword={onNavigateToForgotPassword}
@@ -82,11 +82,11 @@ const LoginModal = ({
               : "bg-[#1AABFE] hover:bg-[#1AABFE]/70 text-white cursor-pointer"
           }`}
         >
-          {isLoading ? "Logging in..." : "Login"}
+          {isLoading ? "Entrando..." : "Entrar"}
         </button>
 
         <p className="text-center text-[0.8rem] mt-4 md:mt-6">
-          Don't have an account?{" "}
+          Não tem uma conta ?{" "}
           <span
             onClick={() => {
               onClose();
@@ -94,7 +94,7 @@ const LoginModal = ({
             }}
             className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
           >
-            Sign Up
+            Cadastra-se
           </span>
         </p>
       </form>

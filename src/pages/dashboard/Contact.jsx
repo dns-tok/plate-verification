@@ -40,12 +40,9 @@ const ContactPage = () => {
     <MainContent showMenu={false} bgImage="/assets/privacy.svg">
       <div className="space-y-4">
         <div className="flex flex-col gap-1 text-center justify-center items-center">
-          <p className="text-2xl font-semibold">Contact Us</p>
+          <p className="text-2xl font-semibold">Fale conosco</p>
           <p className="text-[0.8rem] font-[400] max-w-[85%]">
-            Our team is available to answer your questions and offer the best
-            possible service.Before we continue, we need some basic information
-            so we can get back to you quickly.If you prefer another channel, you
-            can also contact us through the options below:
+            Nossa equipe está à disposição para responder às suas perguntas e oferecer o melhor atendimento possível. Antes de prosseguirmos, precisamos de algumas informações básicas para que possamos entrar em contato com você rapidamente. Se preferir outro canal, você também pode nos contatar através das opções abaixo:
           </p>
         </div>
         <div className="flex gap-4 justify-between items-center rounded-xl overflow-hidden">
@@ -56,14 +53,14 @@ const ContactPage = () => {
               className="absolute bottom-0 right-0 size-[30%] "
             />
             <div className="w-full h-full text-white p-9">
-              <p className="text-2xl font-medium">Contact Information</p>
+              <p className="text-2xl font-medium">Informações de contato</p>
               <p className="text-white/60 font-light text-[0.9rem] ms-0.5">
-                Say something to start a live chat!
+                Caso prefira, podemos lhe atender por Whatsapp
               </p>
               <div className="flex flex-col justify-evenly gap-2 [&>p]:flex [&>p]:items-center [&>p]:gap-2 mt-5 h-[200px]">
                 <p>
                   <BiSolidPhoneCall className="text-[1.3rem]" />
-                  +1012 3456 789
+                  +55 11 94222-7953
                 </p>
                 <p>
                   <BiSolidEnvelope className="text-[1.3rem]" />
@@ -84,7 +81,7 @@ const ContactPage = () => {
               htmlFor="message"
               className="text-sm font-semibold mb-2 block text-black/70"
             >
-              Message
+              Mensagem
             </label>
             <textarea
               name="message"
@@ -92,7 +89,7 @@ const ContactPage = () => {
               className="w-full border-2 border-[#8D8D8D]/60 p-2 rounded-md resize-none text-sm focus:outline-none focus:ring-0 focus:border-[#1AABFE] transition-all duration-500"
               value={message}
               onChange={handleMessageChange}
-              placeholder="Write your message..."
+              placeholder="Escreva sua mensagem aqui"
               rows={5}
               required
             />
@@ -103,7 +100,7 @@ const ContactPage = () => {
               }`}
               disabled={isSending}
             >
-              {isSending ? "Sending..." : "Send Message"}
+              {isSending ? "Sending..." : "Enviar mensagem"}
               <img
                 src="/letterSend.svg"
                 alt=""

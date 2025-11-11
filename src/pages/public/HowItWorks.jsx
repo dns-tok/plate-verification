@@ -8,7 +8,7 @@ const HowItWorks = () => {
           <div className="bg-white rounded-lg shadow-lg p-8">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                How It Works
+                Como Funciona
               </h1>
             </div>
           </div>

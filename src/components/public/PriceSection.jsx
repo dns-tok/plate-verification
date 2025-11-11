@@ -6,9 +6,9 @@ import { FaArrowRightLong } from "react-icons/fa6";
 const singlePlans = [
   {
     id: 1,
-    name: "Premium Plan",
+    name: "Relatório Premium",
     price: "R$ 58,00",
-    desc: "Single consultation",
+    desc: "Consulta única",
     features: [
       "Vehicle registration details",
       "License plate status",
@@ -24,7 +24,7 @@ const singlePlans = [
   },
   {
     id: 2,
-    name: "Ultra Plan",
+    name: "Relatório Ultra",
     price: "R$ 44,90",
     desc: "Complete consultation",
     features: [
@@ -43,8 +43,8 @@ const singlePlans = [
   },
   {
     id: 3,
-    name: "Plus Plan",
-    price: "R$ 33,90",
+    name: "Relatório Plus",
+    price: "R$ 55,90",
     desc: "Multi consultation",
     features: [
       "Vehicle registration details",
@@ -62,7 +62,7 @@ const singlePlans = [
   },
   {
     id: 4,
-    name: "Light Plan",
+    name: "Relatório Light",
     price: "R$ 27,90",
     desc: "Unlimited consultation",
     features: [
@@ -84,43 +84,43 @@ const singlePlans = [
 const multiPlans = [
   {
     id: 5,
-    name: "Always Present",
-    planNumber: "Plan R$1200",
-    priceDesc: "Buy R$1200 and pay R$900.00",
+    name: "Sempre Presente",
+    planNumber: "Pacote R$ 1.200,00",
+    priceDesc: "Compre R$ 1.200,00 e pague R$900.00",
     discount: "-25%",
-    desc: "of economy",
+    desc: "de economia",
   },
   {
     id: 6,
     name: "Eye on security",
-    planNumber: "Plan R$700",
-    priceDesc: "Buy R$700 and pay R$500.00",
+    planNumber: "Pacote R$ 700,00",
+    priceDesc: "Buy R$ 700,00 and pay R$500.00",
     discount: "-21%",
-    desc: "of economy",
+    desc: "de economia",
   },
   {
     id: 7,
-    name: "Professional",
-    planNumber: "Plan R$500",
-    priceDesc: "Buy R$500 and pay R$410.00",
+    name: "Profissional",
+    planNumber: "Pacote R$ 500,00",
+    priceDesc: "Compre R$ 500,00 e pague R$410.00",
     discount: "-18%",
-    desc: "of economy",
+    desc: "de economia",
   },
   {
     id: 8,
-    name: "Negotiator",
-    planNumber: "Plan R$300",
-    priceDesc: "Buy R$300 and pay R$250.00",
+    name: "Negociador",
+    planNumber: "Pacote R$ 300,00",
+    priceDesc: "Compre R$ 300,00 e pague R$250.00",
     discount: "-17%",
-    desc: "of economy",
+    desc: "de economia",
   },
   {
     id: 9,
     name: "Test Drive",
-    planNumber: "Plan R$150",
-    priceDesc: "Buy R$150 and pay R$140.00",
+    planNumber: "Pacote R$ 150,00",
+    priceDesc: "Compre R$ 150,00 e pague R$140.00",
     discount: "-7%",
-    desc: "of economy",
+    desc: "de economia",
   },
 ];
 
@@ -144,10 +144,10 @@ const PriceSection = () => {
       {/* Header */}
       <div className="text-center mb-10 md:mb-12 lg:mb-20">
         <h1 className="text-[2rem] md:text-[3rem] lg:text-[4rem] font-bold">
-          The Best Plan for You
+         O melhor plano para você
         </h1>
         <p className="md:text-[1rem] lg:text-[1.3rem] font-normal">
-          Prices valid per unit​. If you have any questions, please contact us.
+         Preços válidos por unidade. Em caso de dúvidas, entre em contato conosco.
         </p>
       </div>
       {/* Plans */}
@@ -163,7 +163,7 @@ const PriceSection = () => {
               price={plan.price}
               description={plan.desc}
               features={plan.features}
-              buttonText="Choose Plan"
+              buttonText="Comprar Relatórioo"
               isUserChoice={plan.id === selectedCard}
             />
           ))}
@@ -181,7 +181,7 @@ const PriceSection = () => {
               priceDescription={plan.priceDesc}
               discount={plan.discount}
               description={plan.desc}
-              buttonText="Choose Plan"
+              buttonText="Comprar Relatório"
               isUserChoice={plan.id === selectedCard}
             />
           ))}
@@ -195,7 +195,7 @@ const PriceSection = () => {
           className="bg-[#1AABFE] rounded-md flex items-center gap-3 py-3 px-8 w-fit cursor-pointer bg-[#1AABFE]hover:text-[#1AABFE] transition-all duration-300 border-[#1AABFE] group "
         >
           <span className="md:text-[1.2rem] font-medium">
-            Single Consultation
+            Consulta única
           </span>
           <FaArrowRightLong className=" md:text-[1.3rem] transition-all duration-300 -rotate-45" />
         </button>
@@ -204,7 +204,7 @@ const PriceSection = () => {
           className="bg-[#1AABFE] rounded-md flex items-center gap-3 py-3 px-8 w-fit cursor-pointer bg-[#1AABFE]hover:text-[#1AABFE] transition-all duration-300 border-[#1AABFE] group "
         >
           <span className="md:text-[1.2rem] font-medium">
-            Multiple Consultation
+            Multiplas consultas / Pacotes
           </span>
           <FaArrowRightLong className="md:text-[1.3rem] transition-all duration-300 -rotate-45" />
         </button>

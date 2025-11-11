@@ -27,18 +27,18 @@ const infoCards = [
   },
   {
     id: 2,
-    title: "*KM History​",
+    title: "*Histórico de KM​",
     img: "/meter.svg",
   },
 
   {
     id: 3,
-    title: "Acceptance in Insurance​",
+    title: "Aceitação em seguradoras​",
     img: "/secure.svg",
   },
   {
     id: 4,
-    title: "Car Loss Rate​",
+    title: "Índice de sinistro​",
     img: "/carCrash.svg",
   },
   {
@@ -48,112 +48,112 @@ const infoCards = [
   },
   {
     id: 6,
-    title: "Robbery & Theft​",
+    title: "Roubo e Furto​",
     img: "/carThief.svg",
   },
   {
     id: 7,
-    title: "Approximate Maintenance​ cost",
+    title: "Custo aproximado de manutenção",
     img: "/maintenance.svg",
   },
   {
     id: 8,
-    title: "Lighthouse​",
+    title: "Farol",
     img: "/lighthouse.svg",
   },
   {
     id: 9,
-    title: "Debts & Fines​",
+    title: "Débitos e Multas​",
     img: "/debt.svg",
   },
   {
     id: 10,
-    title: "Restrictions & impediments​",
+    title: "Restrições & Impedimentos​",
     img: "/meter.svg",
   },
   {
     id: 11,
-    title: "Beats​",
+    title: "Batidas",
     img: "/secure.svg",
   },
   {
     id: 12,
-    title: "FIPE​",
+    title: "Histórico da tabela Fipe",
     img: "/carCrash.svg",
   },
   {
     id: 13,
-    title: "Auction Data",
+    title: "Dados de Leilão",
     icon: <RiAuctionFill className="text-[#1AABFE]" />,
   },
   {
     id: 14,
-    title: "Vehicle Photos",
+    title: "Fotos do veículo",
     icon: <FaPhotoFilm className="text-[#1AABFE]" />,
   },
   {
     id: 15,
-    title: "Search History",
+    title: "Fotos do veículo",
     icon: <MdYoutubeSearchedFor className="text-[#1AABFE]" />,
   },
   {
     id: 16,
-    title: "Maintenance History",
+    title: "*Histórico de Manutenção",
     icon: <MdOutlineManageHistory className="text-[#1AABFE]" />,
   },
   {
     id: 17,
-    title: "Chassis Explanation",
+    title: "Explicação do Chassi",
     icon: <MdOutlineCarRepair className="text-[#1AABFE]" />,
   },
   {
     id: 18,
-    title: "Main model problems",
+    title: "Principais problemas com o modelo escolhido",
     icon: <MdOutlineSyncProblem className="text-[#1AABFE]" />,
   },
   {
     id: 19,
-    title: "Ownership",
+    title: "Proprietários",
     icon: <MdOutlineCarRental className="text-[#1AABFE]" />,
   },
   {
     id: 20,
-    title: "Price History",
+    title: "Histórico de preços",
     icon: <FaHistory className="text-[#1AABFE]" />,
   },
   {
     id: 21,
-    title: "Registration data state",
+    title: "Dados cadastrais do veículo (Por estado)",
     icon: <MdAppRegistration className="text-[#1AABFE]" />,
   },
   {
     id: 22,
-    title: "Vehicle Numbers",
+    title: "Números de veículo (Chassi, Motor, vidros)",
     icon: <PiNumberSevenFill className="text-[#1AABFE]" />,
   },
   {
     id: 23,
-    title: "Registration in rental companies",
+    title: "Registro em locadoras",
     icon: <MdOutlineCarRental className="text-[#1AABFE]" />,
   },
   {
     id: 24,
-    title: "Technical sheet",
+    title: "Tabela com detalhes técnicos",
     icon: <BiSolidSpreadsheet className="text-[#1AABFE]" />,
   },
   {
     id: 25,
-    title: "Fair Price",
+    title: "Preço justo (Compra e Venda)",
     icon: <MdOutlinePriceChange className="text-[#1AABFE]" />,
   },
   {
     id: 26,
-    title: "Owner's Opinion",
+    title: "Opinião do dono",
     icon: <MdOutlinePerson className="text-[#1AABFE]" />,
   },
   {
     id: 27,
-    title: "Vehicle Registration Data",
+    title: "Dados de registro do veículo",
     icon: <AiFillDatabase className="text-[#1AABFE]" />,
   },
 ];
@@ -169,7 +169,7 @@ const InfoSection = () => {
   const handleShowMore = () => {
     setShowMore(!showMore);
     if (showMore) {
-      scrollToSection("advantages");
+      scrollToSection("vantagens");
     }
   };
 
@@ -178,21 +178,17 @@ const InfoSection = () => {
       <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0">
         <div className=" lg:w-[50%]">
           <h1 className="text-[#194D9A] text-[1.5rem] md:text-[2rem] font-bold tracking-tight">
-            The best for you​
+            O melhor para você
           </h1>
           <h2 className="text-black text-[1.5rem] md:text-[2rem] font-medium">
-            Complete Vehicle X-ray
+            Radiografia completa do veículo
           </h2>
           <p className="text-black text-[0.8rem] font-normal">
-            Buying a vehicle and don't want to discover hidden issues later?
-            Verified Plate guarantees peace of mind when you purchase the
-            complete vehicle inspection for your dream vehicle. It provides
-            peace of mind against fraud and losses by automatically validating
-            information about the vehicle's history, risks, and status.
+            Vai comprar um veículo e não quer descobrir problemas ocultos mais tarde? A Placa Verificada garante tranquilidade ao adquirir a inspeção do histórico vericular completo para o carro dos seus sonhos. Ela oferece proteção contra fraudes e prejuízos, validando automaticamente as informações sobre o histórico, os riscos e o estado do veículo para todos os itens registrados.
           </p>
         </div>
         <div className="font-bold text-[1rem] md:text-[1.1rem]">
-          28 pieces of information about your dream​
+          + de 28 informações sobre o veículo desejado.
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full mt-6 lg:mt-12 gap-4">
@@ -207,8 +203,7 @@ const InfoSection = () => {
         ))}
       </div>
       <p className="text-start w-full ms-2 mt-2 text-gray-600 text-[0.7rem] md:text-[0.8rem] font-normal">
-        *Information available according to the consulted public and private
-        databases
+        *Informações disponíveis de acordo com as bases de dados públicas e privadas consultadas
       </p>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mt-5 mb-4 md:mb-6">
         <button
@@ -216,7 +211,7 @@ const InfoSection = () => {
           onClick={handleShowMore}
         >
           <span className="md:text-[1.4rem] font-medium">
-            {showMore ? "View Less" : "View More"}
+            {showMore ? "Ver Menos" : "Ver Mais"}
           </span>
           <FaArrowRightLong
             className={` md:text-[1.3rem] transition-all duration-500 ${

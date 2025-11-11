@@ -4,29 +4,29 @@ import { scrollToTop } from "../../utils/scrollUtils";
 
 const footerLinks = [
   {
-    name: "Company",
+    name: "Empresa",
     border: "border-r border-white/50",
     links: [
       {
-        name: "About Us",
+        name: "Sobre nós",
         href: "/about-us",
       },
       {
-        name: "Solution",
+        name: "Solução",
         href: "#",
       },
     ],
   },
   {
-    name: "Resources",
+    name: "Recursos",
     border: "border-r border-white/50",
     links: [
       {
-        name: "Help Center",
+        name: "Central de Ajuda",
         href: "#",
       },
       {
-        name: "Insights",
+        name: "Percepções",
         href: "#",
       },
       {
@@ -36,19 +36,19 @@ const footerLinks = [
     ],
   },
   {
-    name: "Legal",
+    name: "Jurídico",
     border: "border-r border-white/50",
     links: [
       {
-        name: "Privacy Policy",
+        name: "Política de privacidade",
         href: "/privacy-policy",
       },
       {
-        name: "Terms of Use",
+        name: "Termos de Uso",
         href: "/terms-of-use",
       },
       {
-        name: "Compliance – LGPD (General Data Protection Law)",
+        name: "Conformidade com a LGPD (Lei Geral de Proteção de Dados)",
         href: "#",
       },
     ],
@@ -67,8 +67,7 @@ const Footer = () => {
               <img src="/whiteLogo.svg" alt="Logo" className="" />
             </div>
             <p className="text-lg font-normal max-w-[22rem]">
-              Protect your purchase before closing the deal. Check, confirm,
-              trust. Verified Plate, security that goes beyond the plate.
+Proteja sua compra antes de fechar o negócio. Verifique, confirme, confie. Placa Verificada, segurança que vai além da placa.
             </p>
             <div className="flex space-x-3  ">
               <a
@@ -110,7 +109,7 @@ const Footer = () => {
             ))}
 
             <div className="  ">
-              <h2 className="text-xl lg:text-2xl mb-3">Contact</h2>
+              <h2 className="text-xl lg:text-2xl mb-3">Contato</h2>
               <div className="space-y-4  ">
                 <div className="flex items-center gap-2">
                   <a href="#" className="bg-white text-blue-600 rounded p-1.5">
@@ -138,8 +137,8 @@ const Footer = () => {
           </div>
         </div>
         <div className="text-center text-[0.4rem] text-black flex justify-around items-center py-1 bg-[#D9D9D9]">
-          <p>Verified Plate. All rights reserved.</p>
-          <p>Security first – protecting your dream</p>
+          <p>Placa verificada. Todos os direitos reservados.</p>
+          <p>Segurança em primeiro lugar – protegendo o seu sonho.</p>
         </div>
       </div>
     </div>

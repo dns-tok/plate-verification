@@ -203,12 +203,12 @@ const PlateSearchBar = ({
           onClick={handleSearch}
           disabled={isSearchingPlate || !licensePlate.trim()}
         >
-          {isSearchingPlate ? "Searching..." : "Consult Now"}
+          {isSearchingPlate ? "Searching..." : "Consultar agora"}
         </button>
       )}
       {showSearchPlatePopup && (
         <Modal
-          title={!plateSearchResult ? "Search Plate" : "Confirm Data"}
+          title={!plateSearchResult ? "Search Plate" : "Confirmar informações"}
           onClose={handleModalClose}
           className="!bg-[#194D9A] !text-white !rounded-3xl !p-8"
         >

@@ -44,12 +44,12 @@ export const transformApiPlans = (apiPlans) => {
         id: index + 1, // Maintain same IDs as static data
         name: `${plan.name} Plan`,
         price: formatCurrency(plan.price),
-        desc: "Single consultation",
+        desc: "Consulta única",
         features: plan.description
           ? plan.description.split("\n").filter((item) => item.trim() !== "")
           : [
               "Vehicle Registration Data",
-              "KM History",
+              "*Histórico de KM",
               "Market price",
               "Loss Index",
             ],

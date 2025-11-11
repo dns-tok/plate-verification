@@ -23,17 +23,17 @@ const MultiConsultant = ({
           Test Drive
         </p>
         <h2 className="text-white text-[1.5rem] md:text-[2.5rem] font-bold">
-          Plan R$150
+          Pacote R$ 150,00
         </h2>
         <p className="text-white text-sm md:text-[1rem] font-light">
-          Buy R$150 and pay R$140.00
+          Compre R$ 150,00 e pague R$140.00
         </p>
         <div className="flex flex-col  items-start  ">
           <h2 className="text-white text-[2.2rem] md:text-[2.8rem] font-bold">
             -7%
           </h2>
           <p className="text-white text-sm md:text-[1rem] font-light">
-            of economy
+            de economia
           </p>
         </div>
       </div>
@@ -46,7 +46,7 @@ const MultiConsultant = ({
               : "bg-white text-black hover:bg-[#1AABFE] hover:text-white transition-all duration-500"
           }`}
         >
-          Choose plan
+          Comprar Relatório
         </button>
       </div>
     </div>

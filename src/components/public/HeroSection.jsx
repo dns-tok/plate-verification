@@ -30,8 +30,9 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className="text-white text-[1rem] md:text-[1.2rem] pt-4 md:pt-[1rem] leading-relaxed">
-            Consult everything you need, ultimately want buy a car and not one
-            story to tell, report complete
+            Consulte tudo o que você precisa de um veículo semi-novo, afinal, o
+            que você quer é comprar um carro e não ter uma história para contar.
+            Temos o relatório mais completo.
           </p>
         </div>
 

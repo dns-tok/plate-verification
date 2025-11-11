@@ -22,8 +22,8 @@ const contactSchema = z.object({
     .email("Please enter a valid email address"),
   phone: z
     .string()
-    .min(1, "Phone number is required")
-    .min(10, "Phone number must be at least 10 characters"),
+    .min(1, "Telefone is required")
+    .min(10, "Telefone must be at least 10 characters"),
   message: z
     .string()
     .min(1, "Message is required")
@@ -79,7 +79,7 @@ export default function AboutSectionThree() {
         {/* Left Section - Title */}
         <div className="w-full lg:w-1/4 flex items-center text-white px-4 lg:px-6">
           <h1 className="text-4xl sm:text-4xl lg:text-4xl font-bold leading-tight w-full text-center lg:text-left">
-            Contact Us
+            Fale conosco
           </h1>
         </div>
 
@@ -92,8 +92,7 @@ export default function AboutSectionThree() {
                 {/* Left side - Header text */}
                 <div className="lg:w-1/3 text-white flex items-center bg-[rgba(255,255,255,0.1)] p-6 sm:p-8 lg:p-10">
                   <h2 className="text-lg sm:text-xl lg:text-2xl font-normal leading-relaxed">
-                    Any question or remarks? Just write us a message!
-                  </h2>
+Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!                  </h2>
                 </div>
 
                 {/* Right side - Form fields */}
@@ -128,7 +127,7 @@ export default function AboutSectionThree() {
                       />
                     </div>
 
-                    {/* Email and Phone Number Row */}
+                    {/* Email and Telefone Row */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <InputField
                         form={form}
@@ -145,7 +144,7 @@ export default function AboutSectionThree() {
 
                       <InputField
                         form={form}
-                        label="Phone Number"
+                        label="Telefone"
                         name="phone"
                         required
                         defaultValue="+91"
@@ -180,7 +179,7 @@ export default function AboutSectionThree() {
                           isSubmitting ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                         }`}
                       >
-                        {isSubmitting ? "Sending..." : "Send Message"}
+                        {isSubmitting ? "Sending..." : "Enviar mensagem"}
                       </button>
                     </div>
                   </form>

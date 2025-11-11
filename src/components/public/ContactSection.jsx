@@ -17,18 +17,18 @@ const ContactSection = () => {
         <div className="md:w-[55%]">
           <form className="flex flex-col gap-2 text-white" action="">
             <h1 className="text-white text-[2rem] font-bold leading-none">
-              Contact Us
+              Fale conosco
             </h1>
             <div className="flex flex-col md:flex-row gap-2 md:gap-6">
               <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="name" className={labelClass}>
-                  Name
+                  Nome
                 </label>
                 <input type="text" className={inputClass} />
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="email" className={labelClass}>
-                  Email
+                  E-mail
                 </label>
                 <input type="text" className={inputClass} />
               </div>
@@ -36,20 +36,20 @@ const ContactSection = () => {
             <div className="flex flex-col md:flex-row gap-2 md:gap-6 w-full">
               <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="phone" className={labelClass}>
-                  Phone Number
+                  Telefone
                 </label>
                 <input type="text" className={inputClass} />
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="city" className={labelClass}>
-                  City
+                  Cidade
                 </label>
                 <input type="text" className={inputClass} />
               </div>
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="message" className={labelClass}>
-                Message
+                Mensagem
               </label>
               <textarea
                 type="text"
@@ -60,7 +60,7 @@ const ContactSection = () => {
               type="submit"
               className="bg-white rounded-full ms-auto md:ms-0 me-auto font-bold px-6 py-2 text-[1rem] md:text-[0.9rem] mt-4 text-[#1AABFE] whitespace-nowrap"
             >
-              Submit contact
+              Enviar
             </button>
           </form>
         </div>

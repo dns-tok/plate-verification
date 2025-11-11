@@ -62,7 +62,7 @@ const Purchases = () => {
     >
       <div className="space-y-4">
         <p className="text-2xl font-semibold mb-4 text-center">
-          Purchases History
+          Histórico de compras
         </p>
 
         {loading ? (
@@ -78,11 +78,11 @@ const Purchases = () => {
             <table className="min-w-full border-collapse">
               <thead className="">
                 <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
-                  <th className="!rounded-l-md">Date of conclusion</th>
-                  <th>Chosen</th>
-                  <th>Plate</th>
+                  <th className="!rounded-l-md">Data ce conclusão</th>
+                  <th>Tipo de relatório escolhido</th>
+                  <th>Placa do veículo</th>
                   <th>Status</th>
-                  <th className="!rounded-r-md">Purchase</th>
+                  <th className="!rounded-r-md">Compras</th>
                 </tr>
               </thead>
               <tbody>
@@ -105,7 +105,7 @@ const Purchases = () => {
                       >
                         {item.status === "settled" ||
                         item.transaction_status === "purchased"
-                          ? "Paid"
+                          ? "Pago"
                           : "Pending"}
                       </button>
                     </td>
@@ -120,7 +120,7 @@ const Purchases = () => {
                       >
                         {item.status === "settled" ||
                         item.transaction_status === "purchased"
-                          ? "Completed"
+                          ? "Finalizado"
                           : "Complete Purchase"}
                       </button>
                     </td>

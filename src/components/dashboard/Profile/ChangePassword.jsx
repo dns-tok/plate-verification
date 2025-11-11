@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 // Change Password Schema
 const changePasswordSchema = z
   .object({
-    currentPassword: z.string().nonempty("Current password is required"),
+    currentPassword: z.string().nonempty("Senha atual is required"),
     password: z
       .string()
       .nonempty({ message: "Password is required" })
@@ -65,10 +65,10 @@ const ChangePassword = () => {
         <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
-            label="Current Password"
+            label="Senha atual"
             name="currentPassword"
             required
-            placeholder="Enter current password"
+            placeholder="Digite a senha atual"
             isPassword={true}
             inputClassName={inputClass}
             labelClassName={labelClass}
@@ -79,10 +79,10 @@ const ChangePassword = () => {
         <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
-            label="New Password"
+            label="Nova Senha"
             name="password"
             required
-            placeholder="Enter new password"
+            placeholder="Confirmar a nova senha"
             isPassword={true}
             inputClassName={inputClass}
             labelClassName={labelClass}
@@ -90,10 +90,10 @@ const ChangePassword = () => {
           />
           <InputField
             form={form}
-            label="Confirm Password"
+            label="Confirmar nova senha"
             name="confirmPassword"
             required
-            placeholder="Confirm new password"
+            placeholder="Confirmar a nova senha"
             isPassword={true}
             inputClassName={inputClass}
             labelClassName={labelClass}
@@ -109,7 +109,7 @@ const ChangePassword = () => {
         }`}
         disabled={isLoading}
       >
-        {isLoading ? "Saving..." : "Save"}
+        {isLoading ? "Saving..." : "Salvar"}
       </button>
     </form>
   );

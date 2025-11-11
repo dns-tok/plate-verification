@@ -60,7 +60,7 @@ const SearchPlateForm = ({
       />
       <InputField
         form={form}
-        label="Make & Model"
+        label="Marca e Modelo"
         name="makeAndModel"
         labelClassName={labelClass}
         inputClassName={inputClass}
@@ -96,7 +96,7 @@ const SearchPlateForm = ({
             className="bg-transparent border border-white rounded-full font-bold px-6 py-2 text-[1rem] md:text-[0.9rem] mt-4 text-white whitespace-nowrap mb-2 cursor-pointer hover:bg-white hover:text-black transition-all duration-300"
             onClick={onCancel}
           >
-            Cancel
+            Cancelar
           </button>
         )}
         <button

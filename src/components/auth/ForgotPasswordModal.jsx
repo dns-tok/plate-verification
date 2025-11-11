@@ -95,7 +95,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onNavigateToLogin }) => {
   }
 
   return (
-    <Modal title="Forgot Password" onClose={onClose} isAuthModal={true}>
+    <Modal title="Esqueceu a Senha" onClose={onClose} isAuthModal={true}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <InputField
           form={form}
@@ -114,11 +114,11 @@ const ForgotPasswordModal = ({ isOpen, onClose, onNavigateToLogin }) => {
               : "bg-[#1AABFE] hover:bg-[#1AABFE]/70 text-white cursor-pointer"
           }`}
         >
-          {isLoading ? "Sending..." : "Send Reset Link"}
+          {isLoading ? "Enviando..." : "Enviar Link de Redefinição"}
         </button>
 
         <p className="text-center text-[0.8rem] mt-4 md:mt-3">
-          Remember your password?{" "}
+          Lembrou sua senha?{" "}
           <span
             onClick={() => {
               onClose();
@@ -126,7 +126,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             }}
             className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
           >
-            Log In
+           Entrar
           </span>
         </p>
       </form>

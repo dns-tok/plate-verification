@@ -64,18 +64,18 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <InputField
           form={form}
-          label="New Password"
+          label="Nova Senha"
           name="password"
-          placeholder="Enter new password"
+          placeholder="Digite a nova senha"
           icon={<MdLock />}
           isPassword={true}
         />
 
         <InputField
           form={form}
-          label="Confirm Password"
+          label="Confirmar nova senha"
           name="confirmPassword"
-          placeholder="Confirm new password"
+          placeholder="Confirmar a nova senha"
           icon={<MdLock />}
           isPassword={true}
         />
@@ -101,7 +101,7 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
             }}
             className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
           >
-            Log In
+            Entrar
           </span>
         </p>
       </form>

@@ -5,8 +5,8 @@ import ChangePassword from "../../components/dashboard/Profile/ChangePassword";
 
 const Profile = () => {
   const menuItems = [
-    { label: "Edit Profile", value: "edit-profile" },
-    { label: "Change Password", value: "change-password" },
+    { label: "Editar Perfil", value: "edit-profile" },
+    { label: "Trocar senha", value: "change-password" },
   ];
 
   const [activeMenu, setActiveMenu] = useState(menuItems[0]?.value);

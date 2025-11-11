@@ -41,10 +41,10 @@ const Payment = () => {
   // Map plan names to API codes
   const getPlanCode = (planName) => {
     const codeMap = {
-      "Premium Plan": "premium",
-      "Ultra Plan": "ultra",
+      "Relatório Premium": "premium",
+      "Relatório Ultra": "ultra",
       "Plus Plan": "plus",
-      "Light Plan": "light",
+      "Relatório Light": "light",
       "Always Present": "always_present",
       "Eye on security": "eye_on_security",
       Professional: "professional",
@@ -311,7 +311,7 @@ const Payment = () => {
               ? "Processing..."
               : isCheckingPayment
               ? "Waiting for payment confirmation..."
-              : "Choose Your payment method"}
+              : "Escolha a forma de pagamento"}
           </p>
 
           <div
@@ -366,13 +366,13 @@ const Payment = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1AABFE]" />
               {isCheckingPayment && (
                 <p className="mt-4 text-sm text-gray-600 text-center px-4">
-                  Please complete the payment in the new tab. We're checking the
+                  Por favor, complete o pagamento na nova aba. Estamos verificando o
                   payment status...
                 </p>
               )}
               {isCreatingOrder && (
                 <p className="mt-4 text-sm text-gray-600 text-center px-4">
-                  Processing your order...
+                  Processando seu pedido...
                 </p>
               )}
             </div>
@@ -400,18 +400,18 @@ const Payment = () => {
                   isExpired ? "text-red-600" : ""
                 }`}
               >
-                Time Remaining: {formatTime(timeRemaining)}
+                Tempo Restante: {formatTime(timeRemaining)}
               </p>
               {isExpired && (
                 <p className="text-red-600 text-sm font-medium">
-                  Payment expired! Please go back to cart and create a new
+                  Tempo de pagamento expirado! Por favor, volte para o carrinho e crie um novo
                   order.
                 </p>
               )}
             </div>
             <div className="flex flex-col items-center gap-3 bg-[#F3F3F3] p-4 rounded-lg">
               <p className="text-[0.9rem] font-medium">
-                Scan to pay with your bank app
+                Escaneie para pagar com o seu app de banco
               </p>
               {!isExpired &&
               paymentData?.payment_options?.pix?.pix_copia_e_cola ? (
@@ -434,7 +434,7 @@ const Payment = () => {
             {isExpired && (
               <div className="flex flex-col items-center gap-3 bg-red-50 border-2 border-red-500 p-4 rounded-lg my-4">
                 <p className="text-red-600 font-medium text-center">
-                  Payment time has expired
+                  Tempo de pagamento expirado
                 </p>
                 <button
                   onClick={() => {
@@ -442,20 +442,20 @@ const Payment = () => {
                   }}
                   className="bg-[#194D9A] text-white px-6 py-2 rounded hover:bg-[#1AABFE] transition-all"
                 >
-                  Go Back to Plans
+                  Volte para o Plano
                 </button>
               </div>
             )}
             {!isExpired && (
               <div className="flex justify-between items-center gap-2 bg-[#F3F3F3] p-4 rounded-lg mt-4">
                 <p className="text-[0.8rem] font-medium">
-                  Or copy the code to pay
+                  Ou copie o código para pagar
                 </p>
                 <button
                   className="bg-[#194D9A] text-white px-4 py-1 rounded w-fit text-xs cursor-pointer"
                   onClick={handleCopyCode}
                 >
-                  <span className="text-xs">COPY CODE</span>
+                  <span className="text-xs">COPIAR CÓDIGO</span>
                 </button>
               </div>
             )}

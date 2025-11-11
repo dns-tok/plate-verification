@@ -7,7 +7,6 @@ import {
 import PlanCard from "./PlanCard";
 import { useCart } from "../../../context/CartContext";
 import { useAuth } from "../../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { getCurrentAccount } from "../../../services/authService";
 
 const Consultation = ({ activeMenu, showSearchPlateInput }) => {
@@ -18,27 +17,6 @@ const Consultation = ({ activeMenu, showSearchPlateInput }) => {
   const { addToCart, openCart } = useCart();
   const { user } = useAuth();
   const [purchasedPlanIds, setPurchasedPlanIds] = useState([]);
-
-  const navigate = useNavigate();
-
-  // Helper function to map purchase data to plan ID
-  const getPlanIdFromPurchase = (purchase) => {
-    // Map purchase.chosen or purchase.plan to plan IDs
-    const planMapping = {
-      Premium: 1,
-      Ultra: 2,
-      Plus: 3,
-      Light: 4,
-      "Always Present": 5,
-      "Keep an eye on security": 6,
-      Professional: 7,
-      Negotiator: 8,
-      "Test Drive": 9,
-    };
-
-    const purchaseName = purchase.chosen || purchase.plan_name || purchase.plan;
-    return planMapping[purchaseName];
-  };
 
   useEffect(() => {
     if (activeMenu === "single") {
@@ -144,13 +122,13 @@ const Consultation = ({ activeMenu, showSearchPlateInput }) => {
   return (
     <div className="py-4">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-2xl font-semibold">Our Plans</p>
+        <p className="text-2xl font-semibold">Nossos Plano</p>
         {activeMenu === "single" && (
           <div className="flex items-center gap-2">
             {loading && (
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                Loading plans...
+                Carregando planos...
               </div>
             )}
             {error && <div className="text-sm text-orange-600">{error}</div>}

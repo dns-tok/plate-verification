@@ -25,8 +25,8 @@ const History = () => {
       setPagination(response.pagination);
       setTotalItems(response.pagination?.total_count || 0);
     } catch (error) {
-      console.error("Failed to load search history:", error);
-      toast.error("Failed to load search history. Please try again.");
+      console.error("Failed to load Fotos do veículo:", error);
+      toast.error("Failed to load Fotos do veículo. Please try again.");
       setSearches([]);
       setTotalItems(0);
     } finally {
@@ -70,7 +70,7 @@ const History = () => {
       }`}
     >
       <div className="space-y-4">
-        <p className="text-2xl font-semibold mb-4 text-center">Query History</p>
+        <p className="text-2xl font-semibold mb-4 text-center">Histórico de relatórios</p>
 
         {loading ? (
           <div className="flex items-center justify-center py-8">
@@ -78,18 +78,18 @@ const History = () => {
           </div>
         ) : searches.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No search history found.
+            No Fotos do veículo found.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse">
               <thead className="">
                 <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
-                  <th className="!rounded-l-md">Date of conclusion</th>
-                  <th>Chosen</th>
-                  <th>Plate</th>
+                  <th className="!rounded-l-md">Data ce conclusão</th>
+                  <th>Tipo de relatório escolhido</th>
+                  <th>Histórico de relatórios</th>
                   <th>Status</th>
-                  <th className="!rounded-r-md">Purchase</th>
+                  <th className="!rounded-r-md">Compras</th>
                 </tr>
               </thead>
               <tbody>
@@ -122,7 +122,7 @@ const History = () => {
                             : ""
                         }
                       >
-                        Access your report
+                        Acesse o seu relatório
                       </button>
                     </td>
                   </tr>
