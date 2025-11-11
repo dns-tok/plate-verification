@@ -64,9 +64,9 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <InputField
           form={form}
-          label="New Password"
+          label="Nova Senha"
           name="password"
-          placeholder="Enter new password"
+          placeholder="Digite a nova senha"
           icon={<MdLock />}
           isPassword={true}
         />
@@ -75,7 +75,7 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
           form={form}
           label="Confirm Password"
           name="confirmPassword"
-          placeholder="Confirm new password"
+          placeholder="Confirmar a nova senha"
           icon={<MdLock />}
           isPassword={true}
         />

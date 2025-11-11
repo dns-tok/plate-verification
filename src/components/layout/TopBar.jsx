@@ -40,7 +40,7 @@ export const TopBar = () => {
             className="rounded px-3 py-0.5 font-medium mb-1 whitespace-nowrap cursor-pointer transition-all duration-300 bg-[#F2DF33] text-black hover:drop-shadow"
             onClick={() => navigate("/buy-consultation")}
           >
-            Buy Consultations
+            Comprar consultas
           </button>
         </div>
       </div>

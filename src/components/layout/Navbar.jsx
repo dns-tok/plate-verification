@@ -17,7 +17,7 @@ const navLinks = [
     href: "/como-funciona",
   },
   {
-    name: "Contact",
+    name: "Fale consoco",
     href: "#contact",
   },
   {

@@ -101,7 +101,7 @@ const PrivacyPolicy = () => {
                           Registration and access to the platform
                         </td>
                         <td className="border border-gray-300 px-4 py-2">
-                          Name, date of birth, email, cell phone, zip code, CPF,
+                          Name, Data de Nascimento, email, cell phone, CEP *, CPF,
                           IP and access records
                         </td>
                       </tr>
@@ -131,7 +131,7 @@ const PrivacyPolicy = () => {
                           Marketing actions
                         </td>
                         <td className="border border-gray-300 px-4 py-2">
-                          Name, email, cell phone, zip code, consumption
+                          Name, email, cell phone, CEP *, consumption
                           history, vehicle data consulted (fines, auction,
                           accident, maintenance)
                         </td>
@@ -147,7 +147,7 @@ const PrivacyPolicy = () => {
                       </tr>
                       <tr>
                         <td className="border border-gray-300 px-4 py-2">
-                          Contact and feedback
+                          Fale consoco and feedback
                         </td>
                         <td className="border border-gray-300 px-4 py-2">
                           Name, email, Telefone and consultation rating
@@ -159,7 +159,7 @@ const PrivacyPolicy = () => {
                           Platform improvements and development
                         </td>
                         <td className="border border-gray-300 px-4 py-2">
-                          Name, email, cell phone, zip code, CPF, IP, access
+                          Name, email, cell phone, CEP *, CPF, IP, access
                           records, comments and feedback
                         </td>
                       </tr>
@@ -320,7 +320,7 @@ const PrivacyPolicy = () => {
                           Request anonymization, temporary blocking, or
                           permanent deletion of your data. Your account can be
                           deleted by going to "Profile" &gt; "Always Connected"
-                          &gt; "Delete Account."
+                          &gt; "Deletar conta."
                         </td>
                       </tr>
                       <tr>

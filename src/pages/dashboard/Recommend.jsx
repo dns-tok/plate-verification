@@ -12,14 +12,13 @@ const RecommendPage = () => {
 
   return (
     <MainContent showMenu={false}>
-      <p className="text-2xl font-semibold mb-4">My Recommendations</p>
+      <p className="text-2xl font-semibold mb-4">Minhas indicações</p>
       <p className="text-[1.2rem] mb-4 font-medium max-w-[650px]">
-        Refer a verified license plate to your friends and customers and earn a
-        referral discount coupon. You can use the value toward future inquiries.
+        Indique uma placa de veículo verificada para seus amigos e clientes e ganhe um cupom de desconto por indicação. Você pode usar o valor em consultas futuras.
       </p>
       <div>
         <p className="text-[#194D9A] text-[1.2rem] font-medium mb-2">
-          My Recommendation ID
+          ID da Minha Recomendação
         </p>
         <div className="flex items-center gap-2">
           <p className="text-[0.6rem] px-4 py-[0.6rem] border-2 border-[#194D9A] rounded-full">
@@ -29,7 +28,7 @@ const RecommendPage = () => {
             onClick={handleCopyAddress}
             className="bg-[#194D9A] text-white px-6 py-2 rounded-full cursor-pointer"
           >
-            Copy Address
+           Copiar endereço
           </button>
         </div>
       </div>

@@ -85,8 +85,8 @@ const History = () => {
             <table className="min-w-full border-collapse">
               <thead className="">
                 <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
-                  <th className="!rounded-l-md">Date of conclusion</th>
-                  <th>Chosen</th>
+                  <th className="!rounded-l-md">Data ce conclusão</th>
+                  <th>Tipo de relatório escolhido</th>
                   <th>Plate</th>
                   <th>Status</th>
                   <th className="!rounded-r-md">Purchase</th>
@@ -122,7 +122,7 @@ const History = () => {
                             : ""
                         }
                       >
-                        Access your report
+                        Acesse o seu relatório
                       </button>
                     </td>
                   </tr>

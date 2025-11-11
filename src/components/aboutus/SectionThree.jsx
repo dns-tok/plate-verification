@@ -179,7 +179,7 @@ Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!               
                           isSubmitting ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                         }`}
                       >
-                        {isSubmitting ? "Sending..." : "Send Message"}
+                        {isSubmitting ? "Sending..." : "Enviar mensagem"}
                       </button>
                     </div>
                   </form>

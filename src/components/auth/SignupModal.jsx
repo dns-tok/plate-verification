@@ -14,9 +14,9 @@ const step1Schema = z.object({
   id: z.string().nonempty("ID is required"),
   fullName: z
     .string()
-    .nonempty("Full name is required")
-    .min(2, "Full name must be at least 2 characters"),
-  dateOfBirth: z.string().nonempty("Date of birth is required"),
+    .nonempty("Nome completo is required")
+    .min(2, "Nome completo must be at least 2 characters"),
+  dateOfBirth: z.string().nonempty("Data de Nascimento is required"),
   email: z
     .string()
     .nonempty("Email is required")
@@ -32,7 +32,7 @@ const step2Schema = z
   .object({
     zipCode: z
       .string()
-      .min(5, { message: "ZIP code must be at least 5 characters" }),
+      .min(5, { message: "CEP * must be at least 5 characters" }),
     houseNumber: z.string().min(1, { message: "Número da residência is required" }),
     password: z
       .string()
@@ -215,7 +215,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           {/* <InputField
             form={step1Form}
-            label="Date of Birth"
+            label="Data de Nascimento"
             name="dateOfBirth"
             placeholder="_ _ / _ _ / _ _ _ _"
             inputProps={{ type: "date" }}

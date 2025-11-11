@@ -12,25 +12,25 @@ const editProfileSchema = z.object({
   id: z.string().nonempty("ID is required"),
   fullName: z
     .string()
-    .nonempty("Full name is required")
-    .min(2, "Full name must be at least 2 characters"),
-  dateOfBirth: z.string().nonempty("Date of birth is required"),
+    .nonempty("Nome completo is required")
+    .min(2, "Nome completo must be at least 2 characters"),
+  dateOfBirth: z.string().nonempty("Data de Nascimento is required"),
   email: z
     .string()
     .nonempty("Email is required")
     .email("Invalid email address"),
   zipCode: z
     .string()
-    .nonempty("ZIP code is required")
-    .min(5, "ZIP code must be at least 5 characters"),
+    .nonempty("CEP * is required")
+    .min(5, "CEP * must be at least 5 characters"),
   houseNumber: z
     .string()
-    .nonempty("House number is required")
-    .min(1, "House number is required"),
+    .nonempty("Número da residência is required")
+    .min(1, "Número da residência is required"),
   telephone: z
     .string()
-    .nonempty("Telephone is required")
-    .min(10, "Telephone must be at least 10 characters"),
+    .nonempty("Telefone is required")
+    .min(10, "Telefone must be at least 10 characters"),
 });
 
 const EditProfile = () => {
@@ -119,7 +119,7 @@ const EditProfile = () => {
 
           <InputField
             form={form}
-            label="Full Name"
+            label="Nome completo"
             name="fullName"
             required
             placeholder="John Doe"
@@ -130,7 +130,7 @@ const EditProfile = () => {
 
           <InputField
             form={form}
-            label="Date of Birth"
+            label="Data de Nascimento"
             name="dateOfBirth"
             required
             placeholder="_ _ / _ _ / _ _ _ _"
@@ -154,7 +154,7 @@ const EditProfile = () => {
         <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
-            label="ZIP Code"
+            label="CEP *"
             name="zipCode"
             required
             placeholder="_ _ _ _ _ - _ _"
@@ -165,7 +165,7 @@ const EditProfile = () => {
 
           <InputField
             form={form}
-            label="House Number"
+            label="Número da residência"
             name="houseNumber"
             required
             placeholder="_ _ _ _"
@@ -176,7 +176,7 @@ const EditProfile = () => {
 
           <InputField
             form={form}
-            label="Telephone"
+            label="Telefone"
             name="telephone"
             required
             placeholder="(_ _) _ _ _ _ _ - _ _ _ _"
@@ -194,7 +194,7 @@ const EditProfile = () => {
         }`}
         disabled={isLoading}
       >
-        {isLoading ? "Saving..." : "Save"}
+        {isLoading ? "Saving..." : "Salvar"}
       </button>
     </form>
   );

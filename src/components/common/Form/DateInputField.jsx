@@ -1,7 +1,7 @@
 import { Controller } from "react-hook-form";
 
 const DateInputField = ({
-  label = "Date of Birth",
+  label = "Data de Nascimento",
   name,
   form,
   required = false,

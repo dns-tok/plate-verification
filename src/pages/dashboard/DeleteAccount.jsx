@@ -72,26 +72,20 @@ const DeleteAccountPage = () => {
 
   return (
     <MainContent showMenu={false}>
-      <p className="text-2xl font-semibold mb-4">Delete Your Account</p>
+      <p className="text-2xl font-semibold mb-4">Deletar sua conta</p>
       <div>
         <p className="text-red-600 text-[0.85rem] font-medium mb-2">
-          Pay close attention at this time!!!
+          Preste muita atenção nesta etapa!!!
         </p>
         <ul className="list-decimal list-inside text-[0.65rem] font-[400] space-y-2">
           <li>
-            If there is no record of purchases, queries or payments, the
-            deletion will be completed within 30 days.
+            Se não houver registro de compras, consultas ou pagamentos, a exclusão será concluída em até 30 dias.
           </li>
           <li>
-            If there is any activity recorded, your account will only be
-            deactivated for up to 3 years, and can be reactivated at any Time
-            through the "I forgot my password" option.
+            Se houver alguma atividade registrada, sua conta será desativada por até 3 anos e poderá ser reativada a qualquer momento através da opção "Esqueci minha senha".
           </li>
           <li>
-            After this period, the deletion will be final and irreversible. All
-            information linked to the account—such as history, credits, Queries,
-            and preferences—will be deleted, and access to our services will be
-            terminated.
+            Após esse período, a exclusão será definitiva e irreversível. Todas as informações vinculadas à conta — como histórico, créditos, consultas e preferências — serão excluídas e o acesso aos nossos serviços será encerrado.
           </li>
         </ul>
       </div>
@@ -101,15 +95,15 @@ const DeleteAccountPage = () => {
         className="mt-4 space-y-2"
       >
         <p className="text-[0.7rem] font-[600]">
-          If you are sure you want to proceed, enter your password and click
-          "Delete Account" <span className="text-red-500">*</span>
+          Se você tem certeza de que deseja continuar, insira sua senha e clique em
+          "Deletar conta" <span className="text-red-500">*</span>
         </p>
 
         {showConfirmation && (
           <div className="bg-red-50 border-l-4 border-red-500 p-3 mb-3">
             <p className="text-red-700 text-[0.7rem] font-semibold">
               ⚠️ WARNING: This action cannot be undone. Are you absolutely
-              certain you want to delete your account?
+              certain you want to Deletar sua conta?
             </p>
           </div>
         )}
@@ -121,7 +115,7 @@ const DeleteAccountPage = () => {
             name="password"
             required
             isPassword={true}
-            placeholder="Enter your password"
+            placeholder="Digite sua senha"
             labelClassName="!text-black !text-sm"
             inputClassName="!bg-[#EDEDED] !p-2 !py-3 !rounded-md !text-black !text-sm"
             inputContainerClassName="!bg-[#EDEDED] !p-0 !rounded-md !text-black !text-sm"
@@ -135,7 +129,7 @@ const DeleteAccountPage = () => {
               }`}
               disabled={isDeleting}
             >
-              {isDeleting ? "Deleting..." : "Delete Account"}
+              {isDeleting ? "Deleting..." : "Deletar conta"}
             </button>
 
             {showConfirmation && (
@@ -145,7 +139,7 @@ const DeleteAccountPage = () => {
                 className="w-fit bg-gray-500 hover:bg-gray-700 text-white rounded-md px-3 py-1.5 text-[0.8rem] font-[400] outline-none cursor-pointer transition-all duration-200"
                 disabled={isDeleting}
               >
-                Cancel
+                Cancelar
               </button>
             )}
           </div>

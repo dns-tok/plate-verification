@@ -97,7 +97,7 @@ const PlanCard = ({
             isMultiple && "hidden"
           } text-white text-[0.8rem] md:text-[0.7rem] line-through`}
         >
-          From 33.90 for:
+          Dê R$ 75,90 por:
         </p>
         <p
           className={`text-white ${
@@ -153,7 +153,7 @@ const PlanCard = ({
         <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#F2DF33] rounded-xl px-5 py-2 text-center shadow-lg flex items-center gap-2">
           <BsStarFill className="text-black mb-0.5 lg:text-[clamp(0.4rem,1vw,0.75rem)]!" />
           <p className="text-black font-semibold whitespace-nowrap lg:text-[clamp(0.4rem,1vw,0.9rem)]!">
-            Most Popular
+           Mais vendido
           </p>
         </div>
       )}

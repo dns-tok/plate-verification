@@ -69,7 +69,7 @@ const Pagination = ({
     <div className="flex items-center justify-between ">
       {/* Rows per page section */}
       <div className="flex items-center space-x-2">
-        <span className="text-gray-700 text-xs font-medium">Rows per page</span>
+        <span className="text-gray-700 text-xs font-medium">Linhas por página</span>
         <select
           value={itemsPerPage}
           onChange={(e) => onItemsPerPageChange(parseInt(e.target.value))}
@@ -118,7 +118,7 @@ const Pagination = ({
 
       {/* Go to page section */}
       <div className="flex items-center space-x-2">
-        <span className="text-gray-700 text-xs font-medium">Go to page</span>
+        <span className="text-gray-700 text-xs font-medium">Ir para a página</span>
         <form onSubmit={handleGoToPage} className="flex items-center space-x-1">
           <input
             name="pageInput"

@@ -37,46 +37,46 @@ export const SideBar = () => {
     },
     {
       id: "history",
-      label: "History",
+      label: "Histórico de relatórios",
       icon: "/assets/sidebar/history.svg",
       hasDropdown: false,
       path: "/history",
     },
     {
       id: "recommendations",
-      label: "My recommendations",
+      label: "Minhas indicações",
       icon: "/assets/sidebar/recommend.svg",
       hasDropdown: false,
       path: "/my-recommendations",
     },
     {
       id: "my-data",
-      label: "My data",
+      label: "Meus dados",
       icon: "/assets/sidebar/data.svg",
       hasDropdown: true,
       path: null,
       subItems: [
         {
           id: "profile",
-          label: "Profile",
+          label: "Perfil",
           icon: "/assets/sidebar/profile.svg",
           path: "/profile",
         },
         {
           id: "purchases",
-          label: "Purchases Made",
+          label: "Compras feitas",
           icon: "/assets/sidebar/purchase.svg",
           path: "/purchases",
         },
         {
           id: "always-connected",
-          label: "Always Connected",
+          label: "Sempre conectado com o plaquinha",
           icon: "/assets/sidebar/connect.svg",
           path: "/always-connected",
         },
         {
           id: "delete-account",
-          label: "Delete Account",
+          label: "Deletar conta",
           icon: "/assets/sidebar/delete.svg",
           path: "/delete-account",
         },
@@ -91,7 +91,7 @@ export const SideBar = () => {
     },
     {
       id: "contact",
-      label: "Contact",
+      label: "Fale consoco",
       icon: "/assets/sidebar/contact.svg",
       hasDropdown: false,
       path: "/contact",
@@ -215,7 +215,7 @@ export const SideBar = () => {
               className="w-4 h-4"
             />
             <span className="text-[0.95rem] font-medium border-b-2 border-transparent group-hover:border-[#1AABFE] transition-all duration-300">
-              Log out
+              Sair
             </span>
           </button>
 
