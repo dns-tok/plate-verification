@@ -63,7 +63,7 @@ const PlanCard = ({
               onClick={onClick}
               className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
             >
-              Comprar Relatório
+              Comprar Pacotes
             </button>
           )}
         </div>
@@ -144,7 +144,7 @@ const PlanCard = ({
             onClick={onClick}
             className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] text-black font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md cursor-pointer`}
           >
-            Comprar Relatório
+            Comprar Pacotes
           </button>
         )}
       </div>
