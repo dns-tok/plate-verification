@@ -208,7 +208,10 @@ const PriceSection = () => {
           </span>
           <FaArrowRightLong className="md:text-[1.3rem] transition-all duration-300 -rotate-45" />
         </button>
+       
       </div>
+       <p className="font-thin">* Essas informações dependem da disponibilidade nas bases de dados públicas.</p>
+        <p className="font-thin">** Essas informações dependem da disponibilidade na base de dados de nossos parceiros.</p>
     </section>
   );
 };
