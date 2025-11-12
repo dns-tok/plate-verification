@@ -18,7 +18,7 @@ const contactSchema = z.object({
     .min(2, "Last name must be at least 2 characters"),
   email: z
     .string()
-    .min(1, "Email is required")
+    .min(1, "Por favor digite o seu e-mail")
     .email("Please enter a valid email address"),
   phone: z
     .string()

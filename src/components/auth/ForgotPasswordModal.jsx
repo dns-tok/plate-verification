@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 const emailSchema = z.object({
   email: z
     .string()
-    .nonempty({ message: "Email is required" })
+    .nonempty({ message: "Por favor digite o seu e-mail" })
     .email({ message: "Invalid email address" }),
 });
 

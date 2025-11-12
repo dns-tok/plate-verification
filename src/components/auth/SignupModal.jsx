@@ -19,7 +19,7 @@ const step1Schema = z.object({
   dateOfBirth: z.string().nonempty("Data de Nascimento is required"),
   email: z
     .string()
-    .nonempty("Email is required")
+    .nonempty("Por favor digite o seu e-mail")
     .email("Endereço de e-mail inválido"),
   telephone: z
     .string()
@@ -42,10 +42,10 @@ const step2Schema = z
       .min(6, { message: "A senha deve ter no mínimo 6 caracteres" }),
     confirmPassword: z
       .string()
-      .min(1, { message: "Please confirm your password" }),
+      .min(1, { message: "Por favor, confirme sua senha" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "As senhas não coincidem.",
     path: ["confirmPassword"],
   });
 
@@ -211,7 +211,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             form={step1Form}
             label="Nome completo"
             name="fullName"
-            placeholder="John Doe"
+            placeholder="João Silva"
             required
           />
 
@@ -232,7 +232,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             form={step1Form}
             label="Email"
             name="email"
-            placeholder="yvoce@exemplo.com"
+            placeholder="voce@exemplo.com"
             required
           />
 
@@ -350,12 +350,9 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           {/* Privacy Notice */}
           <p className="text-xs mb-3 leading-relaxed text-white">
-            When you register, we'll use your contact information to send you
-            email and WhatsApp promotions, and to send you weekly consultation
-            information for the Protected Plate plan. For more information, see
-            our{" "}
+           Ao se cadastrar, Poderemos usar suas informações de contato para enviar promoções por e-mail e WhatsApp, além de informações semanais sobre o plano Placa Protegida. Para mais informações, consulte nossa Política de {" "}
             <span className="text-[#1AABFE] cursor-pointer hover:underline">
-              <Link to="/privacy-policy">Privacy Policy</Link>
+              <Link to="/privacy-policy">Privacidade</Link>
             </span>
             .
           </p>
