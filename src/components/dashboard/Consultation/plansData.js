@@ -69,7 +69,7 @@ const multiPlans = [
     id: 6,
     name: "Olho na segurança",
     planNumber: "Pacote R$ 700,00",
-    priceDesc: "Buy R$ 700,00 and pay",
+    priceDesc: "Compre R$ 700,00 e pague",
     price: "R$500.00",
     discount: "-21%",
     desc: "de economia",

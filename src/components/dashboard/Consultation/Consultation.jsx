@@ -122,7 +122,7 @@ const Consultation = ({ activeMenu, showSearchPlateInput }) => {
   return (
     <div className="py-4">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-2xl font-semibold">Nossos Plano</p>
+        <p className="text-2xl font-semibold">Nossos Relatórios</p>
         {activeMenu === "single" && (
           <div className="flex items-center gap-2">
             {loading && (

@@ -203,7 +203,7 @@ const PlateSearchBar = ({
           onClick={handleSearch}
           disabled={isSearchingPlate || !licensePlate.trim()}
         >
-          {isSearchingPlate ? "Searching..." : "Consultar agora"}
+          {isSearchingPlate ? "Procurando..." : "Consultar agora"}
         </button>
       )}
       {showSearchPlatePopup && (
