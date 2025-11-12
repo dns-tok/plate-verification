@@ -20,7 +20,6 @@ import BarGauge from "./components/BarGauge";
 import { formatCurrency, parseCurrency } from "../../../utils/currencyUtils";
 import {
   isSummaryBoxVisible,
-  isFieldVisible,
   filterTwoColumnFields,
 } from "../../../utils/reportFieldFilter";
 
@@ -33,7 +32,7 @@ const Report = ({ data, onClose, loading }) => {
   const planName = data?.planName || "light";
   // Helper function to format dates
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "Nada Consta";
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
@@ -216,7 +215,7 @@ const Report = ({ data, onClose, loading }) => {
 
   let reportData = null;
   let consultationDate = formatDate(new Date().toISOString());
-  let queryId = "N/A";
+  let queryId = "Nada Consta";
   // let status = "N/A";
 
   if (responseItem?.response?.body?.data) {
@@ -225,7 +224,7 @@ const Report = ({ data, onClose, loading }) => {
       ? formatDate(responseItem.response.body.headerInfos.date)
       : formatDate(responseItem.requested_at || new Date().toISOString());
     // ID da consulta: response.body._id
-    queryId = responseItem._id || "N/A";
+    queryId = responseItem._id || "Nada Consta";
     // Status da consulta: response.status → "Parcial" if status_code !== 200
     status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else if (responseItem?.body?.data) {
@@ -234,20 +233,20 @@ const Report = ({ data, onClose, loading }) => {
       ? formatDate(responseItem.body.headerInfos.date)
       : formatDate(new Date().toISOString());
     // ID da consulta: response.body._id
-    queryId = responseItem._id || "N/A";
+    queryId = responseItem._id || "Nada Consta";
     // Status da consulta: response.status → "Parcial" if status_code !== 200
     status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else if (responseItem?.data) {
     reportData = responseItem.data;
-    queryId = responseItem._id || "N/A";
+    queryId = responseItem._id || "Nada Consta";
     status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else if (responseItem?.response?.body) {
     reportData = responseItem.response.body;
-    queryId = responseItem._id || "N/A";
+    queryId = responseItem._id || "Nada Consta";
     status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
   } else {
     reportData = responseItem;
-    queryId = responseItem?._id || "N/A";
+    queryId = responseItem?._id || "Nada Consta";
     status = responseItem?.status_code === 200 ? "Sucesso" : "Parcial";
   }
 
@@ -271,38 +270,44 @@ const Report = ({ data, onClose, loading }) => {
 
   // Extract basic vehicle information - Block 1 mapping
   // Placa: response.body.data.placa
-  const plate = reportData?.placa || "N/A";
+  const plate = reportData?.placa || "";
 
   const make =
     reportData.marcaModelo?.split("/")[0] ||
     reportData.dadosBasicosDoVeiculo?.marca ||
-    "N/A";
+    "Nada Consta";
   const model =
     reportData.marcaModelo?.split("/")[1] ||
     reportData.dadosBasicosDoVeiculo?.descricao ||
-    "N/A";
-  const chassis = reportData.chassi || reportData.baseEstadual?.chassi || "N/A";
-  const year =
-    reportData.anoModelo || reportData.baseEstadual?.anoModelo || "N/A";
-  const color = reportData.corVeiculo || reportData.baseEstadual?.cor || "N/A";
+    "Nada Consta";
+  const chassis =
+    reportData.chassi || reportData.baseEstadual?.chassi || "Nada Consta";
+  // const year =
+  //   reportData.anoModelo || reportData.baseEstadual?.anoModelo || "N/A";
+  const color =
+    reportData.corVeiculo || reportData.baseEstadual?.cor || "Nada Consta";
   const fuel =
-    reportData.combustivel || reportData.baseEstadual?.combustivel || "N/A";
+    reportData.combustivel ||
+    reportData.baseEstadual?.combustivel ||
+    "Nada Consta";
   const baseEstadual = reportData.baseEstadual || {};
   const baseNacional = reportData.baseNacional || {};
   const decodificador = reportData.decodificadorPrecificador || {};
   const precificadorI = decodificador.precificadorI?.[0] || {};
   const precificadorII = decodificador.precificadorII?.[0] || {};
   const codigoFipe =
-    reportData.codigoFipe?.[0]?.codigo || precificadorI?.codigo || "N/A";
+    reportData.codigoFipe?.[0]?.codigo ||
+    precificadorI?.codigo ||
+    "Nada Consta";
 
   // Valor FIPE: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
   const valorFipe = reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
     ?.valorAtual
     ? reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
-    : "N/A";
+    : "Nada Consta";
   const valorAtual = precificadorII?.valor
     ? formatCurrency(parseCurrency(precificadorII.valor))
-    : "N/A";
+    : "Nada Consta";
 
   // Calculate valuations from historicoPreco
   const calculateValuations = () => {
@@ -315,8 +320,8 @@ const Report = ({ data, onClose, loading }) => {
 
     if (!historicoPreco.length && !valorAtualNum) {
       return {
-        sixMonths: "N/A",
-        twelveMonths: "N/A",
+        sixMonths: "Nada Consta",
+        twelveMonths: "Nada Consta",
         years: {},
       };
     }
@@ -348,7 +353,7 @@ const Report = ({ data, onClose, loading }) => {
 
     // Calculate 6 months: (last month / 6 months ago) - 1
     // For Oct 2025, compare against Apr 2025 (6 months ago)
-    let sixMonthsVal = "N/A";
+    let sixMonthsVal = "Nada Consta";
     if (valorAtualNum > 0) {
       // Calculate 6 months ago from previous month
       let sixMonthsAgoMonth = previousMonth - 6;
@@ -367,7 +372,7 @@ const Report = ({ data, onClose, loading }) => {
     // Calculate 12 months: (oct 2025 / nov 2024) - 1
     // If previous month is Oct, compare with Nov of previous year
     // Formula: (previousMonth / (previousMonth + 1) of previous year) - 1
-    let twelveMonthsVal = "N/A";
+    let twelveMonthsVal = "Nada Consta";
     if (valorAtualNum > 0) {
       let twelveMonthsAgoMonth = previousMonth + 1;
       let twelveMonthsAgoYear = previousMonthYear - 1;
@@ -395,7 +400,7 @@ const Report = ({ data, onClose, loading }) => {
     // Include all years from data, but mark first year as "N/A" since it can't be calculated
     if (yearKeys.length > 0) {
       const firstYear = yearKeys[0];
-      years[firstYear] = "N/A"; // First year can't be calculated (no previous year data)
+      years[firstYear] = "Nada Consta"; // First year can't be calculated (no previous year data)
     }
 
     // Calculate variations for years that have previous year data
@@ -415,7 +420,7 @@ const Report = ({ data, onClose, loading }) => {
         const variation = (dezValue / dezPrevValue - 1) * 100;
         years[year] = `${variation >= 0 ? "+" : ""}${variation.toFixed(2)}%`;
       } else {
-        years[year] = "N/A";
+        years[year] = "Nada Consta";
       }
     }
 
@@ -433,14 +438,14 @@ const Report = ({ data, onClose, loading }) => {
             variation >= 0 ? "+" : ""
           }${variation.toFixed(2)}%`;
         } else {
-          years[calcCurrentYear] = "N/A";
+          years[calcCurrentYear] = "Nada Consta";
         }
       } else {
-        years[calcCurrentYear] = "N/A";
+        years[calcCurrentYear] = "Nada Consta";
       }
     } else if (yearKeys.includes(calcCurrentYear)) {
       // If current year is in data but we don't have valorAtual, show N/A
-      years[calcCurrentYear] = "N/A";
+      years[calcCurrentYear] = "Nada Consta";
     }
 
     return {
@@ -456,7 +461,7 @@ const Report = ({ data, onClose, loading }) => {
   const currentYear = new Date().getFullYear();
   const vehicleAge = reportData.anoFabricacao
     ? currentYear - parseInt(reportData.anoFabricacao)
-    : "N/A";
+    : "Nada Consta";
 
   // Helper function to check if value should be "Sim" or "Não"
   // Returns "Não" if value is: "não" (case-insensitive), null, [], "n/a", empty string, or false
@@ -609,22 +614,25 @@ const Report = ({ data, onClose, loading }) => {
   // Block 3 mapping - Insights do veículo
   // Nível de risco geral: response.body.data.leilao.score.aceitacao
   const leilaoScore = reportData.leilao?.score || {};
-  const leilaoScoreAceitacao = leilaoScore.aceitacao || "N/A";
+  const leilaoScoreAceitacao = leilaoScore.aceitacao || "Nada Consta";
   const nivelRisco =
-    leilaoScoreAceitacao !== "N/A" ? parseInt(leilaoScoreAceitacao) || 0 : 0;
+    leilaoScoreAceitacao !== "Nada Consta"
+      ? parseInt(leilaoScoreAceitacao) || 0
+      : 0;
   // Exigência de Vistoria Especial (Barra exigencia de vistoria): response.body.data.leilao.score.percentualSobreRef
   const leilaoScoreExigenciaVistoria =
     leilaoScore.exigenciaVistoriaEspecial || null;
   // Convert to low/high: if value exists and is a number, use it; otherwise check if it's a string "low"/"high"
   const exigenciaVistoriaEspecial =
     leilaoScoreExigenciaVistoria !== null &&
-    leilaoScoreExigenciaVistoria !== "N/A"
+    leilaoScoreExigenciaVistoria !== "Nada Consta"
       ? parseInt(leilaoScoreExigenciaVistoria) || 0
       : null;
   // Percentual sobre Tabela FIPE: response.body.data.leilao.score.percentualSobreRef
-  const leilaoScorePercentualRef = leilaoScore.percentualSobreRef || "N/A";
+  const leilaoScorePercentualRef =
+    leilaoScore.percentualSobreRef || "Nada Consta";
   const percentualSobreRef =
-    leilaoScorePercentualRef !== "N/A"
+    leilaoScorePercentualRef !== "Nada Consta"
       ? parseInt(leilaoScorePercentualRef) || 0
       : 0;
 
@@ -698,11 +706,10 @@ const Report = ({ data, onClose, loading }) => {
         scrollX: 0,
         scrollY: 0,
         imageTimeout: 0,
-        windowWidth: document.documentElement.scrollWidth, // 👈 capture full width
-        windowHeight: document.documentElement.scrollHeight, // 👈 capture full height
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
       });
 
-      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
@@ -831,8 +838,8 @@ const Report = ({ data, onClose, loading }) => {
           <div className="bg-[#194D9A] border-b-6 border-yellow-300 flex justify-between items-center gap-2 h-[210px] text-white p-2 mb-6">
             <div className="w-[25%] h-full relative p-2 ">
               <img src="/reportLogo.png" alt="" className="h-full mx-auto" />
-              <span className="text-yellow-300 absolute bottom-7 right-0 left-0 mx-auto w-fit text-[2.5rem] ">
-                {plate}
+              <span className="text-yellow-300 absolute bottom-7 right-0 left-0 mx-auto w-fit text-[2.5rem]  ">
+                {plate.slice(0, 9)}
               </span>
             </div>
             <div className="flex flex-col w-[75%] gap-2 justify-between h-full">
@@ -841,7 +848,7 @@ const Report = ({ data, onClose, loading }) => {
               </h1>
               <div className="flex items-center justify-between overflow-hidden">
                 <div className="flex gap-4">
-                  {vehicleAge !== "N/A" && (
+                  {vehicleAge !== "Nada Consta" && (
                     <div className="bg-[#1AABFE] text-white p-2 rounded-xl flex items-center gap-2 w-[180px]">
                       <span className="text-3xl">
                         <TbInfoCircle />
@@ -849,13 +856,15 @@ const Report = ({ data, onClose, loading }) => {
                       <span className="flex flex-col text-sm whitespace-nowrap">
                         Idade do Veiculo{" "}
                         <strong>
-                          {vehicleAge !== "N/A" ? `${vehicleAge} Anos` : "N/A"}
+                          {vehicleAge !== "Nada Consta"
+                            ? `${vehicleAge} Anos`
+                            : "Nada Consta"}
                         </strong>
                       </span>
                     </div>
                   )}
 
-                  {valorFipe !== "N/A" && (
+                  {valorFipe !== "Nada Consta" && (
                     <div className="bg-[#1AABFE] text-white p-2 rounded-lg flex items-center gap-2 text-sm w-[180px]">
                       <span className="text-3xl">
                         <AiFillDollarCircle />
@@ -1012,31 +1021,39 @@ const Report = ({ data, onClose, loading }) => {
                       // Marca / Modelo: response.body.data.marcaModelo
                       {
                         label: "Marca / Modelo",
-                        value: reportData.marcaModelo || "N/A",
+                        value: reportData.marcaModelo || "Nada Consta",
                       },
                       // Cor: response.body.data.corVeiculo
-                      { label: "Cor", value: reportData.corVeiculo || "N/A" },
+                      {
+                        label: "Cor",
+                        value: reportData.corVeiculo || "Nada Consta",
+                      },
                       // RENAVAM: response.body.data.renavam
                       {
                         label: "RENAVAM",
                         value:
-                          reportData.renavam || baseEstadual.renavam || "N/A",
+                          reportData.renavam ||
+                          baseEstadual.renavam ||
+                          "Nada Consta",
                       },
                       // Tipo do Veículo: response.body.data.tipoVeiculo
                       {
                         label: "Tipo do Veículo",
                         value:
-                          reportData.tipoVeiculo || baseEstadual.tipo || "N/A",
+                          reportData.tipoVeiculo ||
+                          baseEstadual.tipo ||
+                          "Nada Consta",
                       },
                       // Nacionalidade: response.body.data.nacionalidade
                       {
                         label: "Nacionalidade",
-                        value: reportData.nacionalidade || "N/A",
+                        value: reportData.nacionalidade || "Nada Consta",
                       },
                       // UF: response.body.data.uf
                       {
                         label: "UF",
-                        value: reportData.uf || baseEstadual.uf || "N/A",
+                        value:
+                          reportData.uf || baseEstadual.uf || "Nada Consta",
                       },
                       // Registro DI: response.body.data.registroDi - Only for Plus, Ultra, Premium
                       {
@@ -1044,7 +1061,7 @@ const Report = ({ data, onClose, loading }) => {
                         value:
                           reportData.registroDi ||
                           baseNacional.registroDi ||
-                          "N/A",
+                          "Nada Consta",
                       },
                     ],
                     right: [
@@ -1057,7 +1074,7 @@ const Report = ({ data, onClose, loading }) => {
                             ? `${reportData.anoFabricacao}/${reportData.anoModelo}`
                             : reportData.anoFabricacao ||
                               reportData.anoModelo ||
-                              "N/A",
+                              "Nada Consta",
                       },
                       // Placa: response.body.headerInfos.keys.placa
                       {
@@ -1066,7 +1083,7 @@ const Report = ({ data, onClose, loading }) => {
                           responseItem?.response?.body?.headerInfos?.keys
                             ?.placa ||
                           reportData.placa ||
-                          "N/A",
+                          "Nada Consta",
                       },
                       // Combustível: response.body.data.combustivel
                       {
@@ -1074,20 +1091,24 @@ const Report = ({ data, onClose, loading }) => {
                         value:
                           reportData.combustivel ||
                           baseEstadual.combustivel ||
-                          "N/A",
+                          "Nada Consta",
                       },
                       //  motor: response.body.data.numMotor
                       {
                         label: "Número do motor",
                         value:
-                          reportData.numMotor || baseEstadual.motor || "N/A",
+                          reportData.numMotor ||
+                          baseEstadual.motor ||
+                          "Nada Consta",
                       },
 
                       // Chasi: response.body.data.chassi
                       {
                         label: "Chassi",
                         value:
-                          reportData.chassi || baseEstadual.chassi || "N/A",
+                          reportData.chassi ||
+                          baseEstadual.chassi ||
+                          "Nada Consta",
                       },
 
                       // Município: response.body.data.municipio
@@ -1096,7 +1117,7 @@ const Report = ({ data, onClose, loading }) => {
                         value:
                           reportData.municipio ||
                           baseEstadual.municipio ||
-                          "N/A",
+                          "Nada Consta",
                       },
                     ],
                   },
@@ -1114,12 +1135,12 @@ const Report = ({ data, onClose, loading }) => {
                       // Caixa Câmbio: response.body.data.caixaCambio
                       {
                         label: "Caixa Câmbio",
-                        value: reportData.caixaCambio || "N/A",
+                        value: reportData.caixaCambio || "Nada Consta",
                       },
                       // Cilindradas: response.body.data.cilindradas
                       {
                         label: "Cilindradas",
-                        value: reportData.cilindradas || "N/A",
+                        value: reportData.cilindradas || "Nada Consta",
                       },
                       // Número 3º Eixo: response.body.data.numTerceiroEixo
                       {
@@ -1130,16 +1151,19 @@ const Report = ({ data, onClose, loading }) => {
                       // Potência: response.body.data.potencia
                       {
                         label: "Potência",
-                        value: reportData.potencia || "N/A",
+                        value: reportData.potencia || "Nada Consta",
                       },
                       // Peso Bruto: response.body.data.pbt
-                      { label: "Peso Bruto", value: reportData.pbt || "N/A" },
+                      {
+                        label: "Peso Bruto",
+                        value: reportData.pbt || "Nada Consta",
+                      },
                     ],
                     right: [
                       // Capacidade Máxima de tração: response.body.data.capMaxTracao
                       {
                         label: "Capacidade Máxima de tração",
-                        value: reportData.capMaxTracao || "N/A",
+                        value: reportData.capMaxTracao || "Nada Consta",
                       },
                       // Eixo Diferencial: response.body.data.eixoTraseiroDif
                       {
@@ -1154,13 +1178,13 @@ const Report = ({ data, onClose, loading }) => {
                       // Tipo Carroceria: response.body.data.tipoCarroceria
                       {
                         label: "Tipo Carroceria",
-                        value: reportData.tipoCarroceria || "N/A",
+                        value: reportData.tipoCarroceria || "Nada Consta",
                       },
 
                       // Capacidade de Passageiros: response.body.data.capacidadePassageiro
                       {
                         label: "Capacidade de Passageiros",
-                        value: reportData.capacidadePassageiro || "N/A",
+                        value: reportData.capacidadePassageiro || "Nada Consta",
                       },
                     ],
                   },
@@ -1186,27 +1210,27 @@ const Report = ({ data, onClose, loading }) => {
                   ]}
                   rows={reportData.leilao.registros.map((item) => [
                     // Data Leilão: response.body.data.leilao.registros.0.dataLeilao
-                    formatDate(item.dataLeilao) || "N/A",
+                    formatDate(item.dataLeilao) || "-",
                     // Lote: response.body.data.leilao.registros.0.lote
-                    item.lote || "N/A",
+                    item.lote || "-",
                     // Placa: response.body.data.leilao.registros.placa
-                    item.placa || "N/A",
+                    item.placa || "-",
                     // Chassi: response.body.data.leilao.registros.chassi
-                    item.chassi || "N/A",
+                    item.chassi || "-",
                     // Marca: response.body.data.leilao.registros.0.marca
-                    item.marca || "N/A",
+                    item.marca || "-",
                     // Modelo: response.body.data.leilao.registros.0.modelo
-                    item.modelo || "N/A",
+                    item.modelo || "-",
                     // Condição: response.body.data.leilao.registros.0.condicaoGeral
-                    item.condicaoGeral || "N/A",
+                    item.condicaoGeral || "-",
                     // Comitente: response.body.data.leilao.registros.0.comitente
-                    item.comitente || "N/A",
+                    item.comitente || "-",
                   ])}
                 />
               ) : (
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
                   <p className="text-gray-800">
-                    {reportData?.leilao?.descricao || "N/A"}
+                    {reportData?.leilao?.descricao || "Nada Consta"}
                   </p>
                 </div>
               )}
@@ -1225,7 +1249,7 @@ const Report = ({ data, onClose, loading }) => {
                 </>
               ) : (
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                  <p className="text-[#194D9A]">N/A</p>
+                  <p className="text-[#194D9A]">Nada Consta</p>
                 </div>
               )}
             </ReportSection>
@@ -1235,7 +1259,7 @@ const Report = ({ data, onClose, loading }) => {
               <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
                 {/* inside the box: response.body.data.indicioSinistro.descricao */}
                 <p className="text-[#194D9A] ">
-                  {reportData?.indicioSinistro?.descricao || "N/A"}
+                  {reportData?.indicioSinistro?.descricao || "Nada Consta"}
                 </p>
               </div>
             </ReportSection>
@@ -1255,7 +1279,7 @@ const Report = ({ data, onClose, loading }) => {
                   </div>
                 ) : (
                   <div className="shrink-0 w-[30%] h-full flex items-center justify-center border-2 border-[#1AABFE]/80 rounded-xl bg-white">
-                    <p className="text-gray-800">N/A</p>
+                    <p className="text-gray-800">Nada Consta</p>
                   </div>
                 )}
                 <div className="w-[70%] h-full flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
@@ -1263,12 +1287,12 @@ const Report = ({ data, onClose, loading }) => {
                     {/* Placa: response.body.data.leilao.registros[0].placa */}
                     <ReportField
                       label="Placa"
-                      value={reportData?.placa || plate || "N/A"}
+                      value={reportData?.placa || plate || "Nada Consta"}
                     />
                     {/* Chasi: response.body.data.leilao.registros[0].chassi */}
                     <ReportField
                       label="Chassi"
-                      value={reportData?.chassi || chassis || "N/A"}
+                      value={reportData?.chassi || chassis || "Nada Consta"}
                     />
                     <ReportField
                       label="Análise"
@@ -1297,32 +1321,25 @@ const Report = ({ data, onClose, loading }) => {
                 rows={[
                   [
                     // Organizador: response.body.data.remarketing.leilao.organizador
-                    reportData?.remarketing?.leilao?.organizador ||
-                      "Nada consta",
+                    reportData?.remarketing?.leilao?.organizador || "-",
                     // Vendedor: response.body.data.remarketing.leilao.vendedor
-                    reportData?.remarketing?.leilao?.vendedor || "Nada consta",
+                    reportData?.remarketing?.leilao?.vendedor || "-",
                     // Data evento: response.body.data.remarketing.leilao.dataEvento
                     reportData?.remarketing?.leilao?.dataEvento
                       ? formatDate(reportData?.remarketing?.leilao?.dataEvento)
-                      : "Nada consta",
+                      : "-",
                     // Condições do veículo: response.body.data.remarketing.leilao.condicoesVeiculo
-                    reportData?.remarketing?.leilao?.condicoesVeiculo ||
-                      "Nada consta",
+                    reportData?.remarketing?.leilao?.condicoesVeiculo || "-",
                     // Situação chassi: response.body.data.remarketing.leilao.situacaoChassi
-                    reportData?.remarketing?.leilao?.situacaoChassi ||
-                      "Nada consta",
+                    reportData?.remarketing?.leilao?.situacaoChassi || "-",
                     // Condições motor: response.body.data.remarketing.leilao.condicoesMotor
-                    reportData?.remarketing?.leilao?.condicoesMotor ||
-                      "Nada consta",
+                    reportData?.remarketing?.leilao?.condicoesMotor || "-",
                     // Condições câmbio: response.body.data.remarketing.leilao.condicoesCambio
-                    reportData?.remarketing?.leilao?.condicoesCambio ||
-                      "Nada consta",
+                    reportData?.remarketing?.leilao?.condicoesCambio || "-",
                     // Condições mecânicas: response.body.data.remarketing.leilao.condicoesMecanica
-                    reportData?.remarketing?.leilao?.condicoesMecanica ||
-                      "Nada consta",
+                    reportData?.remarketing?.leilao?.condicoesMecanica || "-",
                     // Observação: response.body.data.remarketing.leilao.observacao
-                    reportData?.remarketing?.leilao?.observacao ||
-                      "Nada consta",
+                    reportData?.remarketing?.leilao?.observacao || "-",
                   ],
                 ]}
               />
@@ -1330,101 +1347,245 @@ const Report = ({ data, onClose, loading }) => {
 
             {/* Block 11: Remarketing - Dados do veículo */}
             <ReportSection title="Remarketing - Dados do veículo">
-              <TwoColumnFieldSection
-                fields={{
-                  left: [
-                    // RENAVAM: response.body.data.remarketing.renavam
-                    {
-                      label: "RENAVAM",
-                      value: reportData?.remarketing?.renavam || "N/A",
-                    },
-                    // Situação Chassi: response.body.data.remarketing.situacaoChassi
-                    {
-                      label: "Situação Chassi",
-                      value: reportData?.remarketing?.situacaoChassi || "N/A",
-                    },
-                    {
-                      label: "Marca / Modelo",
-                      value:
-                        reportData?.remarketing?.marcamodelo ||
-                        reportData?.remarketing?.marcaModelo ||
-                        "N/A",
-                    },
-                    // Segmento: response.body.data.remarketing.segmento
-                    {
-                      label: "Segmento",
-                      value: reportData?.remarketing?.segmento || "N/A",
-                    },
+              {(() => {
+                const r = reportData?.remarketing;
 
-                    {
-                      label: "Data da Inspeção",
-                      value:
-                        reportData?.remarketing?.checklist?.dataInspecao ||
-                        "N/A",
-                    },
-                    // Garantia: response.body.data.remarketing.checklist.garantia
-                    {
-                      label: "Garantia",
-                      value:
-                        reportData?.remarketing?.checklist?.garantia || "N/A",
-                    },
-                  ],
-                  right: [
-                    // Placa: response.body.data.remarketing.placa
-                    {
-                      label: "Placa",
-                      value: reportData?.remarketing?.placa || "N/A",
-                    },
-                    // Motor: response.body.data.remarketing.nummotor
-                    {
-                      label: "Motor",
-                      value:
-                        reportData?.remarketing?.nummotor ||
-                        reportData?.remarketing?.motor ||
-                        "N/A",
-                    },
-                    // Chassi: response.body.data.remarketing.chassi
-                    {
-                      label: "Chassi",
-                      value: reportData?.remarketing?.chassi || "N/A",
-                    },
+                if (!r) {
+                  return (
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white flex items-center">
+                      <p className="text-gray-500">
+                        Informações não encontradas nas bases consultadas
+                      </p>
+                    </div>
+                  );
+                }
 
-                    // Auto Sub segmento: response.body.data.remarketing.subSegmento
-                    {
-                      label: "Auto Sub segmento",
-                      value: reportData?.remarketing?.subSegmento || "N/A",
-                    },
-                    // Data da Inspeção: response.body.data.remarketing.checklist.dataInspecao
+                // Flatten fields from remarketing and its checklist
+                const fieldsToCheck = [
+                  r?.renavam,
+                  r?.situacaoChassi,
+                  r?.marcamodelo || r?.marcaModelo,
+                  r?.segmento,
+                  r?.placa,
+                  r?.motor || r?.nummotor,
+                  r?.chassi,
+                  r?.subSegmento,
+                  r?.observacao,
+                  r?.checklist?.dataInspecao,
+                  r?.checklist?.garantia,
+                  // Optionally: include other checklist fields if needed
+                  ...(r?.checklist ? Object.values(r.checklist) : []),
+                ];
 
-                    // Observação: response.body.data.remarketing.observacao
-                    {
-                      label: "Observação",
-                      value: reportData?.remarketing?.observacao || "N/A",
-                    },
-                  ],
-                }}
-              />
+                // Check if all are null, undefined, empty, or empty arrays
+                const allEmpty = fieldsToCheck.every(
+                  (v) =>
+                    v === null ||
+                    v === undefined ||
+                    v === "" ||
+                    (Array.isArray(v) && v.length === 0)
+                );
+
+                return allEmpty ? (
+                  <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white flex items-center">
+                    <p className="text-gray-500">
+                      Informações não encontradas nas bases consultadas
+                    </p>
+                  </div>
+                ) : (
+                  <TwoColumnFieldSection
+                    fields={{
+                      left: [
+                        {
+                          label: "RENAVAM",
+                          value: r?.renavam || "Nada Consta",
+                        },
+                        {
+                          label: "Situação Chassi",
+                          value: r?.situacaoChassi || "Nada Consta",
+                        },
+                        {
+                          label: "Marca / Modelo",
+                          value:
+                            r?.marcamodelo || r?.marcaModelo || "Nada Consta",
+                        },
+                        {
+                          label: "Segmento",
+                          value: r?.segmento || "Nada Consta",
+                        },
+                        {
+                          label: "Data da Inspeção",
+                          value: r?.checklist?.dataInspecao || "Nada Consta",
+                        },
+                        {
+                          label: "Garantia",
+                          value: r?.checklist?.garantia || "Nada Consta",
+                        },
+                      ],
+                      right: [
+                        { label: "Placa", value: r?.placa || "Nada Consta" },
+                        {
+                          label: "Motor",
+                          value: r?.nummotor || r?.motor || "Nada Consta",
+                        },
+                        { label: "Chassi", value: r?.chassi || "Nada Consta" },
+                        {
+                          label: "Auto Sub segmento",
+                          value: r?.subSegmento || "Nada Consta",
+                        },
+                        {
+                          label: "Observação",
+                          value: r?.observacao || "Nada Consta",
+                        },
+                      ],
+                    }}
+                  />
+                );
+              })()}
             </ReportSection>
 
             {/* Block 12: Fotos */}
             <ReportSection title="Fotos">
-              {reportData?.remarketing?.checklist?.fotos &&
-              reportData.remarketing.checklist.fotos.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {reportData.remarketing.checklist.fotos.map((foto, index) => (
-                    <img
-                      key={index}
-                      src={typeof foto === "string" ? foto : foto.url || foto}
-                      alt={`Foto ${index + 1}`}
-                      className="w-full h-48 object-cover rounded-lg border-2 border-[#1AABFE]/80"
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white flex items-center ">
-                  <p className="text-gray-500">N/A</p>
-                </div>
-              )}
+              {(() => {
+                // Check all three mappings for photos
+                // 1. response.body.data.remarketing.checklist.fotos
+                // 2. response.body.data.anuncio.fotos
+                // 3. response.body.data.fotos
+                const fotosFromRemarketing =
+                  reportData?.remarketing?.checklist?.fotos;
+                const fotosFromAnuncio = reportData?.anuncio?.fotos;
+                const fotosFromData = reportData?.fotos;
+
+                // Collect all photos from all three locations
+                const allFotos = [];
+
+                // Helper function to check if a photo is valid
+                const isValidPhoto = (foto) => {
+                  if (!foto) return false;
+                  if (typeof foto === "string") {
+                    return (
+                      foto.trim().length > 0 &&
+                      foto !== "null" &&
+                      foto !== "undefined"
+                    );
+                  }
+                  if (typeof foto === "object") {
+                    const url = foto.url || foto.src || foto;
+                    return (
+                      url &&
+                      typeof url === "string" &&
+                      url.trim().length > 0 &&
+                      url !== "null" &&
+                      url !== "undefined"
+                    );
+                  }
+                  return false;
+                };
+
+                // Helper function to extract URL from photo
+                const getPhotoUrl = (foto) => {
+                  if (typeof foto === "string") return foto;
+                  return foto.url || foto.src || foto;
+                };
+
+                // Check remarketing.checklist.fotos
+                if (fotosFromRemarketing) {
+                  if (
+                    Array.isArray(fotosFromRemarketing) &&
+                    fotosFromRemarketing.length > 0
+                  ) {
+                    fotosFromRemarketing.forEach((foto) => {
+                      if (isValidPhoto(foto)) {
+                        allFotos.push(foto);
+                      }
+                    });
+                  } else if (
+                    !Array.isArray(fotosFromRemarketing) &&
+                    isValidPhoto(fotosFromRemarketing)
+                  ) {
+                    allFotos.push(fotosFromRemarketing);
+                  }
+                }
+
+                // Check anuncio.fotos
+                if (fotosFromAnuncio) {
+                  if (
+                    Array.isArray(fotosFromAnuncio) &&
+                    fotosFromAnuncio.length > 0
+                  ) {
+                    fotosFromAnuncio.forEach((foto) => {
+                      if (isValidPhoto(foto)) {
+                        allFotos.push(foto);
+                      }
+                    });
+                  } else if (
+                    !Array.isArray(fotosFromAnuncio) &&
+                    isValidPhoto(fotosFromAnuncio)
+                  ) {
+                    allFotos.push(fotosFromAnuncio);
+                  }
+                }
+
+                // Check fotos (direct)
+                if (fotosFromData) {
+                  if (
+                    Array.isArray(fotosFromData) &&
+                    fotosFromData.length > 0
+                  ) {
+                    fotosFromData.forEach((foto) => {
+                      if (isValidPhoto(foto)) {
+                        allFotos.push(foto);
+                      }
+                    });
+                  } else if (
+                    !Array.isArray(fotosFromData) &&
+                    isValidPhoto(fotosFromData)
+                  ) {
+                    allFotos.push(fotosFromData);
+                  }
+                }
+
+                // Remove duplicates (if any) based on URL
+                const seenUrls = new Set();
+                const uniqueFotos = allFotos.filter((foto) => {
+                  const url = getPhotoUrl(foto);
+                  if (!url || seenUrls.has(url)) {
+                    return false;
+                  }
+                  seenUrls.add(url);
+                  return true;
+                });
+
+                if (uniqueFotos.length > 0) {
+                  return (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {uniqueFotos.map((foto, index) => {
+                        const photoUrl = getPhotoUrl(foto);
+                        return (
+                          <img
+                            key={index}
+                            src={photoUrl}
+                            alt={`Foto ${index + 1}`}
+                            className="w-full h-48 object-cover rounded-lg border-2 border-[#1AABFE]/80"
+                            onError={(e) => {
+                              // Hide broken images
+                              e.target.style.display = "none";
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white flex items-center ">
+                      <p className="text-gray-500">
+                        Informações não encontradas nas bases consultadas
+                      </p>
+                    </div>
+                  );
+                }
+              })()}
             </ReportSection>
 
             {/* Block 13: Histórico de KMs */}
@@ -1434,15 +1595,15 @@ const Report = ({ data, onClose, loading }) => {
                   headers={["Data", "Odômetro"]}
                   rows={reportData.historicoKm.map((item) => [
                     // Data: response.body.data.historicoKm.0.dataInclusao
-                    formatDate(item.dataInclusao) || "N/A",
+                    formatDate(item.dataInclusao) || "-",
                     // Odômetro: response.body.data.historicoKm.0.km
-                    item.km ? `${item.km} km` : "N/A",
+                    item.km ? `${item.km} km` : "-",
                   ])}
                 />
               ) : (
                 <ReportTableSection
                   headers={["Data", "Odômetro"]}
-                  rows={[["N/A", "N/A"]]}
+                  rows={[["-", "-"]]}
                 />
               )}
             </ReportSection>
@@ -1466,7 +1627,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               baseNacional.anoModelo ||
                               reportData.anoModelo ||
-                              "N/A",
+                              "Nada Consta",
                           },
 
                           // Marca: response.body.data.dadosBasicosDoVeiculo.marca
@@ -1475,7 +1636,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               reportData.dadosBasicosDoVeiculo?.marca ||
                               make ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Modelo: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].modelo
                           {
@@ -1484,7 +1645,7 @@ const Report = ({ data, onClose, loading }) => {
                               reportData.dadosBasicosDoVeiculo
                                 ?.informacoesFipe?.[0]?.modelo ||
                               model ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Versão: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].versao
                           {
@@ -1493,7 +1654,7 @@ const Report = ({ data, onClose, loading }) => {
                               reportData.dadosBasicosDoVeiculo
                                 ?.informacoesFipe?.[0]?.versao ||
                               decodificador.versao ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Código FIPE: response.body.data.dadosBasicosDoVeiculo.codigoFipe
                           {
@@ -1501,7 +1662,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               reportData.dadosBasicosDoVeiculo?.codigoFipe ||
                               codigoFipe ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Região Geográfica: response.body.data.decodificadorPrecificador.regiao
                           {
@@ -1509,7 +1670,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               decodificador.regiao ||
                               reportData.decodificadorPrecificador?.regiao ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // País: response.body.data.decodificadorPrecificador.pais
                           {
@@ -1517,7 +1678,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               decodificador.pais ||
                               reportData.decodificadorPrecificador?.pais ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Tipo Veículo: response.body.data.baseNacional.tipoVeiculo
                           {
@@ -1525,7 +1686,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               baseNacional.tipoVeiculo ||
                               reportData.tipoVeiculo ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Peso Bruto Total: response.body.data.decodificadorPrecificador.pesoBruto
                           {
@@ -1534,7 +1695,7 @@ const Report = ({ data, onClose, loading }) => {
                               decodificador.pesoBruto ||
                               reportData.decodificadorPrecificador?.pesoBruto ||
                               reportData.pbt ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Capacidade Carga: response.body.data.dadosBasicosDoVeiculo.capacidadeCarga
                           {
@@ -1552,7 +1713,7 @@ const Report = ({ data, onClose, loading }) => {
                               reportData.dadosBasicosDoVeiculo
                                 ?.capacidadePassageiro ||
                               reportData.capacidadePassageiro ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Número Eixos Traseiro: response.body.data.eixoTraseiroDif
                           {
@@ -1575,7 +1736,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               baseNacional.anoFabricacao ||
                               reportData.anoFabricacao ||
-                              "N/A",
+                              "Nada Consta",
                           },
 
                           // Nacionalidade: response.body.data.nacionalidade
@@ -1589,7 +1750,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               baseEstadual.combustivel ||
                               reportData.combustivel ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Cilindradas: response.body.data.dadosBasicosDoVeiculo.cilindradas
                           {
@@ -1597,12 +1758,13 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               reportData.dadosBasicosDoVeiculo?.cilindradas ||
                               reportData.cilindradas ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Código Versão: (no path provided in mapping, keeping existing)
                           {
                             label: "Código Versão",
-                            value: reportData.codigoMarcaModelo || "N/A",
+                            value:
+                              reportData.codigoMarcaModelo || "Nada Consta",
                           },
                           // Valor atual: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].historicoPreco[0].valor
                           {
@@ -1616,7 +1778,7 @@ const Report = ({ data, onClose, loading }) => {
                                       .valor
                                   )
                                 )
-                              : valorAtual || "N/A",
+                              : valorAtual || "Nada Consta",
                           },
                           {
                             label: "Tipo de Carroceria",
@@ -1638,14 +1800,14 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               baseNacional.especieVeiculo ||
                               reportData.especieVeiculo ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           {
                             label: "Potência",
                             value:
                               reportData.dadosBasicosDoVeiculo?.potencia ||
                               reportData.potencia ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Capacidade Máxima Tração: response.body.data.dadosBasicosDoVeiculo.capMaxTracao
                           {
@@ -1653,7 +1815,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               reportData.dadosBasicosDoVeiculo?.capMaxTracao ||
                               reportData.capMaxTracao ||
-                              "N/A",
+                              "Nada Consta",
                           },
                           // Eixos: response.body.data.dadosBasicosDoVeiculo.eixos
                           {
@@ -1669,7 +1831,7 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               reportData.dadosBasicosDoVeiculo?.caixaCambio ||
                               reportData.caixaCambio ||
-                              "N/A",
+                              "Nada Consta",
                           },
                         ],
                       },
@@ -1725,7 +1887,10 @@ const Report = ({ data, onClose, loading }) => {
                         const firstYearValue = valuations.years[firstYear];
 
                         // If first year is "N/A" (nothing to compare), remove it
-                        if (firstYearValue === "N/A" || !firstYearValue) {
+                        if (
+                          firstYearValue === "Nada Consta" ||
+                          !firstYearValue
+                        ) {
                           last9Years = last9Years.slice(1); // Remove first year (now have 8 years)
 
                           // If we have more than 9 years total, try to add an earlier year to still show 9
@@ -1744,7 +1909,7 @@ const Report = ({ data, onClose, loading }) => {
                               // Only add if it has a valid valuation (not N/A)
                               if (
                                 earlierYearValue &&
-                                earlierYearValue !== "N/A"
+                                earlierYearValue !== "Nada Consta"
                               ) {
                                 last9Years = [earlierYear, ...last9Years];
                               }
@@ -1765,7 +1930,7 @@ const Report = ({ data, onClose, loading }) => {
                         valuations.sixMonths,
                         valuations.twelveMonths,
                         ...last9Years.map(
-                          (year) => valuations.years[year] || "N/A"
+                          (year) => valuations.years[year] || "Nada Consta"
                         ),
                       ];
 
@@ -2010,12 +2175,12 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Documento Faturado: response.body.data.faturamento.documentoFaturado */}
                         {renderField(
                           "Documento Faturado",
-                          reportData?.faturamento?.documentoFaturado || "N/A"
+                          reportData?.baseNacional?.docFaturado || "Nada Consta"
                         )}
                         {/* Tipo Documento Faturado: response.body.data.faturamento.tipoDocumentoFaturado */}
                         {renderField(
                           "Tipo Documento Faturado",
-                          reportData?.faturamento?.tipoDocumentoFaturado ||
+                          reportData?.baseNacional?.tipoDocFaturado ||
                             "Nada Consta"
                         )}
 
@@ -2027,25 +2192,28 @@ const Report = ({ data, onClose, loading }) => {
                         {/* CEP: response.body.data.faturamento.cep */}
                         {renderField(
                           "CEP",
-                          reportData?.faturamento?.cep || "Nada Consta"
+                          reportData?.baseNacional?.documentoFaturado
+                            ?.enderecos?.[0]?.cep || "Nada Consta"
                         )}
                       </div>
                       <div className="space-y-3">
                         {/* UF Faturado: response.body.data.faturamento.ufFaturado */}
                         {renderField(
                           "UF Faturado",
-                          reportData?.faturamento?.ufFaturado || "Nada Consta"
+                          reportData?.baseNacional?.ufFaturado || "Nada Consta"
                         )}
                         {/* Razão Social: response.body.data.faturamento.razaoSocial */}
                         {renderField(
                           "Razão Social",
-                          reportData?.faturamento?.razaoSocial || "Nada Consta"
+                          reportData?.baseNacional?.documentoFaturado
+                            ?.razaoSocial || "Nada Consta"
                         )}
 
                         {/* Cidade: response.body.data.faturamento.cidade */}
                         {renderField(
                           "Cidade",
-                          reportData?.faturamento?.cidade || "Nada Consta"
+                          reportData?.baseNacional?.documentoFaturado
+                            ?.enderecos?.[0]?.cidade || "Nada Consta"
                         )}
                       </div>
                     </>
@@ -2285,7 +2453,9 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débito DPVAT: response.body.data.baseEstadual.existeDebitoDpvat */}
                         {renderField(
                           "Débito DPVAT",
-                          baseEstadual.existeDebitoDpvat || "Nada consta",
+                          baseEstadual.existeDebitoDpvat.includes("NAO EXISTE")
+                            ? "Nada Consta"
+                            : baseEstadual.existeDebitoDpvat || "Nada consta",
                           baseEstadual.existeDebitoDpvat &&
                             !baseEstadual.existeDebitoDpvat
                               .toLowerCase()
@@ -2295,8 +2465,12 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débitos Licenciamento: response.body.data.baseEstadual.existeDebitoLicenciamento */}
                         {renderField(
                           "Débitos Licenciamento",
-                          baseEstadual.existeDebitoLicenciamento ||
-                            "Nada consta",
+                          baseEstadual.existeDebitoLicenciamento.includes(
+                            "NAO EXISTE"
+                          )
+                            ? "Nada Consta"
+                            : baseEstadual.existeDebitoLicenciamento ||
+                                "Nada consta",
                           baseEstadual.existeDebitoLicenciamento &&
                             !baseEstadual.existeDebitoLicenciamento
                               .toLowerCase()
@@ -2309,7 +2483,9 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débitos IPVA: response.body.data.baseEstadual.existeDebitoIpva */}
                         {renderField(
                           "Débitos IPVA",
-                          baseEstadual.existeDebitoIpva || "Nada consta",
+                          baseEstadual.existeDebitoIpva.includes("NAO EXISTE")
+                            ? "Nada Consta"
+                            : baseEstadual.existeDebitoIpva || "Nada consta",
                           baseEstadual.existeDebitoIpva &&
                             !baseEstadual.existeDebitoIpva
                               .toLowerCase()
@@ -2319,7 +2495,9 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débitos Multa: response.body.data.baseEstadual.existeDebitoMulta */}
                         {renderField(
                           "Débitos Multa",
-                          baseEstadual.existeDebitoMulta || "Nada consta",
+                          baseEstadual.existeDebitoMulta.includes("NAO EXISTE")
+                            ? "Nada Consta"
+                            : baseEstadual.existeDebitoMulta || "Nada consta",
                           baseEstadual.existeDebitoMulta &&
                             !baseEstadual.existeDebitoMulta
                               .toLowerCase()
@@ -2330,7 +2508,7 @@ const Report = ({ data, onClose, loading }) => {
                     </>
                   )}
                   {renderWarningBox(
-                    "Atenção! As informações de débitos e multas em nosso sistema são uma cortesia ao nosso cliente e podem não refletir o status atual do veículo consultado, podendo não trazer todos os débitos ou multas do veículo. Orientamos a todos a consultar o site do DETRAN e SECRETARIA DA FAZENDA da UF do veículo."
+                    "Atenção! As informações de débitos e multas em nosso sistema podem não refletir o status atual do veículo consultado, podendo não trazer todos os débitos ou multas do veículo. Orientamos a todos a consultar o site do DETRAN e SECRETARIA DA FAZENDA da UF do veículo."
                   )}
                 </div>
                 {/* SEFAZ / SEF Link */}
@@ -2350,7 +2528,7 @@ const Report = ({ data, onClose, loading }) => {
                           {reportData?.baseEstadual?.SEFAZ_LINK}
                         </a>
                       ) : (
-                        "N/A"
+                        "Nada Consta"
                       )}
                     </p>
                   }
@@ -2465,10 +2643,10 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Multas: response.body.data.baseEstadual.debitoMulta */}
                         {(() => {
                           const value = formatCurrency(
-                            parseCurrency(baseEstadual.debitoMulta || "0,00")
+                            parseCurrency(baseEstadual.debitoMultas || "0,00")
                           );
                           const numericValue = parseCurrency(
-                            baseEstadual.debitoMulta || "0,00"
+                            baseEstadual.debitoMultas || "0,00"
                           );
                           return renderField("Multas", value, numericValue > 0);
                         })()}
@@ -2505,20 +2683,14 @@ const Report = ({ data, onClose, loading }) => {
                     reportData?.historicoProprietarios &&
                     reportData?.historicoProprietarios?.length > 0
                       ? reportData?.historicoProprietarios?.map((item) => [
-                          // Hist. Proprietários - Município: response.body.data.historicoProprietarios[0].municipio
-                          item?.municipio || "N/A",
-                          // Hist. Proprietários - UF: response.body.data.historicoProprietarios[0].uf
-                          item?.uf || "N/A",
-                          // Hist. Proprietários - Exercício: response.body.data.historicoProprietarios[0].anoExercicio
-                          item?.anoExercicio || "N/A",
-                          // Hist. Proprietários - Proprietário: response.body.data.historicoProprietarios[0].proprietario
-                          item?.proprietario || "N/A",
-                          // Hist. Proprietários - Data: response.body.data.historicoProprietarios[0].data
-                          item?.data ? formatDate(item?.data) : "N/A",
-                          // Hist. Proprietários - Motivo: response.body.data.historicoProprietarios[0].motivo
-                          item?.motivo || "N/A",
+                          item?.municipio || "-",
+                          item?.uf || "-",
+                          item?.anoExercicio || "-",
+                          item?.proprietario || "-",
+                          item?.data ? formatDate(item?.data) : "-",
+                          item?.motivo || "-",
                         ])
-                      : [["N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]]
+                      : [["-", "-", "-", "-", "-", "-"]]
                   }
                 />
                 {/* Informações de Parceiros */}
@@ -2530,13 +2702,13 @@ const Report = ({ data, onClose, loading }) => {
                     [
                       reportData?.anuncio?.data
                         ? formatDate(reportData?.anuncio?.data)
-                        : "N/A",
+                        : "-",
                       reportData?.anuncio?.km
                         ? `${reportData?.anuncio?.km} KM`
-                        : "N/A",
+                        : "-",
                       reportData?.anuncio?.valor
                         ? formatCurrency(reportData?.anuncio?.valor)
-                        : "N/A",
+                        : "-",
                     ],
                   ]}
                 />
@@ -2546,12 +2718,12 @@ const Report = ({ data, onClose, loading }) => {
                     <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                       {/* Observação do Vendedor: response.body.data.anuncio.observacao */}
                       <p className="text-[#194D9A] leading-relaxed">
-                        {reportData?.anuncio?.observacao || "N/A"}
+                        {reportData?.anuncio?.observacao || "Nada Consta"}
                       </p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-full p-4 py-2 bg-white">
-                      N/A
+                      Nada Consta
                     </div>
                   )}
                 </ReportSection>
@@ -2580,7 +2752,9 @@ const Report = ({ data, onClose, loading }) => {
                               {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
                               {typeof opcional === "string"
                                 ? opcional
-                                : opcional.descricao || opcional || "N/A"}
+                                : opcional.descricao ||
+                                  opcional ||
+                                  "Nada Consta"}
                             </div>
                           );
                         })}
@@ -2600,7 +2774,9 @@ const Report = ({ data, onClose, loading }) => {
                               {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
                               {typeof opcional === "string"
                                 ? opcional
-                                : opcional.descricao || opcional || "N/A"}
+                                : opcional.descricao ||
+                                  opcional ||
+                                  "Nada Consta"}
                             </div>
                           );
                         })}
@@ -2608,7 +2784,7 @@ const Report = ({ data, onClose, loading }) => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-full p-4 py-2 bg-white">
-                    N/A
+                    Nada Consta
                   </div>
                 )}
               </ReportSection>
@@ -2625,13 +2801,13 @@ const Report = ({ data, onClose, loading }) => {
                       [
                         // Precificador - Valor de Mercado - Modelo: response.body.data.comparativoEspecificacoes.veiculoComparativo.0.modelo
                         reportData?.comparativoEspecificacoes
-                          ?.veiculoComparativo?.[0]?.modelo || "N/A",
+                          ?.veiculoComparativo?.[0]?.modelo || "-",
                         // Precificador - Valor de Mercado - Marca: response.body.data.comparativoEspecificacoes.veiculoComparativo.0.marca
                         reportData?.comparativoEspecificacoes
-                          ?.veiculoComparativo?.[0]?.marca || "N/A",
+                          ?.veiculoComparativo?.[0]?.marca || "-",
                         // Precificador - Valor de Mercado - Versão: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.versao
                         reportData?.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
-                          ?.versao || "N/A",
+                          ?.versao || "-",
                         // Precificador - Valor de Mercado - Valor: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
                         reportData?.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
                           ?.valorAtual
@@ -2641,7 +2817,7 @@ const Report = ({ data, onClose, loading }) => {
                                   .informacoesFipe[0].valorAtual
                               )
                             )
-                          : "N/A",
+                          : "Nada Consta",
                       ],
                     ]}
                   />
@@ -2661,23 +2837,24 @@ const Report = ({ data, onClose, loading }) => {
                     rows={[
                       [
                         // FIPE - Código FIPE: response.body.data.dadosBasicosDoVeiculo.codigoFipe
-                        reportData?.dadosBasicosDoVeiculo?.codigoFipe || "N/A",
+                        reportData?.dadosBasicosDoVeiculo?.codigoFipe || "-",
                         // FIPE - Combustível: response.body.data.dadosBasicosDoVeiculo.combustivel
-                        reportData?.dadosBasicosDoVeiculo?.combustivel || "N/A",
+                        reportData?.dadosBasicosDoVeiculo?.combustivel || "-",
                         // FIPE - Modelo: response.body.data.dadosBasicosDoVeiculo.modelo
-                        reportData?.dadosBasicosDoVeiculo?.modelo || "N/A",
+                        reportData?.comparativoEspecificacoes
+                          ?.veiculoComparativo?.[0]?.modelo || "-",
                         // FIPE - Marca: response.body.data.dadosBasicosDoVeiculo.marca
-                        reportData?.dadosBasicosDoVeiculo?.marca || "N/A",
+                        reportData?.dadosBasicosDoVeiculo?.marca || "-",
                         // FIPE - Valor: response.body.data.cestaBasica.veiculosFipe[0].registros[0].valor
-                        reportData?.cestaBasica?.veiculosFipe?.[0]
-                          ?.registros?.[0]?.valor
+                        reportData?.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
+                          ?.valorAtual
                           ? formatCurrency(
                               parseCurrency(
-                                reportData.cestaBasica.veiculosFipe[0]
-                                  .registros[0].valor
+                                reportData.dadosBasicosDoVeiculo
+                                  .informacoesFipe[0].valorAtual
                               )
                             )
-                          : "N/A",
+                          : "-",
                         // FIPE - Valor 0 KM: response.body.data.cestaBasica.veiculosFipe[0].registros[0].valorZeroKm
                         reportData?.cestaBasica?.veiculosFipe?.[0]
                           ?.registros?.[0]?.valorZeroKm
@@ -2687,7 +2864,7 @@ const Report = ({ data, onClose, loading }) => {
                                   .registros[0].valorZeroKm
                               )
                             )
-                          : "-",
+                          : "Nada Consta",
                       ],
                     ]}
                   />
@@ -2698,18 +2875,27 @@ const Report = ({ data, onClose, loading }) => {
                   <div className="flex flex-col md:flex-row gap-6 ">
                     <div className="shrink-0 w-[30%]">
                       {/* Porcentagem sobre Tabela FIPE - Percentual Máximo de Oferta: response.body.data.leilao.score.aceitacao */}
-                      {renderGauge({
-                        label: "",
-                        value: reportData?.leilao?.score?.percentualSobreRef,
-                      })}
+                      {(() => {
+                        const percentualSobreRef =
+                          reportData?.leilao?.score?.percentualSobreRef;
+                        const isNull =
+                          percentualSobreRef === null ||
+                          percentualSobreRef === undefined;
+                        return renderGauge({
+                          label: "",
+                          value: isNull ? 100 : percentualSobreRef,
+                          invertColors: true,
+                        });
+                      })()}
                     </div>
                     <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                       <div className="space-y-3">
                         <div className="mt-4">
                           <p className="text-sm  text-[#1AABFE] mb-2">
                             Esse veículo poderá receber uma oferta máxima de{" "}
-                            {reportData?.leilao?.score?.percentualSobreRef}% do
-                            preço do seu valor de tabela.
+                            {reportData?.leilao?.score?.percentualSobreRef ??
+                              100}
+                            % do preço do seu valor de tabela.
                           </p>
                         </div>
                       </div>
@@ -2727,17 +2913,42 @@ const Report = ({ data, onClose, loading }) => {
                             ?.exigenciaVistoriaEspecial || 0
                         }
                         min={0}
-                        max={100}
+                        max={10}
                         label="Exigência de Vistoria Especial"
                       />
                     </div>
                     <div className="w-[70%] flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
                       <div className="space-y-3">
                         {/* Exigência de Vistoria Especial (Barra exigencia de vistoria): response.body.data.leilao.score.percentualSobreRef */}
-                        <p className="text-sm text-[#1AABFE] mb-2">
-                          Este veículo possui uma chance de exigência de
-                          vistoria especial, para a realização do seguro.
-                        </p>
+                        {(() => {
+                          const exigenciaValue =
+                            reportData?.leilao?.score
+                              ?.exigenciaVistoriaEspecial;
+                          const numericValue =
+                            exigenciaValue === null ||
+                            exigenciaValue === undefined
+                              ? null
+                              : parseInt(exigenciaValue) || 0;
+
+                          let message = "";
+                          if (numericValue === null || numericValue === 1) {
+                            message =
+                              "Este veículo possui uma pequena chance de vistoria especial, para a realização do seguro.";
+                          } else if (numericValue >= 2 && numericValue <= 10) {
+                            message =
+                              "Este veículo possui uma chance de vistoria especial, para a realização do seguro.";
+                          } else {
+                            // Fallback for values outside the specified range
+                            message =
+                              "Este veículo possui uma chance de exigência de vistoria especial, para a realização do seguro.";
+                          }
+
+                          return (
+                            <p className="text-sm text-[#1AABFE] mb-2">
+                              {message}
+                            </p>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
@@ -2745,38 +2956,54 @@ const Report = ({ data, onClose, loading }) => {
 
                 {/* Recall */}
                 <ReportSection title="Recall">
-                  <ReportTableSection
-                    headers={["Data", "Defeito", "Risco"]}
-                    rows={
-                      reportData?.recall?.detalhes &&
-                      reportData?.recall?.detalhes?.length > 0
-                        ? reportData?.recall?.detalhes?.map((item) => [
-                            // Recall - Data: response.body.data.recall.detalhes[0].data
-                            item?.data
-                              ? formatDate(item?.data)
-                              : "Informação não encontrada nas bases consultadas",
-                            // Recall - Defeito: response.body.data.recall.detalhes[0].defeito
-                            item?.defeito ||
-                              "Informação não encontrada nas bases consultadas",
-                            // Recall - Risco: response.body.data.recall.detalhes[0].risco
-                            item?.risco ||
-                              "Informação não encontrada nas bases consultadas",
-                          ])
-                        : [
-                            [
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                            ],
-                          ]
-                    }
-                  />
+                  {reportData?.recall?.detalhes?.every(
+                    (item) => item?.data === null
+                  ) ? (
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
+                      <p className="text-[#1AABFE]">
+                        Informação não encontrada nas bases consultadas
+                      </p>
+                    </div>
+                  ) : (
+                    <ReportTableSection
+                      headers={["Data", "Defeito", "Risco"]}
+                      rows={
+                        reportData?.recall?.detalhes &&
+                        reportData?.recall?.detalhes?.length > 0
+                          ? reportData?.recall?.detalhes?.map((item) => [
+                              // Recall - Data: response.body.data.recall.detalhes[0].data
+                              item?.data
+                                ? formatDate(item?.data)
+                                : "Informação não encontrada nas bases consultadas",
+                              // Recall - Defeito: response.body.data.recall.detalhes[0].defeito
+                              item?.defeito ||
+                                "Informação não encontrada nas bases consultadas",
+                              // Recall - Risco: response.body.data.recall.detalhes[0].risco
+                              item?.risco ||
+                                "Informação não encontrada nas bases consultadas",
+                            ])
+                          : [
+                              [
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                              ],
+                            ]
+                      }
+                    />
+                  )}
                 </ReportSection>
 
                 {/* Descrição Completa */}
                 <ReportSection title="Descrição Completa">
-                  <div className={`border-2 border-[#1AABFE]/80  p-4 py-2 bg-white ${reportData?.recall?.detalhes &&
-                      reportData?.recall?.detalhes?.length > 0 ? "rounded-xl" : "rounded-full"}`}>
+                  <div
+                    className={`border-2 border-[#1AABFE]/80  p-4 py-2 bg-white ${
+                      reportData?.recall?.detalhes &&
+                      reportData?.recall?.detalhes?.length > 0
+                        ? "rounded-xl"
+                        : "rounded-full"
+                    }`}
+                  >
                     <div className="space-y-3">
                       {reportData?.recall?.detalhes &&
                       reportData?.recall?.detalhes?.length > 0 ? (
@@ -2795,7 +3022,7 @@ const Report = ({ data, onClose, loading }) => {
                                   ? `veículo: ${item.veiculo} — ano/modelo: ${item.anoModelo} — chassis (não sequenciais): ${item.chassis};`
                                   : null) ||
                                 JSON.stringify(item) ||
-                                "N/A";
+                                "Nada Consta";
 
                           return (
                             <p
@@ -2807,8 +3034,8 @@ const Report = ({ data, onClose, loading }) => {
                           );
                         })
                       ) : (
-                        <p className="text-sm text-[#194D9A] leading-relaxed">
-                          N/A
+                        <p className=" text-[#1AABFE] leading-relaxed">
+                          Informação não encontrada nas bases consultadas
                         </p>
                       )}
                     </div>
@@ -2901,80 +3128,83 @@ const Report = ({ data, onClose, loading }) => {
                                 {
                                   label: "Documento Agente",
                                   // Gravame - Documento Agente: response.body.data.gravame[0].documentoAgente
-                                  value: gravame?.documentoAgente || "N/A",
+                                  value:
+                                    gravame?.documentoAgente || "Nada Consta",
                                 },
                                 {
                                   label: "Agente",
                                   // Gravame - Agente: response.body.data.gravame[0].agente
-                                  value: gravame?.agente || "N/A",
+                                  value: gravame?.agente || "Nada Consta",
                                 },
                                 {
                                   label: "Responsável",
                                   // Gravame - Responsável: response.body.data.gravame[0].responsavel
-                                  value: gravame?.responsavel || "N/A",
+                                  value: gravame?.responsavel || "Nada Consta",
                                 },
                                 {
                                   label: "Placa",
                                   // Gravame - Placa: response.body.data.gravame[0].placa
-                                  value: gravame?.placa || "N/A",
+                                  value: gravame?.placa || "Nada Consta",
                                 },
                                 {
                                   label: "Renavam",
                                   // Gravame - Renavam: response.body.data.gravame[0].renavam
-                                  value: gravame?.renavam || "N/A",
+                                  value: gravame?.renavam || "Nada Consta",
                                 },
                                 {
                                   label: "Chassi",
                                   // Gravame - Chassi: response.body.data.gravame[0].chassi
-                                  value: gravame?.chassi || "N/A",
+                                  value: gravame?.chassi || "Nada Consta",
                                 },
                                 {
                                   label: "Contrato",
                                   // Gravame - Contrato: response.body.data.gravame[0].contrato
-                                  value: gravame?.contrato || "N/A",
+                                  value: gravame?.contrato || "Nada Consta",
                                 },
                               ],
                               right: [
                                 {
                                   label: "Número da Restrição",
                                   // Gravame - Número da Restrição: response.body.data.gravame[0].numeroRestricao
-                                  value: gravame?.numero || "N/A",
+                                  value: gravame?.numero || "Nada Consta",
                                 },
                                 {
                                   label: "Documento Financiado",
                                   // Gravame - Documento Financiado: response.body.data.gravame[0].documentoFinanciado
-                                  value: gravame?.documentoFinanciado || "N/A",
+                                  value:
+                                    gravame?.documentoFinanciado ||
+                                    "Nada Consta",
                                 },
                                 {
                                   label: "Data Situação",
                                   // Gravame - Data Situação: response.body.data.gravame[0].dataSituacao
                                   value: gravame?.dataSituacao
                                     ? formatDate(gravame.dataSituacao)
-                                    : "N/A",
+                                    : "Nada Consta",
                                 },
                                 {
                                   label: "Data Inclusão",
                                   // Gravame - Data Inclusão: response.body.data.gravame[0].dataInclusao
                                   value: gravame?.dataInclusao
                                     ? formatDate(gravame.dataInclusao)
-                                    : "N/A",
+                                    : "Nada Consta",
                                 },
                                 {
                                   label: "Vigência Contrato",
                                   // Gravame - Vigência Contrato: response.body.data.gravame[0].vigenciaContrato
                                   value: gravame?.vigenciaContrato
                                     ? formatDate(gravame.vigenciaContrato)
-                                    : "N/A",
+                                    : "Nada Consta",
                                 },
                                 {
                                   label: "Observações",
                                   // Gravame - Observações: response.body.data.gravame[0].observacoes
-                                  value: gravame?.observacoes || "N/A",
+                                  value: gravame?.observacoes || "Nada Consta",
                                 },
                                 {
                                   label: "Situação",
                                   // Gravame - Situação: response.body.data.gravame[0].situacao
-                                  value: gravame?.situacao || "N/A",
+                                  value: gravame?.situacao || "Nada Consta",
                                 },
                               ],
                             }}
@@ -2985,7 +3215,7 @@ const Report = ({ data, onClose, loading }) => {
                   ) : (
                     <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white">
                       <p className="text-sm text-gray-800 leading-relaxed ">
-                        N/A
+                        Nada Consta
                       </p>
                     </div>
                   )}
@@ -2999,8 +3229,8 @@ const Report = ({ data, onClose, loading }) => {
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
                   <p className="text-[#1AABFE]">
                     {/* Registro em Locadora: response.body.data.registroEmLocadora */}
-                    {reportData?.registroEmLocadora
-                      ? "Consta informações nas bases consultadas"
+                    {reportData?.registroEmLocadora?.registroEmLocadora === true
+                      ? "Sim"
                       : "Não Consta informações nas bases consultadas"}
                   </p>
                 </div>
@@ -3015,7 +3245,7 @@ const Report = ({ data, onClose, loading }) => {
                   <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
                     <p className="text-[#1AABFE]">
                       {/* CSV: response.body.data.csv */}
-                      {reportData?.csv
+                      {reportData?.csv?.length > 0
                         ? "Consta informações nas bases consultadas"
                         : "Não Consta informações nas bases consultadas"}
                     </p>
@@ -3063,8 +3293,8 @@ const Report = ({ data, onClose, loading }) => {
                   )}
                 </ReportSection>
 
-                {/* Radar Secundário */}
-                <ReportSection title="Radar Secundário">
+                {/* Seguradoras Consultadas */}
+                <ReportSection title="Seguradoras Consultadas">
                   {reportData?.radarSecuritario &&
                   Array.isArray(reportData.radarSecuritario) &&
                   reportData.radarSecuritario.length > 0 ? (
@@ -3170,15 +3400,28 @@ const Report = ({ data, onClose, loading }) => {
                               </div>
 
                               {/* Legend content */}
-                              <div
-                                className={`space-y-3 border-2 border-[#1AABFE]/80 text-[#194D9A] p-4 py-2 bg-white ${
-                                  reportData?.conclusao
-                                    ? " rounded-xl "
-                                    : " rounded-full"
-                                }`}
-                              >
-                                {reportData?.conclusao || "Nada Consta"}
-                              </div>
+                              {(() => {
+                                const radarSecuritario =
+                                  reportData?.radarSecuritario;
+                                const hasData =
+                                  radarSecuritario &&
+                                  Array.isArray(radarSecuritario) &&
+                                  radarSecuritario.length > 0;
+
+                                const conclusionText = hasData
+                                  ? 'O sistema de análise "Radar Securitário" aponta condições iniciais favoráveis para que o veículo seja aceito por seguradoras, considerando os tipos de cobertura disponíveis. Essa indicação representa uma tendência positiva, mas não garante a contratação, pois está sujeita à avaliação individual de cada empresa.\n\nA decisão final pode variar conforme fatores como:\n\nPerfil do condutor: idade, histórico de acidentes, multas ou infrações.\n\nSituação financeira: score de crédito e possíveis restrições em nome do segurado, condutor ou proprietário.\n\nCaracterísticas do veículo: quilometragem alta, uso comercial ou por aplicativos como Uber.\n\nFatores externos: índices de sinistros ou violência na área onde o veículo circula.\n\nPortanto, a sinalização de aprovação é preliminar e pode sofrer alterações no valor ou até ser recusada após análise detalhada pela seguradora.'
+                                  : "No momento, não identificamos seguradoras com condições favoráveis para este veículo ou não há dados suficientes para realizar uma análise completa.\n\nEssa ausência pode ocorrer por diversos motivos, como falta de histórico disponível, características específicas do veículo ou limitações nas fontes de consulta.\n\nRecomendamos que você consulte diretamente uma corretora de seguros para uma avaliação personalizada, considerando seu perfil e as coberturas desejadas";
+
+                                return (
+                                  <div
+                                    className={`space-y-3 border-2 border-[#1AABFE]/80 text-[#194D9A] p-4  bg-white rounded-xl`}
+                                  >
+                                    <div className="whitespace-pre-line text-sm leading-relaxed">
+                                      {conclusionText}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
                             </div>
                           </div>
                         </div>
