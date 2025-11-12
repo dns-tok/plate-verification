@@ -443,7 +443,7 @@ const Report = ({ data, onClose, loading }) => {
       } else {
         years[calcCurrentYear] = "Nada Consta";
       }
-    } else if (yearKeys.includes(calcCurrentYear)) {
+    } else if (yearKeys?.includes(calcCurrentYear)) {
       // If current year is in data but we don't have valorAtual, show N/A
       years[calcCurrentYear] = "Nada Consta";
     }
@@ -489,7 +489,7 @@ const Report = ({ data, onClose, loading }) => {
         trimmed === "não" ||
         trimmed === "null" ||
         trimmed === "nada consta" ||
-        trimmed.includes("nao existe") ||
+        trimmed?.toLowerCase()?.includes("nao existe") ||
         trimmed === "empty"
       ) {
         return "Não";
@@ -2091,9 +2091,9 @@ const Report = ({ data, onClose, loading }) => {
 
                           reportData?.baseNacional?.restricaoFinanciadora &&
                             !reportData?.baseNacional?.restricaoFinanciadora
-                              .toLowerCase()
-                              .trim()
-                              .includes("nada ")
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nada ")
                         )}
                         {/* Restrição 1: response.body.data.baseNacional.restricao1 */}
                         {renderField(
@@ -2101,9 +2101,9 @@ const Report = ({ data, onClose, loading }) => {
                           reportData?.baseNacional?.restricao1 || "Nada consta",
                           reportData?.baseNacional?.restricao1 &&
                             !reportData?.baseNacional?.restricao1
-                              .toLowerCase()
-                              .trim()
-                              .includes("nada")
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nada")
                         )}
 
                         {/* Restrição 3: response.body.data.baseNacional.restricao3 */}
@@ -2112,9 +2112,9 @@ const Report = ({ data, onClose, loading }) => {
                           reportData?.baseNacional?.restricao3 || "Nada consta",
                           reportData?.baseNacional?.restricao3 &&
                             !reportData?.baseNacional?.restricao3
-                              .toLowerCase()
-                              .trim()
-                              .includes("nada ")
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nada ")
                         )}
                       </div>
 
@@ -2136,10 +2136,10 @@ const Report = ({ data, onClose, loading }) => {
                               "veículo sem ocorrência de roubo/furto" &&
                             !reportData?.baseNacional?.ocorrencia
                               ?.toLowerCase()
-                              .includes("não") &&
+                              ?.includes("não") &&
                             !reportData?.baseNacional?.ocorrencia
                               ?.toLowerCase()
-                              .includes("nao")
+                              ?.includes("nao")
                         )}
 
                         {/* Restrição 2: response.body.data.baseNacional.restricao2 */}
@@ -2148,9 +2148,9 @@ const Report = ({ data, onClose, loading }) => {
                           reportData?.baseNacional?.restricao2 || "Nada consta",
                           reportData?.baseNacional?.restricao2 &&
                             !reportData?.baseNacional?.restricao2
-                              .toLowerCase()
-                              .trim()
-                              .includes("nada")
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nada")
                         )}
                         {/* Restrição 4: response.body.data.baseNacional.restricao4 */}
                         {renderField(
@@ -2158,9 +2158,9 @@ const Report = ({ data, onClose, loading }) => {
                           reportData?.baseNacional?.restricao4 || "Nada consta",
                           reportData?.baseNacional?.restricao4 &&
                             !reportData?.baseNacional?.restricao4
-                              .toLowerCase()
-                              .trim()
-                              .includes("nada")
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nada")
                         )}
                       </div>
                     </>
@@ -2453,29 +2453,31 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débito DPVAT: response.body.data.baseEstadual.existeDebitoDpvat */}
                         {renderField(
                           "Débito DPVAT",
-                          baseEstadual.existeDebitoDpvat.includes("NAO EXISTE")
+                          baseEstadual?.existeDebitoDpvat?.includes(
+                            "NAO EXISTE"
+                          )
                             ? "Nada Consta"
                             : baseEstadual.existeDebitoDpvat || "Nada consta",
                           baseEstadual.existeDebitoDpvat &&
                             !baseEstadual.existeDebitoDpvat
-                              .toLowerCase()
-                              .trim()
-                              .includes("nao")
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nao")
                         )}
                         {/* Débitos Licenciamento: response.body.data.baseEstadual.existeDebitoLicenciamento */}
                         {renderField(
                           "Débitos Licenciamento",
-                          baseEstadual.existeDebitoLicenciamento.includes(
+                          baseEstadual?.existeDebitoLicenciamento?.includes(
                             "NAO EXISTE"
                           )
                             ? "Nada Consta"
                             : baseEstadual.existeDebitoLicenciamento ||
                                 "Nada consta",
                           baseEstadual.existeDebitoLicenciamento &&
-                            !baseEstadual.existeDebitoLicenciamento
-                              .toLowerCase()
-                              .trim()
-                              .includes("nao")
+                            !baseEstadual?.existeDebitoLicenciamento
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nao")
                         )}
                       </div>
 
@@ -2483,26 +2485,28 @@ const Report = ({ data, onClose, loading }) => {
                         {/* Débitos IPVA: response.body.data.baseEstadual.existeDebitoIpva */}
                         {renderField(
                           "Débitos IPVA",
-                          baseEstadual.existeDebitoIpva.includes("NAO EXISTE")
+                          baseEstadual.existeDebitoIpva?.includes("NAO EXISTE")
                             ? "Nada Consta"
                             : baseEstadual.existeDebitoIpva || "Nada consta",
                           baseEstadual.existeDebitoIpva &&
                             !baseEstadual.existeDebitoIpva
-                              .toLowerCase()
-                              .trim()
-                              .includes("nao")
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nao")
                         )}
                         {/* Débitos Multa: response.body.data.baseEstadual.existeDebitoMulta */}
                         {renderField(
                           "Débitos Multa",
-                          baseEstadual.existeDebitoMulta.includes("NAO EXISTE")
+                          baseEstadual?.existeDebitoMulta?.includes(
+                            "NAO EXISTE"
+                          )
                             ? "Nada Consta"
-                            : baseEstadual.existeDebitoMulta || "Nada consta",
-                          baseEstadual.existeDebitoMulta &&
-                            !baseEstadual.existeDebitoMulta
-                              .toLowerCase()
-                              .trim()
-                              .includes("nao")
+                            : baseEstadual?.existeDebitoMulta || "Nada consta",
+                          baseEstadual?.existeDebitoMulta &&
+                            !baseEstadual?.existeDebitoMulta
+                              ?.toLowerCase()
+                              ?.trim()
+                              ?.includes("nao")
                         )}
                       </div>
                     </>
