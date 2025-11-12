@@ -41,10 +41,10 @@ const Payment = () => {
   // Map plan names to API codes
   const getPlanCode = (planName) => {
     const codeMap = {
-      "Relatório Premium": "premium",
-      "Relatório Ultra": "ultra",
+      "Premium Plan": "premium",
+      "Ultra Plan": "ultra",
       "Plus Plan": "plus",
-      "Relatório Light": "light",
+      "Light Plan": "light",
       "Always Present": "always_present",
       "Eye on security": "eye_on_security",
       Professional: "professional",
@@ -76,10 +76,9 @@ const Payment = () => {
     try {
       // Map cart items to API format
       const items = cartItems.map((item) => ({
-        code: getPlanCode(item.name),
+        code: item?.apiData?.code ? item.apiData.code : getPlanCode(item.name),
         quantity: item.quantity || 1,
       }));
-
       const payload = {
         items,
         coupon_code: appliedCoupon?.code || "",
@@ -366,8 +365,8 @@ const Payment = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1AABFE]" />
               {isCheckingPayment && (
                 <p className="mt-4 text-sm text-gray-600 text-center px-4">
-                  Por favor, complete o pagamento na nova aba. Estamos verificando o
-                  payment status...
+                  Por favor, complete o pagamento na nova aba. Estamos
+                  verificando o payment status...
                 </p>
               )}
               {isCreatingOrder && (
@@ -404,8 +403,8 @@ const Payment = () => {
               </p>
               {isExpired && (
                 <p className="text-red-600 text-sm font-medium">
-                  Tempo de pagamento expirado! Por favor, volte para o carrinho e crie um novo
-                  order.
+                  Tempo de pagamento expirado! Por favor, volte para o carrinho
+                  e crie um novo order.
                 </p>
               )}
             </div>

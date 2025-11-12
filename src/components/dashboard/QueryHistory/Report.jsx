@@ -18,6 +18,11 @@ import html2canvas from "html2canvas-pro";
 import { toast } from "react-toastify";
 import BarGauge from "./components/BarGauge";
 import { formatCurrency, parseCurrency } from "../../../utils/currencyUtils";
+import {
+  isSummaryBoxVisible,
+  isFieldVisible,
+  filterTwoColumnFields,
+} from "../../../utils/reportFieldFilter";
 
 const Report = ({ data, onClose, loading }) => {
   const reportRef = useRef(null);
@@ -499,8 +504,22 @@ const Report = ({ data, onClose, loading }) => {
   // Block 2 mapping - Check for issues in summary
   // Leilão: response.body.data.leilao.registros (empty or not empty)
   const hasLeilao = checkSimNao(reportData.leilao?.registros);
-  // Sinistro: response.body.data.indicioSinistro
-  const hasSinistro = checkSimNao(reportData.indicioSinistro);
+  // Sinistro: response.body.data.indicioSinistro.id
+  // If ID field doesn't exist inside indicioSinistro → "Não" (blue)
+  // If ID field exists → "Sim" (red)
+  const hasSinistro = (() => {
+    const indicioSinistro = reportData.indicioSinistro;
+    // Check if indicioSinistro exists and has an id field
+    if (!indicioSinistro) {
+      return "Não";
+    }
+    // Check if id field exists (regardless of its value)
+    if (indicioSinistro.id !== undefined) {
+      return "Sim";
+    }
+    // If id doesn't exist, return "Não"
+    return "Não";
+  })();
   // Bancos, Financeiras ou seguradoras: response.body.data.baseEstadual.restricaoFinanceira
   const hasBancosFinanceiras = checkSimNao(baseEstadual.restricaoFinanceira);
   // Restrições nacionais: response.body.data.restricoes
@@ -801,7 +820,7 @@ const Report = ({ data, onClose, loading }) => {
   }
 
   return (
-    <div className="h-screen overflow-auto rounded-xl ">
+    <div className="h-screen overflow-auto rounded-xl py-4 ">
       <div className=" mx-auto max-w-[1080px] ">
         <div
           ref={reportRef}
@@ -867,56 +886,75 @@ const Report = ({ data, onClose, loading }) => {
             </div>
           </div>
           <div className="space-y-6 max-w-[88%] mx-auto">
-            {reportData.ia && renderAiSummary()}
+            {/* Resumo IA - Only for Ultra and Premium */}
+            {reportData.ia &&
+              (planName === "ultra" || planName === "premium") &&
+              renderAiSummary()}
             {/* Resumo da consulta - Block 2 mapping */}
             <div className="space-y-4">
               {renderSectionTitle("Resumo da consulta")}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 gap-x-5">
-                {renderStatusBox("Leilão", hasLeilao, "/report/auction.png")}
-                {renderStatusBox("Sinistro", hasSinistro, "/report/crash.png")}
-                {renderStatusBox(
+                {isSummaryBoxVisible("Leilão", planName) &&
+                  renderStatusBox("Leilão", hasLeilao, "/report/auction.png")}
+                {isSummaryBoxVisible("Sinistro", planName) &&
+                  renderStatusBox("Sinistro", hasSinistro, "/report/crash.png")}
+                {isSummaryBoxVisible(
                   "Bancos, Financeiras ou seguradoras",
-                  hasBancosFinanceiras,
-                  "/report/bank.png"
-                )}
-                {renderStatusBox(
-                  "Restrições Nacionais",
-                  hasRestricoesNacionais,
-                  "/report/national.webp"
-                )}
-                {renderStatusBox(
-                  "Restrições Estaduais",
-                  hasRestricoesEstaduais,
-                  "/report/restrict.png"
-                )}
-                {renderStatusBox(
-                  "motor alterado",
-                  hasMotorAlterado,
-                  "/report/engine.png"
-                )}
-                {renderStatusBox(
-                  "Chassi remarcado",
-                  hasChassiRemarcado,
-                  "/report/!.svg"
-                )}
-                {renderStatusBox("Recall", hasRecall, "/report/tools.svg")}
-                {renderStatusBox(
-                  "Alerta de Gravame",
-                  hasAlertaGravame,
-                  "/report/alert.webp"
-                )}
-                {renderStatusBox(
-                  "Historico de Roubo",
-                  hasHistoricoRoubo,
-                  "/report/theft.png"
-                )}
-                {renderStatusBox("CSV", hasCSV, "/report/csv.png")}
-                {renderStatusBox("RENAJUD", hasRENAJUD, "/report/renajud.svg")}
-                {renderStatusBox(
-                  "Historico de multas RENAINF",
-                  hasMultasRENAINF,
-                  "/report/police.png"
-                )}
+                  planName
+                ) &&
+                  renderStatusBox(
+                    "Bancos, Financeiras ou seguradoras",
+                    hasBancosFinanceiras,
+                    "/report/bank.png"
+                  )}
+                {isSummaryBoxVisible("Restrições Nacionais", planName) &&
+                  renderStatusBox(
+                    "Restrições Nacionais",
+                    hasRestricoesNacionais,
+                    "/report/national.webp"
+                  )}
+                {isSummaryBoxVisible("Restrições Estaduais", planName) &&
+                  renderStatusBox(
+                    "Restrições Estaduais",
+                    hasRestricoesEstaduais,
+                    "/report/restrict.png"
+                  )}
+                {isSummaryBoxVisible("motor alterado", planName) &&
+                  renderStatusBox(
+                    "motor alterado",
+                    hasMotorAlterado,
+                    "/report/engine.png"
+                  )}
+                {isSummaryBoxVisible("Chassi remarcado", planName) &&
+                  renderStatusBox(
+                    "Chassi remarcado",
+                    hasChassiRemarcado,
+                    "/report/!.svg"
+                  )}
+                {isSummaryBoxVisible("Recall", planName) &&
+                  renderStatusBox("Recall", hasRecall, "/report/tools.svg")}
+                {isSummaryBoxVisible("Alerta de Gravame", planName) &&
+                  renderStatusBox(
+                    "Alerta de Gravame",
+                    hasAlertaGravame,
+                    "/report/alert.webp"
+                  )}
+                {isSummaryBoxVisible("Historico de Roubo", planName) &&
+                  renderStatusBox(
+                    "Historico de Roubo",
+                    hasHistoricoRoubo,
+                    "/report/theft.png"
+                  )}
+                {isSummaryBoxVisible("CSV", planName) &&
+                  renderStatusBox("CSV", hasCSV, "/report/csv.png")}
+                {isSummaryBoxVisible("RENAJUD", planName) &&
+                  renderStatusBox("RENAJUD", hasRENAJUD, "/report/renajud.svg")}
+                {isSummaryBoxVisible("Historico de multas RENAINF", planName) &&
+                  renderStatusBox(
+                    "Historico de multas RENAINF",
+                    hasMultasRENAINF,
+                    "/report/police.png"
+                  )}
               </div>
               {/* //show warning box if there are any issues */}
               {hasIssues &&
@@ -956,7 +994,7 @@ const Report = ({ data, onClose, loading }) => {
                 exigenciaVistoriaEspecial === null &&
                 !percentualSobreRef && (
                   <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white w-full">
-                    <p className="text-gray-800">
+                    <p className="text-[#194D9A]">
                       Informação não encontrada nas bases consultadas.
                     </p>
                   </div>
@@ -968,156 +1006,166 @@ const Report = ({ data, onClose, loading }) => {
               breakSection={true}
             >
               <TwoColumnFieldSection
-                fields={{
-                  left: [
-                    // Marca / Modelo: response.body.data.marcaModelo
-                    {
-                      label: "Marca / Modelo",
-                      value: reportData.marcaModelo || "N/A",
-                    },
-                    // Cor: response.body.data.corVeiculo
-                    { label: "Cor", value: reportData.corVeiculo || "N/A" },
-                    // RENAVAM: response.body.data.renavam
-                    {
-                      label: "RENAVAM",
-                      value:
-                        reportData.renavam || baseEstadual.renavam || "N/A",
-                    },
-                    // Tipo do Veículo: response.body.data.tipoVeiculo
-                    {
-                      label: "Tipo do Veículo",
-                      value:
-                        reportData.tipoVeiculo || baseEstadual.tipo || "N/A",
-                    },
-                    // Nacionalidade: response.body.data.nacionalidade
-                    {
-                      label: "Nacionalidade",
-                      value: reportData.nacionalidade || "N/A",
-                    },
-                    // UF: response.body.data.uf
-                    {
-                      label: "UF",
-                      value: reportData.uf || baseEstadual.uf || "N/A",
-                    },
-                    // Registro DI: response.body.data.registroDi
-                    {
-                      label: "Registro DI",
-                      value:
-                        reportData.registroDi ||
-                        baseNacional.registroDi ||
-                        "N/A",
-                    },
-                  ],
-                  right: [
-                    // Número do
-                    // Ano / Modelo: response.body.data.anoFabricacao/response.body.data.anoModelo
-                    {
-                      label: "Ano / Modelo",
-                      value:
-                        reportData.anoFabricacao && reportData.anoModelo
-                          ? `${reportData.anoFabricacao}/${reportData.anoModelo}`
-                          : reportData.anoFabricacao ||
-                            reportData.anoModelo ||
-                            "N/A",
-                    },
-                    // Placa: response.body.headerInfos.keys.placa
-                    {
-                      label: "Placa",
-                      value:
-                        responseItem?.response?.body?.headerInfos?.keys
-                          ?.placa ||
-                        reportData.placa ||
-                        "N/A",
-                    },
-                    // Combustível: response.body.data.combustivel
-                    {
-                      label: "Combustível",
-                      value:
-                        reportData.combustivel ||
-                        baseEstadual.combustivel ||
-                        "N/A",
-                    },
-                    //  motor: response.body.data.numMotor
-                    {
-                      label: "Número do motor",
-                      value: reportData.numMotor || baseEstadual.motor || "N/A",
-                    },
+                fields={filterTwoColumnFields(
+                  {
+                    left: [
+                      // Marca / Modelo: response.body.data.marcaModelo
+                      {
+                        label: "Marca / Modelo",
+                        value: reportData.marcaModelo || "N/A",
+                      },
+                      // Cor: response.body.data.corVeiculo
+                      { label: "Cor", value: reportData.corVeiculo || "N/A" },
+                      // RENAVAM: response.body.data.renavam
+                      {
+                        label: "RENAVAM",
+                        value:
+                          reportData.renavam || baseEstadual.renavam || "N/A",
+                      },
+                      // Tipo do Veículo: response.body.data.tipoVeiculo
+                      {
+                        label: "Tipo do Veículo",
+                        value:
+                          reportData.tipoVeiculo || baseEstadual.tipo || "N/A",
+                      },
+                      // Nacionalidade: response.body.data.nacionalidade
+                      {
+                        label: "Nacionalidade",
+                        value: reportData.nacionalidade || "N/A",
+                      },
+                      // UF: response.body.data.uf
+                      {
+                        label: "UF",
+                        value: reportData.uf || baseEstadual.uf || "N/A",
+                      },
+                      // Registro DI: response.body.data.registroDi - Only for Plus, Ultra, Premium
+                      {
+                        label: "Registro DI",
+                        value:
+                          reportData.registroDi ||
+                          baseNacional.registroDi ||
+                          "N/A",
+                      },
+                    ],
+                    right: [
+                      // Número do
+                      // Ano / Modelo: response.body.data.anoFabricacao/response.body.data.anoModelo
+                      {
+                        label: "Ano / Modelo",
+                        value:
+                          reportData.anoFabricacao && reportData.anoModelo
+                            ? `${reportData.anoFabricacao}/${reportData.anoModelo}`
+                            : reportData.anoFabricacao ||
+                              reportData.anoModelo ||
+                              "N/A",
+                      },
+                      // Placa: response.body.headerInfos.keys.placa
+                      {
+                        label: "Placa",
+                        value:
+                          responseItem?.response?.body?.headerInfos?.keys
+                            ?.placa ||
+                          reportData.placa ||
+                          "N/A",
+                      },
+                      // Combustível: response.body.data.combustivel
+                      {
+                        label: "Combustível",
+                        value:
+                          reportData.combustivel ||
+                          baseEstadual.combustivel ||
+                          "N/A",
+                      },
+                      //  motor: response.body.data.numMotor
+                      {
+                        label: "Número do motor",
+                        value:
+                          reportData.numMotor || baseEstadual.motor || "N/A",
+                      },
 
-                    // Chasi: response.body.data.chassi
-                    {
-                      label: "Chassi",
-                      value: reportData.chassi || baseEstadual.chassi || "N/A",
-                    },
+                      // Chasi: response.body.data.chassi
+                      {
+                        label: "Chassi",
+                        value:
+                          reportData.chassi || baseEstadual.chassi || "N/A",
+                      },
 
-                    // Município: response.body.data.municipio
-                    {
-                      label: "Município",
-                      value:
-                        reportData.municipio || baseEstadual.municipio || "N/A",
-                    },
-                  ],
-                }}
+                      // Município: response.body.data.municipio
+                      {
+                        label: "Município",
+                        value:
+                          reportData.municipio ||
+                          baseEstadual.municipio ||
+                          "N/A",
+                      },
+                    ],
+                  },
+                  planName
+                )}
               />
             </ReportSection>
 
             {/* Block 5: Dados Básicos */}
             <ReportSection title="Dados Básicos">
               <TwoColumnFieldSection
-                fields={{
-                  left: [
-                    // Caixa Câmbio: response.body.data.caixaCambio
-                    {
-                      label: "Caixa Câmbio",
-                      value: reportData.caixaCambio || "N/A",
-                    },
-                    // Cilindradas: response.body.data.cilindradas
-                    {
-                      label: "Cilindradas",
-                      value: reportData.cilindradas || "N/A",
-                    },
-                    // Número 3º Eixo: response.body.data.numTerceiroEixo
-                    {
-                      label: "Número 3º Eixo",
-                      value: reportData.numTerceiroEixo || "Nada Consta",
-                    },
+                fields={filterTwoColumnFields(
+                  {
+                    left: [
+                      // Caixa Câmbio: response.body.data.caixaCambio
+                      {
+                        label: "Caixa Câmbio",
+                        value: reportData.caixaCambio || "N/A",
+                      },
+                      // Cilindradas: response.body.data.cilindradas
+                      {
+                        label: "Cilindradas",
+                        value: reportData.cilindradas || "N/A",
+                      },
+                      // Número 3º Eixo: response.body.data.numTerceiroEixo
+                      {
+                        label: "Número 3º Eixo",
+                        value: reportData.numTerceiroEixo || "Nada Consta",
+                      },
 
-                    // Potência: response.body.data.potencia
-                    {
-                      label: "Potência",
-                      value: reportData.potencia || "N/A",
-                    },
-                    // Peso Bruto: response.body.data.pbt
-                    { label: "Peso Bruto", value: reportData.pbt || "N/A" },
-                  ],
-                  right: [
-                    // Capacidade Máxima de tração: response.body.data.capMaxTracao
-                    {
-                      label: "Capacidade Máxima de tração",
-                      value: reportData.capMaxTracao || "N/A",
-                    },
-                    // Eixo Diferencial: response.body.data.eixoTraseiroDif
-                    {
-                      label: "Eixo Diferencial",
-                      value: reportData.eixoTraseiroDif || "Nada Consta",
-                    },
-                    // Número Carroceria: response.body.data.numCarroceria
-                    {
-                      label: "Número Carroceria",
-                      value: reportData.numCarroceria || "Nada Consta",
-                    },
-                    // Tipo Carroceria: response.body.data.tipoCarroceria
-                    {
-                      label: "Tipo Carroceria",
-                      value: reportData.tipoCarroceria || "N/A",
-                    },
+                      // Potência: response.body.data.potencia
+                      {
+                        label: "Potência",
+                        value: reportData.potencia || "N/A",
+                      },
+                      // Peso Bruto: response.body.data.pbt
+                      { label: "Peso Bruto", value: reportData.pbt || "N/A" },
+                    ],
+                    right: [
+                      // Capacidade Máxima de tração: response.body.data.capMaxTracao
+                      {
+                        label: "Capacidade Máxima de tração",
+                        value: reportData.capMaxTracao || "N/A",
+                      },
+                      // Eixo Diferencial: response.body.data.eixoTraseiroDif
+                      {
+                        label: "Eixo Diferencial",
+                        value: reportData.eixoTraseiroDif || "Nada Consta",
+                      },
+                      // Número Carroceria: response.body.data.numCarroceria
+                      {
+                        label: "Número Carroceria",
+                        value: reportData.numCarroceria || "Nada Consta",
+                      },
+                      // Tipo Carroceria: response.body.data.tipoCarroceria
+                      {
+                        label: "Tipo Carroceria",
+                        value: reportData.tipoCarroceria || "N/A",
+                      },
 
-                    // Capacidade de Passageiros: response.body.data.capacidadePassageiro
-                    {
-                      label: "Capacidade de Passageiros",
-                      value: reportData.capacidadePassageiro || "N/A",
-                    },
-                  ],
-                }}
+                      // Capacidade de Passageiros: response.body.data.capacidadePassageiro
+                      {
+                        label: "Capacidade de Passageiros",
+                        value: reportData.capacidadePassageiro || "N/A",
+                      },
+                    ],
+                  },
+                  planName
+                )}
               />
             </ReportSection>
 
@@ -1156,7 +1204,7 @@ const Report = ({ data, onClose, loading }) => {
                   ])}
                 />
               ) : (
-                <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 bg-white">
+                <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
                   <p className="text-gray-800">
                     {reportData?.leilao?.descricao || "N/A"}
                   </p>
@@ -1177,16 +1225,16 @@ const Report = ({ data, onClose, loading }) => {
                 </>
               ) : (
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                  <p className="text-gray-800">N/A</p>
+                  <p className="text-[#194D9A]">N/A</p>
                 </div>
               )}
             </ReportSection>
 
             {/* Block 8: Indício de Sinistro */}
             <ReportSection title="Indício de Sinistro">
-              <div className="border-2 border-[#1AABFE]/80 rounded-full p-2 bg-white">
+              <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
                 {/* inside the box: response.body.data.indicioSinistro.descricao */}
-                <p className="text-[#1AABFE] text-xs">
+                <p className="text-[#194D9A] ">
                   {reportData?.indicioSinistro?.descricao || "N/A"}
                 </p>
               </div>
@@ -1222,16 +1270,13 @@ const Report = ({ data, onClose, loading }) => {
                       label="Chassi"
                       value={reportData?.chassi || chassis || "N/A"}
                     />
-                    {/* Análise: response.body.data... (default text) */}
-                    <div className="mt-4">
-                      <p className="text-sm font-semibold text-[#1AABFE] mb-2">
-                        Análise:
-                      </p>
-                      <p className="text-sm text-gray-800">
-                        {reportData?.analiseRisco?.parecer ||
-                          "Não consta informações nas bases consultadas."}
-                      </p>
-                    </div>
+                    <ReportField
+                      label="Análise"
+                      value={
+                        reportData?.analiseRisco?.parecer ||
+                        "Não consta informações nas bases consultadas."
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -1411,220 +1456,226 @@ const Report = ({ data, onClose, loading }) => {
                   breakSection={true}
                 >
                   <TwoColumnFieldSection
-                    fields={{
-                      left: [
-                        // Ano Modelo: response.body.data.baseNacional.anoModelo
-                        { label: "Placa", value: plate },
-                        {
-                          label: "Ano Modelo",
-                          value:
-                            baseNacional.anoModelo ||
-                            reportData.anoModelo ||
-                            "N/A",
-                        },
+                    fields={filterTwoColumnFields(
+                      {
+                        left: [
+                          // Ano Modelo: response.body.data.baseNacional.anoModelo
+                          { label: "Placa", value: plate },
+                          {
+                            label: "Ano Modelo",
+                            value:
+                              baseNacional.anoModelo ||
+                              reportData.anoModelo ||
+                              "N/A",
+                          },
 
-                        // Marca: response.body.data.dadosBasicosDoVeiculo.marca
-                        {
-                          label: "Marca",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.marca ||
-                            make ||
-                            "N/A",
-                        },
-                        // Modelo: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].modelo
-                        {
-                          label: "Modelo",
-                          value:
-                            reportData.dadosBasicosDoVeiculo
-                              ?.informacoesFipe?.[0]?.modelo ||
-                            model ||
-                            "N/A",
-                        },
-                        // Versão: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].versao
-                        {
-                          label: "Versão",
-                          value:
-                            reportData.dadosBasicosDoVeiculo
-                              ?.informacoesFipe?.[0]?.versao ||
-                            decodificador.versao ||
-                            "N/A",
-                        },
-                        // Código FIPE: response.body.data.dadosBasicosDoVeiculo.codigoFipe
-                        {
-                          label: "Código FIPE",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.codigoFipe ||
-                            codigoFipe ||
-                            "N/A",
-                        },
-                        // Região Geográfica: response.body.data.decodificadorPrecificador.regiao
-                        {
-                          label: "Região Geográfica",
-                          value:
-                            decodificador.regiao ||
-                            reportData.decodificadorPrecificador?.regiao ||
-                            "N/A",
-                        },
-                        // País: response.body.data.decodificadorPrecificador.pais
-                        {
-                          label: "País",
-                          value:
-                            decodificador.pais ||
-                            reportData.decodificadorPrecificador?.pais ||
-                            "N/A",
-                        },
-                        // Tipo Veículo: response.body.data.baseNacional.tipoVeiculo
-                        {
-                          label: "Tipo Veículo",
-                          value:
-                            baseNacional.tipoVeiculo ||
-                            reportData.tipoVeiculo ||
-                            "N/A",
-                        },
-                        // Peso Bruto Total: response.body.data.decodificadorPrecificador.pesoBruto
-                        {
-                          label: "Peso Bruto Total",
-                          value:
-                            decodificador.pesoBruto ||
-                            reportData.decodificadorPrecificador?.pesoBruto ||
-                            reportData.pbt ||
-                            "N/A",
-                        },
-                        // Capacidade Carga: response.body.data.dadosBasicosDoVeiculo.capacidadeCarga
-                        {
-                          label: "Capacidade Carga",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.capacidadeCarga ||
-                            reportData.capacidadeCarga ||
-                            "Nada Consta",
-                        },
-                        // Capacidade Passageiros: response.body.data.dadosBasicosDoVeiculo.capacidadePassageiro
-                        {
-                          label: "Capacidade Passageiros",
-                          value:
-                            reportData.dadosBasicosDoVeiculo
-                              ?.capacidadePassageiro ||
-                            reportData.capacidadePassageiro ||
-                            "N/A",
-                        },
-                        // Número Eixos Traseiro: response.body.data.eixoTraseiroDif
-                        {
-                          label: "Número Eixos Traseiro",
-                          value: reportData.eixoTraseiroDif || "Nada Consta",
-                        },
-                        // Número Eixos Auxiliar: response.body.data.dadosBasicosDoVeiculo.eixos
-                        {
-                          label: "Número Eixos Auxiliar",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.eixos ||
-                            reportData.eixos ||
-                            "Nada Consta",
-                        },
-                      ],
-                      right: [
-                        // Ano Fabricação: response.body.data.baseNacional.anoFabricacao
-                        {
-                          label: "Ano Fabricação",
-                          value:
-                            baseNacional.anoFabricacao ||
-                            reportData.anoFabricacao ||
-                            "N/A",
-                        },
+                          // Marca: response.body.data.dadosBasicosDoVeiculo.marca
+                          {
+                            label: "Marca",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.marca ||
+                              make ||
+                              "N/A",
+                          },
+                          // Modelo: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].modelo
+                          {
+                            label: "Modelo",
+                            value:
+                              reportData.dadosBasicosDoVeiculo
+                                ?.informacoesFipe?.[0]?.modelo ||
+                              model ||
+                              "N/A",
+                          },
+                          // Versão: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].versao
+                          {
+                            label: "Versão",
+                            value:
+                              reportData.dadosBasicosDoVeiculo
+                                ?.informacoesFipe?.[0]?.versao ||
+                              decodificador.versao ||
+                              "N/A",
+                          },
+                          // Código FIPE: response.body.data.dadosBasicosDoVeiculo.codigoFipe
+                          {
+                            label: "Código FIPE",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.codigoFipe ||
+                              codigoFipe ||
+                              "N/A",
+                          },
+                          // Região Geográfica: response.body.data.decodificadorPrecificador.regiao
+                          {
+                            label: "Região Geográfica",
+                            value:
+                              decodificador.regiao ||
+                              reportData.decodificadorPrecificador?.regiao ||
+                              "N/A",
+                          },
+                          // País: response.body.data.decodificadorPrecificador.pais
+                          {
+                            label: "País",
+                            value:
+                              decodificador.pais ||
+                              reportData.decodificadorPrecificador?.pais ||
+                              "N/A",
+                          },
+                          // Tipo Veículo: response.body.data.baseNacional.tipoVeiculo
+                          {
+                            label: "Tipo Veículo",
+                            value:
+                              baseNacional.tipoVeiculo ||
+                              reportData.tipoVeiculo ||
+                              "N/A",
+                          },
+                          // Peso Bruto Total: response.body.data.decodificadorPrecificador.pesoBruto
+                          {
+                            label: "Peso Bruto Total",
+                            value:
+                              decodificador.pesoBruto ||
+                              reportData.decodificadorPrecificador?.pesoBruto ||
+                              reportData.pbt ||
+                              "N/A",
+                          },
+                          // Capacidade Carga: response.body.data.dadosBasicosDoVeiculo.capacidadeCarga
+                          {
+                            label: "Capacidade Carga",
+                            value:
+                              reportData.dadosBasicosDoVeiculo
+                                ?.capacidadeCarga ||
+                              reportData.capacidadeCarga ||
+                              "Nada Consta",
+                          },
+                          // Capacidade Passageiros: response.body.data.dadosBasicosDoVeiculo.capacidadePassageiro
+                          {
+                            label: "Capacidade Passageiros",
+                            value:
+                              reportData.dadosBasicosDoVeiculo
+                                ?.capacidadePassageiro ||
+                              reportData.capacidadePassageiro ||
+                              "N/A",
+                          },
+                          // Número Eixos Traseiro: response.body.data.eixoTraseiroDif
+                          {
+                            label: "Número Eixos Traseiro",
+                            value: reportData.eixoTraseiroDif || "Nada Consta",
+                          },
+                          // Número Eixos Auxiliar: response.body.data.dadosBasicosDoVeiculo.eixos
+                          {
+                            label: "Número Eixos Auxiliar",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.eixos ||
+                              reportData.eixos ||
+                              "Nada Consta",
+                          },
+                        ],
+                        right: [
+                          // Ano Fabricação: response.body.data.baseNacional.anoFabricacao
+                          {
+                            label: "Ano Fabricação",
+                            value:
+                              baseNacional.anoFabricacao ||
+                              reportData.anoFabricacao ||
+                              "N/A",
+                          },
 
-                        // Nacionalidade: response.body.data.nacionalidade
-                        {
-                          label: "Nacionalidade",
-                          value: reportData.nacionalidade || "Nada Consta",
-                        },
-                        // Combustível: response.body.data.baseEstadual.combustivel
-                        {
-                          label: "Combustível",
-                          value:
-                            baseEstadual.combustivel ||
-                            reportData.combustivel ||
-                            "N/A",
-                        },
-                        // Cilindradas: response.body.data.dadosBasicosDoVeiculo.cilindradas
-                        {
-                          label: "Cilindradas",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.cilindradas ||
-                            reportData.cilindradas ||
-                            "N/A",
-                        },
-                        // Código Versão: (no path provided in mapping, keeping existing)
-                        {
-                          label: "Código Versão",
-                          value: reportData.codigoMarcaModelo || "N/A",
-                        },
-                        // Valor atual: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].historicoPreco[0].valor
-                        {
-                          label: "Valor atual",
-                          value: reportData.dadosBasicosDoVeiculo
-                            ?.informacoesFipe?.[0]?.historicoPreco?.[0]?.valor
-                            ? formatCurrency(
-                                parseCurrency(
-                                  reportData.dadosBasicosDoVeiculo
-                                    .informacoesFipe[0].historicoPreco[0].valor
+                          // Nacionalidade: response.body.data.nacionalidade
+                          {
+                            label: "Nacionalidade",
+                            value: reportData.nacionalidade || "Nada Consta",
+                          },
+                          // Combustível: response.body.data.baseEstadual.combustivel
+                          {
+                            label: "Combustível",
+                            value:
+                              baseEstadual.combustivel ||
+                              reportData.combustivel ||
+                              "N/A",
+                          },
+                          // Cilindradas: response.body.data.dadosBasicosDoVeiculo.cilindradas
+                          {
+                            label: "Cilindradas",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.cilindradas ||
+                              reportData.cilindradas ||
+                              "N/A",
+                          },
+                          // Código Versão: (no path provided in mapping, keeping existing)
+                          {
+                            label: "Código Versão",
+                            value: reportData.codigoMarcaModelo || "N/A",
+                          },
+                          // Valor atual: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].historicoPreco[0].valor
+                          {
+                            label: "Valor atual",
+                            value: reportData.dadosBasicosDoVeiculo
+                              ?.informacoesFipe?.[0]?.historicoPreco?.[0]?.valor
+                              ? formatCurrency(
+                                  parseCurrency(
+                                    reportData.dadosBasicosDoVeiculo
+                                      .informacoesFipe[0].historicoPreco[0]
+                                      .valor
+                                  )
                                 )
-                              )
-                            : valorAtual || "N/A",
-                        },
-                        {
-                          label: "Tipo de Carroceria",
-                          value:
-                            decodificador.tipoCarroceria ||
-                            reportData.decodificadorPrecificador
-                              ?.tipoCarroceria ||
-                            reportData.tipoCarroceria ||
-                            "Nada Consta",
-                        },
-                        // Número Carroceria: (no path provided in mapping)
-                        {
-                          label: "Número Carroceria",
-                          value: reportData.numCarroceria || "Nada Consta",
-                        },
-                        // Espécie Veículo: response.body.data.baseNacional.especieVeiculo
-                        {
-                          label: "Espécie Veículo",
-                          value:
-                            baseNacional.especieVeiculo ||
-                            reportData.especieVeiculo ||
-                            "N/A",
-                        },
-                        {
-                          label: "Potência",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.potencia ||
-                            reportData.potencia ||
-                            "N/A",
-                        },
-                        // Capacidade Máxima Tração: response.body.data.dadosBasicosDoVeiculo.capMaxTracao
-                        {
-                          label: "Capacidade Máxima Tração",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.capMaxTracao ||
-                            reportData.capMaxTracao ||
-                            "N/A",
-                        },
-                        // Eixos: response.body.data.dadosBasicosDoVeiculo.eixos
-                        {
-                          label: "Eixos",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.eixos ||
-                            reportData.eixos ||
-                            "Nada Consta",
-                        },
-                        // Caixa Câmbio: response.body.data.dadosBasicosDoVeiculo.caixaCambio
-                        {
-                          label: "Caixa Câmbio",
-                          value:
-                            reportData.dadosBasicosDoVeiculo?.caixaCambio ||
-                            reportData.caixaCambio ||
-                            "N/A",
-                        },
-                      ],
-                    }}
+                              : valorAtual || "N/A",
+                          },
+                          {
+                            label: "Tipo de Carroceria",
+                            value:
+                              decodificador.tipoCarroceria ||
+                              reportData.decodificadorPrecificador
+                                ?.tipoCarroceria ||
+                              reportData.tipoCarroceria ||
+                              "Nada Consta",
+                          },
+                          // Número Carroceria: (no path provided in mapping)
+                          {
+                            label: "Número Carroceria",
+                            value: reportData.numCarroceria || "Nada Consta",
+                          },
+                          // Espécie Veículo: response.body.data.baseNacional.especieVeiculo
+                          {
+                            label: "Espécie Veículo",
+                            value:
+                              baseNacional.especieVeiculo ||
+                              reportData.especieVeiculo ||
+                              "N/A",
+                          },
+                          {
+                            label: "Potência",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.potencia ||
+                              reportData.potencia ||
+                              "N/A",
+                          },
+                          // Capacidade Máxima Tração: response.body.data.dadosBasicosDoVeiculo.capMaxTracao
+                          {
+                            label: "Capacidade Máxima Tração",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.capMaxTracao ||
+                              reportData.capMaxTracao ||
+                              "N/A",
+                          },
+                          // Eixos: response.body.data.dadosBasicosDoVeiculo.eixos
+                          {
+                            label: "Eixos",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.eixos ||
+                              reportData.eixos ||
+                              "Nada Consta",
+                          },
+                          // Caixa Câmbio: response.body.data.dadosBasicosDoVeiculo.caixaCambio
+                          {
+                            label: "Caixa Câmbio",
+                            value:
+                              reportData.dadosBasicosDoVeiculo?.caixaCambio ||
+                              reportData.caixaCambio ||
+                              "N/A",
+                          },
+                        ],
+                      },
+                      planName,
+                      "Decodificador de Chassi - Dados Básicos"
+                    )}
                   />
                 </ReportSection>
 
@@ -2367,6 +2418,8 @@ const Report = ({ data, onClose, loading }) => {
                           );
                           return renderField("IPVA", value, numericValue > 0);
                         })()}
+                      </div>
+                      <div className="space-y-3">
                         {/* Licenciamento: response.body.data.baseEstadual.debitoLicenciamento */}
                         {(() => {
                           const value = formatCurrency(
@@ -2383,8 +2436,6 @@ const Report = ({ data, onClose, loading }) => {
                             numericValue > 0
                           );
                         })()}
-                      </div>
-                      <div className="space-y-3">
                         {/* Municipais: response.body.data.baseEstadual.debitoMunicipais */}
                         {(() => {
                           const value = formatCurrency(
@@ -2491,12 +2542,18 @@ const Report = ({ data, onClose, loading }) => {
                 />
                 {/* Observação do Vendedor */}
                 <ReportSection title="Observação do Vendedor">
-                  <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
-                    {/* Observação do Vendedor: response.body.data.anuncio.observacao */}
-                    <p className="text-[#194D9A] leading-relaxed">
-                      {reportData?.anuncio?.observacao || "N/A"}
-                    </p>
-                  </div>
+                  {reportData?.anuncio?.observacao ? (
+                    <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                      {/* Observação do Vendedor: response.body.data.anuncio.observacao */}
+                      <p className="text-[#194D9A] leading-relaxed">
+                        {reportData?.anuncio?.observacao || "N/A"}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-full p-4 py-2 bg-white">
+                      N/A
+                    </div>
+                  )}
                 </ReportSection>
               </>
             )}
@@ -2718,7 +2775,8 @@ const Report = ({ data, onClose, loading }) => {
 
                 {/* Descrição Completa */}
                 <ReportSection title="Descrição Completa">
-                  <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
+                  <div className={`border-2 border-[#1AABFE]/80  p-4 py-2 bg-white ${reportData?.recall?.detalhes &&
+                      reportData?.recall?.detalhes?.length > 0 ? "rounded-xl" : "rounded-full"}`}>
                     <div className="space-y-3">
                       {reportData?.recall?.detalhes &&
                       reportData?.recall?.detalhes?.length > 0 ? (
@@ -2742,14 +2800,14 @@ const Report = ({ data, onClose, loading }) => {
                           return (
                             <p
                               key={index}
-                              className="text-sm text-gray-800 leading-relaxed"
+                              className="text-sm text-[#194D9A] leading-relaxed"
                             >
                               {descricao}
                             </p>
                           );
                         })
                       ) : (
-                        <p className="text-sm text-gray-800 leading-relaxed">
+                        <p className="text-sm text-[#194D9A] leading-relaxed">
                           N/A
                         </p>
                       )}
@@ -3102,6 +3160,27 @@ const Report = ({ data, onClose, loading }) => {
                               ].filter(Boolean)}
                             />
                           )}
+
+                          <div className="relative mb-6">
+                            <div className="mb-4">
+                              <div className="bg-[#1AABFE] text-white px-4 py-2 rounded-full w-fit mb-2">
+                                <h4 className="font-semibold px-8">
+                                  Conclusão
+                                </h4>
+                              </div>
+
+                              {/* Legend content */}
+                              <div
+                                className={`space-y-3 border-2 border-[#1AABFE]/80 text-[#194D9A] p-4 py-2 bg-white ${
+                                  reportData?.conclusao
+                                    ? " rounded-xl "
+                                    : " rounded-full"
+                                }`}
+                              >
+                                {reportData?.conclusao || "Nada Consta"}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       );
                     })()
@@ -3276,7 +3355,7 @@ const Report = ({ data, onClose, loading }) => {
             )}
 
             {/* Footer with buttons */}
-            <div className="border-t-2 border-gray-200 pt-6 mt-6">
+            <div className="border-t-2 border-gray-200 pt-6 mt-6 flex flex-col items-end justify-center">
               <div className="flex flex-col md:flex-row gap-4 justify-center">
                 <button
                   disabled={downloading}
