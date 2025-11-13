@@ -3048,71 +3048,121 @@ const Report = ({ data, onClose, loading }) => {
 
                 {/* Recall Pendentes */}
                 <ReportSection title="Recall Pendentes">
-                  <ReportTableSection
-                    headers={["Descrição", "Identificador", "Situação"]}
-                    rows={
-                      reportData?.recall?.recallsPendente &&
-                      reportData.recall.recallsPendente.length > 0
-                        ? reportData.recall.recallsPendente.map((item) => [
-                            // Recall Pendentes - Descrição: response.body.data.recall.recallsPendente[0].descricao
-                            item?.descricao ||
-                              "Informação não encontrada nas bases consultadas",
-                            // Recall Pendentes - Identificador: response.body.data.recall.recallsPendente[0].identificador
-                            item?.identificador ||
-                              "Informação não encontrada nas bases consultadas",
-                            // Recall Pendentes - Situação: response.body.data.recall.recallsPendente[0].situacao
-                            item?.situacao ||
-                              "Informação não encontrada nas bases consultadas",
-                          ])
-                        : [
-                            [
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                            ],
-                          ]
-                    }
-                  />
+                  {reportData?.recall?.recallsPendente?.every(
+                    (item) =>
+                      (item?.descricao === null ||
+                        item?.descricao === undefined ||
+                        item?.descricao === "") &&
+                      (item?.identificador === null ||
+                        item?.identificador === undefined ||
+                        item?.identificador === "") &&
+                      (item?.situacao === null ||
+                        item?.situacao === undefined ||
+                        item?.situacao === "")
+                  ) || reportData?.recall?.recallsPendente?.length === 0 ? (
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
+                      <p className="text-[#1AABFE]">
+                        Informação não encontrada nas bases consultadas
+                      </p>
+                    </div>
+                  ) : (
+                    <ReportTableSection
+                      headers={["Descrição", "Identificador", "Situação"]}
+                      rows={
+                        reportData?.recall?.recallsPendente &&
+                        reportData.recall.recallsPendente.length > 0
+                          ? reportData.recall.recallsPendente.map((item) => [
+                              // Recall Pendentes - Descrição: response.body.data.recall.recallsPendente[0].descricao
+                              item?.descricao ||
+                                "Informação não encontrada nas bases consultadas",
+                              // Recall Pendentes - Identificador: response.body.data.recall.recallsPendente[0].identificador
+                              item?.identificador ||
+                                "Informação não encontrada nas bases consultadas",
+                              // Recall Pendentes - Situação: response.body.data.recall.recallsPendente[0].situacao
+                              item?.situacao ||
+                                "Informação não encontrada nas bases consultadas",
+                            ])
+                          : [
+                              [
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                              ],
+                            ]
+                      }
+                    />
+                  )}
                 </ReportSection>
 
                 {/* Histórico Roubo e Furto */}
                 <ReportSection title="Histórico Roubo e Furto">
-                  <ReportTableSection
-                    headers={[
-                      "Data",
-                      "Ocorrência",
-                      "Município / Estado",
-                      "Número do B.O.",
-                      "Informante",
-                    ]}
-                    rows={
-                      reportData?.rouboFurto?.historico &&
-                      reportData.rouboFurto.historico.length > 0
-                        ? reportData.rouboFurto.historico.map((item, index) => [
-                            // Histórico Roubo e Furto - {index + 1} - Data: response.body.data.rouboFurto.historico[index].data
-                            item?.data
-                              ? formatDate(item.data)
-                              : "Informação não encontrada nas bases consultadas",
-                            // Histórico Roubo e Furto - {index + 1} - Ocorrência: response.body.data.rouboFurto.historico[index].ocorrencia
-                            item?.ocorrencia || "-",
-                            // Histórico Roubo e Furto - {index + 1} - Município/Estado: response.body.data.rouboFurto.historico[index].municipioUf
-                            item?.municipioUf || "-",
-                            // Histórico Roubo e Furto - {index + 1} - Nº B.O.: response.body.data.rouboFurto.historico[index].numeroBo
-                            item?.numeroBo || "-",
-                            // Histórico Roubo e Furto - {index + 1} - Informante: response.body.data.rouboFurto.historico[index].informante
-                            item?.informante || "-",
-                          ])
-                        : [
-                            [
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                              "Informação não encontrada nas bases consultadas",
-                            ],
-                          ]
-                    }
-                  />
+                  {reportData?.rouboFurto?.historico?.every(
+                    (item) =>
+                      (item?.data === null ||
+                        item?.data === undefined ||
+                        item?.data === "") &&
+                      (item?.ocorrencia === null ||
+                        item?.ocorrencia === undefined ||
+                        item?.ocorrencia === "" ||
+                        item?.ocorrencia === "-") &&
+                      (item?.municipioUf === null ||
+                        item?.municipioUf === undefined ||
+                        item?.municipioUf === "" ||
+                        item?.municipioUf === "-") &&
+                      (item?.numeroBo === null ||
+                        item?.numeroBo === undefined ||
+                        item?.numeroBo === "" ||
+                        item?.numeroBo === "-") &&
+                      (item?.informante === null ||
+                        item?.informante === undefined ||
+                        item?.informante === "" ||
+                        item?.informante === "-")
+                  ) || reportData?.rouboFurto?.historico?.length === 0 ? (
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
+                      <p className="text-[#1AABFE]">
+                        Informação não encontrada nas bases consultadas
+                      </p>
+                    </div>
+                  ) : (
+                    <ReportTableSection
+                      headers={[
+                        "Data",
+                        "Ocorrência",
+                        "Município / Estado",
+                        "Número do B.O.",
+                        "Informante",
+                      ]}
+                      rows={
+                        reportData?.rouboFurto?.historico &&
+                        reportData.rouboFurto.historico.length > 0
+                          ? reportData.rouboFurto.historico.map(
+                              (item, index) => [
+                                // Histórico Roubo e Furto - {index + 1} - Data: response.body.data.rouboFurto.historico[index].data
+                                item?.data
+                                  ? formatDate(item.data)
+                                  : "Informação não encontrada nas bases consultadas",
+                                // Histórico Roubo e Furto - {index + 1} - Ocorrência: response.body.data.rouboFurto.historico[index].ocorrencia
+                                item?.ocorrencia || "-",
+                                // Histórico Roubo e Furto - {index + 1} - Município/Estado: response.body.data.rouboFurto.historico[index].municipioUf
+                                item?.municipioUf || "-",
+                                // Histórico Roubo e Furto - {index + 1} - Nº B.O.: response.body.data.rouboFurto.historico[index].numeroBo
+                                item?.numeroBo || "-",
+                                // Histórico Roubo e Furto - {index + 1} - Informante: response.body.data.rouboFurto.historico[index].informante
+                                item?.informante || "-",
+                              ]
+                            )
+                          : [
+                              [
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                                "Informação não encontrada nas bases consultadas",
+                              ],
+                            ]
+                      }
+                    />
+                  )}
                 </ReportSection>
 
                 {/* Gravame */}
