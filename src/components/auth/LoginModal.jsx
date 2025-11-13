@@ -40,11 +40,11 @@ const LoginModal = ({
     setIsLoading(true);
     try {
       await login({ email: data.email, password: data.password });
-      toast.success("Login successful!");
+      toast.success("Login realizado com sucesso!");
       onClose();
     } catch (err) {
       console.log(err);
-      toast.error("Login failed. Please check your credentials.");
+      toast.error("Login falhou. Por favor, verifique suas credenciais.");
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +59,7 @@ const LoginModal = ({
           form={form}
           label="Email"
           name="email"
-          placeholder="you@example.com"
+          placeholder="voce@exemplo.com.br"
           icon={<MdEmail />}
         />
 

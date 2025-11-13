@@ -26,7 +26,8 @@ const navLinks = [
   },
   {
     name: "Blog",
-    href: "/blogs",
+    href: "https://www.placaverificada.com.br/blog",
+    isExternal: true,
   },
   {
     name: "Sobre Nós",
@@ -43,6 +44,11 @@ const Navbar = () => {
   };
 
   const handleNavClick = (link) => {
+    if (link.isExternal) {
+      window.open(link.href, "_blank", "noopener,noreferrer");
+      setIsMenuOpen(false);
+      return;
+    }
     if (link.href.startsWith("#") && link.href !== "#") {
       const sectionId = link.href.substring(1);
       smartScrollToSection(

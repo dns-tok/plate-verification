@@ -19,7 +19,7 @@ const GoBackButton = ({ onClick, className }) => {
     >
       <BiArrowBack className="size-7 p-1" />
       <span className="w-0 group-hover:w-[65px] transition-all duration-300 overflow-hidden whitespace-nowrap group-hover:pe-1 text-sm">
-        Go Back
+        Voltar
       </span>
     </div>
   );
@@ -68,7 +68,7 @@ const Payment = () => {
   // Create order when user clicks on payment method
   const handlePaymentMethodSelect = async (method) => {
     if (cartItems.length === 0) {
-      toast.error("Cart is empty");
+      toast.error("Carrinho está vazio");
       return;
     }
 
@@ -102,7 +102,7 @@ const Payment = () => {
             response.payment_options.pix.expiracao || 3600;
           setTimeRemaining(expirationSeconds);
           setIsExpired(false);
-          toast.success("PIX payment details retrieved!");
+          toast.success("Detalhes de pagamento PIX recuperados!");
 
           // Start polling payment status for PIX
           if (orderId) {
@@ -110,7 +110,9 @@ const Payment = () => {
             startPaymentStatusCheck(orderId);
           } else {
             console.error("Order ID not found in response for PIX payment");
-            toast.error("Order ID not found. Please try again.");
+            toast.error(
+              "ID do pedido não encontrado. Por favor, tente novamente."
+            );
           }
         } else if (method === "card" && response.payment_options?.cartao) {
           // Open payment URL in new tab
@@ -123,7 +125,7 @@ const Payment = () => {
           } else {
             console.error("Order ID not found in response for card payment");
             toast.error(
-              "Order ID not found. Payment status check may not work."
+              "ID do pedido não encontrado. A verificação do status do pagamento pode não funcionar."
             );
             // Still show loading state even if order_id is missing
             setIsCheckingPayment(true);
@@ -134,7 +136,7 @@ const Payment = () => {
       console.error("Failed to create order:", error);
       toast.error(
         error?.response?.data?.message ||
-          "Failed to process payment. Please try again."
+          "Falha ao processar pagamento. Por favor, tente novamente."
       );
     } finally {
       setIsCreatingOrder(false);
@@ -143,7 +145,7 @@ const Payment = () => {
 
   const handleCopyCode = () => {
     if (!paymentData?.payment_options?.pix?.pix_copia_e_cola) {
-      toast.error("PIX code not available");
+      toast.error("Código PIX não disponível");
       return;
     }
 
@@ -155,7 +157,7 @@ const Payment = () => {
       setCopyCode(false);
     }, 2000);
 
-    toast.success("PIX code copied to clipboard");
+    toast.success("Código PIX copiado para a área de transferência");
   };
 
   // Countdown timer effect
@@ -163,7 +165,9 @@ const Payment = () => {
     if (timeRemaining === null || timeRemaining <= 0) {
       if (timeRemaining === 0) {
         setIsExpired(true);
-        toast.error("Payment time expired. Please create a new order.");
+        toast.error(
+          "Tempo de pagamento expirado. Por favor, crie um novo pedido."
+        );
       }
       return;
     }
@@ -219,7 +223,7 @@ const Payment = () => {
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
-          toast.success("Payment completed successfully!");
+          toast.success("Pagamento concluído com sucesso!");
           // Update wallet balance after successful payment
           fetchWalletInfo();
           clearCart();
@@ -236,7 +240,7 @@ const Payment = () => {
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
-          toast.error("Payment failed. Please try again.");
+          toast.error("Pagamento falhou. Por favor, tente novamente.");
           setSelectedPaymentMethod(null);
         } else {
           // Status is pending or unknown, continue polling
@@ -256,7 +260,7 @@ const Payment = () => {
         paymentCheckIntervalRef.current = null;
         setIsCheckingPayment(false);
         toast.error(
-          "Payment check timeout. Please verify payment status manually."
+          "Tempo de verificação de pagamento expirado. Por favor, verifique o status do pagamento manualmente."
         );
         setSelectedPaymentMethod(null);
       }
@@ -274,7 +278,7 @@ const Payment = () => {
 
   // Handle payment completion
   const handlePaymentComplete = () => {
-    toast.success("Payment completed! Order is being processed.");
+    toast.success("Pagamento concluído! Pedido está sendo processado.");
     clearCart();
     setTimeout(() => {
       navigate("/buy-consultation");
@@ -307,10 +311,10 @@ const Payment = () => {
           />
           <p className="text-xl font-medium">
             {isCreatingOrder
-              ? "Processing..."
+              ? "Processando..."
               : isCheckingPayment
-              ? "Waiting for payment confirmation..."
-              : "Escolha a forma de pagamento"}
+              ? "Aguardando confirmação de pagamento..."
+              : "Escolha a forma de pagamento:"}
           </p>
 
           <div
@@ -353,7 +357,7 @@ const Payment = () => {
           >
             <div className="flex flex-col items-center gap-2 w-full">
               <img src="/assets/pix.svg" alt="" className="w-30" />
-              <p className="text-[0.8rem] font-medium">Pay by Pix</p>
+              <p className="text-[0.8rem] font-medium">Pagamento via Pix</p>
             </div>
 
             <div className=" h-full !w-fit mb-4 ms-auto">

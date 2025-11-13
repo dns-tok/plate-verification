@@ -3,19 +3,9 @@ import MainContent from "../../components/layout/MainContent";
 import Consultation from "../../components/dashboard/Consultation/Consultation";
 
 const ConsultationPage = () => {
-  const menuItems = [
-    { label: "Consulta única", value: "single" },
-    { label: "Multiplas consultas / Pacotes", value: "multiple" },
-  ];
-
-  const [activeMenu, setActiveMenu] = useState(menuItems[0]?.value);
   return (
-    <MainContent
-      menuItems={menuItems}
-      activeItem={activeMenu}
-      setActiveItem={setActiveMenu}
-    >
-      <Consultation activeMenu={activeMenu} showSearchPlateInput={true} />
+    <MainContent>
+      <Consultation showSearchPlateInput={true} />
     </MainContent>
   );
 };

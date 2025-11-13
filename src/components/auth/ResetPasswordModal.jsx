@@ -12,14 +12,14 @@ const passwordSchema = z
   .object({
     password: z
       .string()
-      .nonempty({ message: "Password is required" })
-      .min(6, { message: "Password must be at least 6 characters" }),
+      .nonempty({ message: "A senha é requerida" })
+      .min(6, { message: "A senha deve ter no mínimo 6 caracteres" }),
     confirmPassword: z
       .string()
-      .nonempty({ message: "Please confirm your password" }),
+      .nonempty({ message: "Por favor, confirme sua senha" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "As senhas não coincidem.",
     path: ["confirmPassword"],
   });
 
@@ -37,20 +37,20 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
 
   const handleSubmit = async (data) => {
     if (!resetToken) {
-      toast.error("Invalid reset link. Please request a new password reset.");
+      toast.error("Link de redefinição inválido. Por favor, solicite uma nova redefinição de senha.");
       return;
     }
 
     setIsSubmitting(true);
     try {
       await resetPassword({ token: resetToken, newPassword: data.password });
-      toast.success("Password reset successfully!");
+      toast.success("Senha redefinida com sucesso!");
       onClose();
     } catch (error) {
-      console.log("Password reset failed", error);
+      console.log("Redefinição de senha falhou", error);
       toast.error(
         error?.response?.data?.message ||
-          "Invalid or expired reset link. Please request a new one."
+          "Link de redefinição inválido ou expirado. Por favor, solicite uma nova redefinição de senha."
       );
     } finally {
       setIsSubmitting(false);
@@ -60,7 +60,7 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
   if (!isOpen) return null;
 
   return (
-    <Modal title="Reset Password" onClose={onClose} isAuthModal={true}>
+    <Modal title="Redefinir Senha" onClose={onClose} isAuthModal={true}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <InputField
           form={form}
@@ -89,11 +89,11 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
               : "bg-[#1AABFE] hover:bg-[#1AABFE]/70 text-white cursor-pointer"
           }`}
         >
-          {isSubmitting ? "Resetting..." : "Reset Password"}
+          {isSubmitting ? "Redefinindo..." : "Redefinir Senha"}
         </button>
 
         <p className="text-center text-[0.8rem] mt-4 md:mt-3">
-          Remember your password?{" "}
+          Lembrou sua senha?{" "}
           <span
             onClick={() => {
               onClose();

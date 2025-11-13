@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PublicLayout from "../../components/layout/PublicLayout";
 import AboutHero from "../../components/aboutus/AboutHero";
 import AboutSectionOne from "../../components/aboutus/SectionOne";
 import AboutSectionTwo from "../../components/aboutus/SectionTwo";
 import AboutSectionThree from "../../components/aboutus/SectionThree";
+import { scrollToTop } from "../../utils/scrollUtils";
 
 const AboutUs = () => {
+  useEffect(() => {
+    scrollToTop();
+  }, []);
   return (
     <PublicLayout>
       {/* <div className="min-h-screen bg-gray-50 py-12">
@@ -20,11 +24,10 @@ const AboutUs = () => {
         </div>
       </div> */}
 
-      <AboutHero/>
-      <AboutSectionOne/>
-      <AboutSectionTwo/>
-      <AboutSectionThree/>
-      
+      <AboutHero />
+      <AboutSectionOne />
+      <AboutSectionTwo />
+      <AboutSectionThree />
     </PublicLayout>
   );
 };

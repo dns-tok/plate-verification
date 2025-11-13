@@ -3,27 +3,15 @@ import React from "react";
 export default function AboutSectionOne() {
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
-        <div className="flex flex-col relative pt-14 pb-10 px-16 col-span-1 lg:col-span-7">
+      <div className="flex gap-10 justify-between items-center w-full ">
+        <div className="flex flex-col relative w-[50%] ">
           <img
-            src="/yellow-bg.png"
+            src="/golden-car.svg"
             alt="About Us"
-            className="absolute inset-0 h-full z-[-1] left-0 bottom-0 object-contain"
+            className="w-full h-auto rounded-lg "
           />
-          <div
-            className="z-[1] overflow-hidden"
-            style={{
-              borderRadius: "40px 100px",
-            }}
-          >
-            <img
-              src="/golden-car.jpg"
-              alt="About Us"
-              className="w-full h-auto rounded-lg shadow-lg"
-            />
-          </div>
         </div>
-        <div className="flex flex-col col-span-1 lg:col-span-5 px-10 py-10">
+        <div className="flex flex-col  w-[48%] p-4">
           <h3
             className="text-2xl font-bold mb-4 text-center"
             style={{
@@ -37,27 +25,45 @@ export default function AboutSectionOne() {
               lineHeight: "53px",
             }}
           >
-            Placa Verificada
+            Sobre nós
           </h3>
           <p
             className="text-center lg:text-left"
             style={{
               color: "#000",
               // textAlign: "justify",
-              fontFamily: "Open Sans",
-              fontSize: "24px",
+              fontSize: "22px",
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "26px" /* 108.333% */,
             }}
           >
-            A Placa Verificada foi criada com um propósito simples e essencial:
-            proteger quem compra ou vende veículos usados. <br />
+            A Placa Verificada foi criada com um propósito simples e essencial:
+            proteger quem compra ou vende veículos seminovos.
             <br />
-            Sabemos que por trás do sonho de ter um carro, muitos brasileiros
-            acabam se deparando com surpresas desagradáveis ​​, veículos com
-            dívidas pendentes, acidentes ocultos, histórico de leilão, dados
-            adulterados ou problemas legais que só aparecem depois da compra{" "}
+            <br />
+            Sabemos que, por trás do sonho de ter um carro, muitos brasileiros
+            acabam enfrentando surpresas desagradáveis — veículos com dívidas
+            pendentes, acidentes ocultos, histórico de leilão, dados adulterados
+            ou problemas legais que só aparecem após a compra. Nossa missão é
+            tornar essa jornada mais segura, transparente e acessível.
+            <br />
+            <br />
+            Com apenas o número da placa, os usuários podem gerar
+            instantaneamente um relatório completo com informações confiáveis
+            sobre o histórico do veículo, riscos, dívidas, participação em
+            leilões e até uma estimativa de valor de mercado. Seja em uma
+            transação entre particulares ou com concessionárias, a Placa
+            Verificada atua como um escudo digital, garantindo que todos os
+            envolvidos tenham clareza total antes de fechar o negócio.
+            <br />
+            <br />
+            Mais do que um serviço, somos uma ferramenta de confiança e
+            proteção — para que você não acabe “comprando uma história para
+            contar”.
+            <br />
+            Placa Verificada — a escolha segura para quem busca tranquilidade ao
+            verificar o histórico de veículos seminovos.
           </p>
         </div>
       </div>

@@ -1,21 +1,10 @@
 import { useState } from "react";
-import {
-  FaUsers,
-  FaClock,
-  FaHandHolding,
-  FaFileAlt,
-  FaUser,
-  FaShoppingBag,
-  FaTrash,
-  FaRocket,
-  FaPhone,
-  FaChevronRight,
-  FaSignOutAlt,
-} from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 export const SideBar = () => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [openDropdowns, setOpenDropdowns] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
@@ -104,9 +93,30 @@ export const SideBar = () => {
 
   return (
     <div className="relative">
-      <div className="fixed md:relative top-0 left-0 h-full z-50 bg-[#09529C] flex flex-col w-[260px]">
-        {/* Header with Logo */}
-        <div className="p-6">
+      <div
+        className={`fixed lg:relative top-0 left-0 h-full z-50 bg-[#09529C] flex flex-col transition-all duration-300 ease-in-out lg:w-[260px]  ${
+          isCollapsed ? "w-0" : "w-[300px] "
+        }`}
+      >
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={`w-fit lg:hidden bg-[#09529C] ${
+            isCollapsed ? " right-2 " : "absolute -right-6"
+          } top-0 p-2 m-2 text-white hover:bg-[#1AABFE] transition-all duration-200 border rounded-full z-50 cursor-pointer`}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <FaChevronRight
+            className={`${
+              !isCollapsed && "-rotate-180"
+            } size-4 lg:size-3 transition-all duration-500`}
+          />
+        </button>
+        {/* Header with Logo and Toggle Button */}
+        <div
+          className={`${
+            isCollapsed ? "p-4" : "p-6"
+          } flex items-center justify-between relative`}
+        >
           <Link
             to="/buy-consultation"
             className="flex flex-col items-center w-fit"
@@ -200,7 +210,7 @@ export const SideBar = () => {
         </div>
 
         {/* Footer */}
-        <div className="px-4 pb-4 pt-1">
+        <div className={`px-4  pt-1 mb-4 pb-4 overflow-hidden`}>
           {/* Logout Button */}
           <button
             className="flex items-center gap-2 py-1 px-3 text-white cursor-pointer rounded transition-colors w-full group"
@@ -225,7 +235,8 @@ export const SideBar = () => {
               Placa verificada. Todos os direitos reservados.
             </div>
             <div className="text-white text-[0.35rem] opacity-70 ">
-Segurança em primeiro lugar – protegendo o seu sonho.            </div>
+              Segurança em primeiro lugar – protegendo o seu sonho.{" "}
+            </div>
           </div>
         </div>
       </div>

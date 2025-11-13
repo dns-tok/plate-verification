@@ -54,7 +54,7 @@ const DeleteAccountPage = () => {
         error?.response?.data?.error ||
         error?.response?.data?.message ||
         error?.message ||
-        "Failed to delete account. Please check your password and try again.";
+        "Falha ao deletar conta. Por favor, verifique sua senha e tente novamente.";
 
       toast.error(errorMessage);
       // Reset confirmation on error so user can try again

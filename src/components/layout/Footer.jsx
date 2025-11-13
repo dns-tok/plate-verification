@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { scrollToTop } from "../../utils/scrollUtils";
+import { Link, useNavigate } from "react-router-dom";
+import { scrollToTop, smartScrollToSection } from "../../utils/scrollUtils";
 
 const footerLinks = [
   {
@@ -13,7 +13,7 @@ const footerLinks = [
       },
       {
         name: "Solução",
-        href: "#",
+        href: "/how-it-works",
       },
     ],
   },
@@ -23,15 +23,16 @@ const footerLinks = [
     links: [
       {
         name: "Central de Ajuda",
-        href: "#",
+        href: "#contact",
       },
       {
         name: "Percepções",
-        href: "#",
+        href: "#testimonials",
       },
       {
         name: "Blog",
-        href: "#",
+        href: "https://www.placaverificada.com.br/blog",
+        isExternal: true,
       },
     ],
   },
@@ -55,6 +56,23 @@ const footerLinks = [
   },
 ];
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleLinkClick = (linkItem, e) => {
+    // Handle external links
+    if (linkItem.isExternal) {
+      return; // Let the anchor tag handle it
+    }
+
+    // Handle section links (starting with #)
+    if (linkItem.href.startsWith("#") && linkItem.href !== "#") {
+      e.preventDefault();
+      const sectionId = linkItem.href.substring(1);
+      smartScrollToSection(sectionId, navigate, null, 150);
+    }
+    // Internal routes are handled by Link component
+  };
+
   return (
     <div className="relative lg:h-[32rem] lg:max-h-[36rem] bg-[url('/footerBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden">
       <div className=" mx-auto z-[100] w-full h-full flex flex-col">
@@ -67,17 +85,22 @@ const Footer = () => {
               <img src="/whiteLogo.svg" alt="Logo" className="" />
             </div>
             <p className="text-lg font-normal max-w-[22rem]">
-Proteja sua compra antes de fechar o negócio. Verifique, confirme, confie. Placa Verificada, segurança que vai além da placa.
+              Proteja sua compra antes de fechar o negócio. Verifique, confirme,
+              confie. Placa Verificada, segurança que vai além da placa.
             </p>
             <div className="flex space-x-3  ">
               <a
-                href="#"
+                href="https://www.facebook.com/placaverificada/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-white text-blue-600 rounded-md p-2 my-auto hover:bg-blue-200"
               >
                 <img src="/facebookicon.png" alt="" className="size-5" />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/placaverificada/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-white text-blue-600 rounded-md p-2 my-auto hover:bg-blue-200"
               >
                 <img src="/instaicon.png" alt="" className="size-5" />
@@ -93,12 +116,32 @@ Proteja sua compra antes de fechar o negócio. Verifique, confirme, confie. Plac
                   <ul className="space-y-3">
                     {link.links.map((linkItem) => (
                       <li key={linkItem.name} className=" max-w-[15rem]">
-                        <Link
-                          to={linkItem.href}
-                          className="lg:text-[1rem] font-light hover:border-b-2 hover:border-[#1AABFE] transition-colors duration-300 !max-w-[2rem]  "
-                        >
-                          {linkItem.name}
-                        </Link>
+                        {linkItem.isExternal ? (
+                          <a
+                            href={linkItem.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="lg:text-[1rem] font-light hover:border-b-2 hover:border-[#1AABFE] transition-colors duration-300 !max-w-[2rem]  "
+                          >
+                            {linkItem.name}
+                          </a>
+                        ) : linkItem.href.startsWith("#") &&
+                          linkItem.href !== "#" ? (
+                          <a
+                            href={linkItem.href}
+                            onClick={(e) => handleLinkClick(linkItem, e)}
+                            className="lg:text-[1rem] font-light hover:border-b-2 hover:border-[#1AABFE] transition-colors duration-300 !max-w-[2rem] cursor-pointer  "
+                          >
+                            {linkItem.name}
+                          </a>
+                        ) : (
+                          <Link
+                            to={linkItem.href}
+                            className="lg:text-[1rem] font-light hover:border-b-2 hover:border-[#1AABFE] transition-colors duration-300 !max-w-[2rem]  "
+                          >
+                            {linkItem.name}
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>

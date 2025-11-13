@@ -13,14 +13,14 @@ const changePasswordSchema = z
     currentPassword: z.string().nonempty("Senha atual is required"),
     password: z
       .string()
-      .nonempty({ message: "Password is required" })
-      .min(6, { message: "Password must be at least 6 characters" }),
+      .nonempty({ message: "A senha é requerida" })
+      .min(6, { message: "A senha deve ter no mínimo 6 caracteres" }),
     confirmPassword: z
       .string()
-      .min(1, { message: "Please confirm your password" }),
+      .min(1, { message: "Por favor, confirme sua senha" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "As senhas não coincidem.",
     path: ["confirmPassword"],
   });
 
@@ -40,13 +40,13 @@ const ChangePassword = () => {
       });
       // Refresh user data to reflect changes in context
       await refreshUserProfile();
-      toast.success("Password updated successfully!");
+      toast.success("Senha atualizada com sucesso!");
       form.reset();
     } catch (error) {
-      console.error("Failed to update password:", error);
+      console.error("Falha ao atualizar senha:", error);
       toast.error(
         error?.response?.data?.error ||
-          "Failed to update password. Please try again."
+          "Falha ao atualizar senha. Por favor, tente novamente."
       );
     } finally {
       setIsLoading(false);
@@ -109,7 +109,7 @@ const ChangePassword = () => {
         }`}
         disabled={isLoading}
       >
-        {isLoading ? "Saving..." : "Salvar"}
+        {isLoading ? "Salvando..." : "Salvar"}
       </button>
     </form>
   );

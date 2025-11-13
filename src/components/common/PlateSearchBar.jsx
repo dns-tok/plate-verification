@@ -189,7 +189,7 @@ const PlateSearchBar = ({
             }
             `}
         >
-          {isSearchingPlate ? "Searching..." : "Check"}
+          {isSearchingPlate ? "Consultando..." : "Consultar"}
         </button>
       ) : (
         <button
@@ -217,7 +217,7 @@ const PlateSearchBar = ({
             onSubmit={handleFormSubmit}
             showCancelButton={planCard ? true : false}
             onCancel={handleModalClose}
-            buttonText={planCard ? "Confirm" : "Liberar todas as informações"}
+            buttonText={planCard ? "Confirmar" : "Liberar todas as informações"}
             isSearching={isSearchingPlate || isCreatingOrder}
           />
         </Modal>

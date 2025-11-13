@@ -10,24 +10,24 @@ import TextAreaField from "../common/Form/TextAreaField";
 const contactSchema = z.object({
   firstName: z
     .string()
-    .min(1, "First name is required")
-    .min(2, "First name must be at least 2 characters"),
+    .min(1, "Nome é obrigatório")
+    .min(2, "Nome deve ter pelo menos 2 caracteres"),
   lastName: z
     .string()
-    .min(1, "Last name is required")
-    .min(2, "Last name must be at least 2 characters"),
+    .min(1, "Sobrenome é obrigatório")
+    .min(2, "Sobrenome deve ter pelo menos 2 caracteres"),
   email: z
     .string()
     .min(1, "Por favor digite o seu e-mail")
-    .email("Please enter a valid email address"),
+    .email("Por favor digite um e-mail válido"),
   phone: z
     .string()
-    .min(1, "Telefone is required")
-    .min(10, "Telefone must be at least 10 characters"),
+    .min(1, "Telefone é obrigatório")
+    .min(10, "Telefone deve ter pelo menos 10 caracteres"),
   message: z
     .string()
-    .min(1, "Message is required")
-    .min(10, "Message must be at least 10 characters"),
+    .min(1, "Mensagem é obrigatória")
+    .min(10, "Mensagem deve ter pelo menos 10 caracteres"),
 });
 
 export default function AboutSectionThree() {
@@ -57,7 +57,7 @@ export default function AboutSectionThree() {
 
       toast.success(
         response?.message ||
-          "Message sent successfully! We'll get back to you soon."
+          "Mensagem enviada com sucesso! Nós iremos responder o mais breve possível"
       );
 
       // Reset form
@@ -66,7 +66,7 @@ export default function AboutSectionThree() {
       console.error("Failed to send message:", error);
       toast.error(
         error?.response?.data?.message ||
-          "Failed to send message. Please try again."
+          "Erro ao enviar mensagem. Por favor, tente novamente."
       );
     } finally {
       setIsSubmitting(false);
@@ -92,7 +92,9 @@ export default function AboutSectionThree() {
                 {/* Left side - Header text */}
                 <div className="lg:w-1/3 text-white flex items-center bg-[rgba(255,255,255,0.1)] p-6 sm:p-8 lg:p-10">
                   <h2 className="text-lg sm:text-xl lg:text-2xl font-normal leading-relaxed">
-Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!                  </h2>
+                    Tem alguma dúvida ou comentário? Basta nos enviar uma
+                    mensagem!{" "}
+                  </h2>
                 </div>
 
                 {/* Right side - Form fields */}
@@ -105,7 +107,7 @@ Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!               
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <InputField
                         form={form}
-                        label="First Name"
+                        label="Nome"
                         name="firstName"
                         required
                         labelClassName="text-white text-sm font-medium mb-2"
@@ -116,7 +118,7 @@ Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!               
                       />
                       <InputField
                         form={form}
-                        label="Last Name"
+                        label="Sobrenome"
                         name="lastName"
                         required
                         labelClassName="text-white text-sm font-medium mb-2"
@@ -160,10 +162,10 @@ Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!               
                     <div>
                       <TextAreaField
                         form={form}
-                        label="Message"
+                        label="Mensagem"
                         name="message"
                         required
-                        placeholder="Write your message.."
+                        placeholder="Digite sua mensagem..."
                         rows={4}
                         labelClassName="text-white text-sm font-medium mb-2"
                         errorClassName="text-red-400"
@@ -176,10 +178,12 @@ Tem alguma dúvida ou comentário? Basta nos enviar uma mensagem!               
                         type="submit"
                         disabled={isSubmitting}
                         className={`bg-sky-400 hover:bg-sky-300 text-white font-medium py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                          isSubmitting ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                          isSubmitting
+                            ? "opacity-50 cursor-not-allowed"
+                            : "cursor-pointer"
                         }`}
                       >
-                        {isSubmitting ? "Sending..." : "Enviar mensagem"}
+                        {isSubmitting ? "Enviando..." : "Enviar mensagem"}
                       </button>
                     </div>
                   </form>

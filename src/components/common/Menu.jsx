@@ -32,7 +32,7 @@ const Menu = ({ menuItems = [], activeItem, setActiveItem }) => {
           ref={setRef(item.value)}
         >
           <span
-            className={`text-sm cursor-pointer hover:text-[#1AABFE] transition-all duration-500 ease-in-out py-1 ${
+            className={`text-xs md:text-sm cursor-pointer hover:text-[#1AABFE] transition-all duration-500 ease-in-out py-1 ${
               activeItem === item.value ? "font-semibold" : "font-medium"
             }`}
             onClick={() => setActiveItem(item.value)}

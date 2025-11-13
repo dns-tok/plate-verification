@@ -78,7 +78,7 @@ const Purchases = () => {
             <table className="min-w-full border-collapse">
               <thead className="">
                 <tr className="bg-black text-white [&>th]:p-2 [&>th]:text-left text-[0.75rem] [&>th]:!font-[400]">
-                  <th className="!rounded-l-md">Data ce conclusão</th>
+                  <th className="!rounded-l-md">Data de conclusão</th>
                   <th>Tipo de relatório escolhido</th>
                   <th>Placa do veículo</th>
                   <th>Status</th>

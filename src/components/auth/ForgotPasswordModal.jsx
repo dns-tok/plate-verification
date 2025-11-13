@@ -54,39 +54,39 @@ const ForgotPasswordModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
   if (emailSent) {
     return (
-      <Modal title="Check Your Email" onClose={onClose} isAuthModal={true}>
+      <Modal title="Verifique seu e-mail" onClose={onClose} isAuthModal={true}>
         <div className="text-center">
           <div className="mb-4">
             <div className="size-14 bg-[#1AABFE] rounded-full flex items-center justify-center mx-auto mb-4">
               <MdEmail className="text-white text-2xl" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
-              Reset Link Sent!
+              Link de redefinição enviado!
             </h3>
             <p className="text-sm text-gray-300 mb-2">
-              We've sent a password reset link to:
+              Enviamos um link de redefinição de senha para:
             </p>
             <p className="text-[#1AABFE] font-medium">{sentEmail}</p>
           </div>
 
           <div className="space-y-3">
             <p className="text-xs text-gray-300">
-              Check your email and click the reset link to continue. The link
-              will expire in 24 hours.
+              Verifique seu e-mail e clique no link de redefinição para
+              continuar. O link expirará em 24 horas.
             </p>
 
             <button
               onClick={handleResend}
               className="w-full bg-white hover:bg-gray-100 text-[#1AABFE] font-medium py-3 rounded-md transition shadow-lg cursor-pointer"
             >
-              Didn't get the link? Resend
+              Não recebeu o link? Reenviar
             </button>
 
             <button
               onClick={onNavigateToLogin}
               className="w-full bg-[#1AABFE] hover:bg-[#1AABFE]/70 text-white font-medium py-3 rounded-md transition shadow-lg cursor-pointer"
             >
-              Back to Login
+              Voltar para o entrar
             </button>
           </div>
         </div>
@@ -101,7 +101,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onNavigateToLogin }) => {
           form={form}
           label="Email"
           name="email"
-          placeholder="you@example.com"
+          placeholder="voce@exemplo.com.br"
           icon={<MdEmail />}
         />
 
@@ -126,7 +126,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             }}
             className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
           >
-           Entrar
+            Entrar
           </span>
         </p>
       </form>

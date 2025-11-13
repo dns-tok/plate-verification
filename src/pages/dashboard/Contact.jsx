@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import MainContent from "../../components/layout/MainContent";
 import { BiSolidEnvelope, BiSolidPhoneCall } from "react-icons/bi";
-import { FaLocationDot } from "react-icons/fa6";
+import { FaLocationDot, FaWhatsapp } from "react-icons/fa6";
 import { sendMessage } from "../../services/authService";
 import { toast } from "react-toastify";
+import { IoLogoWhatsapp } from "react-icons/io";
 
 const ContactPage = () => {
   const [message, setMessage] = useState("");
@@ -42,7 +43,10 @@ const ContactPage = () => {
         <div className="flex flex-col gap-1 text-center justify-center items-center">
           <p className="text-2xl font-semibold">Fale conosco</p>
           <p className="text-[0.8rem] font-[400] max-w-[85%]">
-            Nossa equipe está à disposição para responder às suas perguntas e oferecer o melhor atendimento possível. Antes de prosseguirmos, precisamos de algumas informações básicas para que possamos entrar em contato com você rapidamente. Se preferir outro canal, você também pode nos contatar através das opções abaixo:
+            Nossa equipe está à disposição para responder às suas dúvidas e
+            oferecer o melhor atendimento possível. Basta escrever sua mensagem
+            no campo abaixo e entraremos em contato com você rapidamente. Se
+            preferir, também pode falar conosco pelos outros canais disponíveis.
           </p>
         </div>
         <div className="flex gap-4 justify-between items-center rounded-xl overflow-hidden">
@@ -58,9 +62,15 @@ const ContactPage = () => {
                 Caso prefira, podemos lhe atender por Whatsapp
               </p>
               <div className="flex flex-col justify-evenly gap-2 [&>p]:flex [&>p]:items-center [&>p]:gap-2 mt-5 h-[200px]">
-                <p>
-                  <BiSolidPhoneCall className="text-[1.3rem]" />
-                  +55 11 94222-7953
+                <p className="hover:text-green-500">
+                  <FaWhatsapp className="text-[1.3rem] " />
+                  <a
+                    href={"https://wa.me/5511942227953"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    +55 11 94222-7953
+                  </a>
                 </p>
                 <p>
                   <BiSolidEnvelope className="text-[1.3rem]" />

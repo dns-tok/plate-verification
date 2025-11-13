@@ -90,3 +90,8 @@ export async function getCurrentAccount(page = 1, perPage = 10) {
   });
   return data;
 }
+
+export async function getMyCoupons() {
+  const { data } = await apiClient.get("/my_cupon_ref");
+  return data;
+}

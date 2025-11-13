@@ -9,7 +9,7 @@ import { useCart } from "../../../context/CartContext";
 import { useAuth } from "../../../hooks/useAuth";
 import { getCurrentAccount } from "../../../services/authService";
 
-const Consultation = ({ activeMenu, showSearchPlateInput }) => {
+const Consultation = ({ activeMenu = "single", showSearchPlateInput }) => {
   const [apiSinglePlans, setApiSinglePlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -120,8 +120,8 @@ const Consultation = ({ activeMenu, showSearchPlateInput }) => {
   );
 
   return (
-    <div className="py-4">
-      <div className="flex items-center justify-between mb-2">
+    <div className={`${!showSearchPlateInput && "py-3"}`}>
+      <div className="flex items-center justify-between mb-2 lg:mb-8">
         <p className="text-2xl font-semibold">Nossos Relatórios</p>
         {activeMenu === "single" && (
           <div className="flex items-center gap-2">
@@ -147,8 +147,10 @@ const Consultation = ({ activeMenu, showSearchPlateInput }) => {
       ) : (
         <div
           className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${
-            activeMenu === "multiple" ? "gap-4" : "gap-2"
-          } max-w-[860px] mx-auto`}
+            activeMenu === "multiple"
+              ? "gap-4"
+              : "gap-10 lg:gap-2 p-4 md:p-0 mb-4 md:mb-0"
+          } mx-auto`}
         >
           {getPlansToRender().map((plan) => {
             const isPurchased = purchasedPlanIds.includes(plan.id);

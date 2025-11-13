@@ -88,16 +88,18 @@ const PublicHome = () => {
       <section id="plans" className="scroll-mt-[3.7rem]">
         <PriceSection />
       </section>
-      <section id="vantagens" className="scroll-mt-[3.7rem]">
+      <section id="advantages" className="scroll-mt-[3.7rem]">
         <InfoSection />
       </section>
-      <section id="dúvidas" className="scroll-mt-[3.7rem]">
+      <section id="questions" className="scroll-mt-[3.7rem]">
         <FaqSection />
       </section>
       <section id="contact" className="scroll-mt-[3.7rem]">
         <ContactSection />
       </section>
-      <TestimonialSection />
+      <section id="testimonials" className="scroll-mt-[3.7rem]">
+        <TestimonialSection />
+      </section>
 
       {/* Auth Modals - Only render when open to properly destroy state */}
       {showLoginModal && (

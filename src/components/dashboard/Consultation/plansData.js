@@ -38,7 +38,7 @@ const singlePlans = [
       "National restrictions",
       "Débitos e Multas",
       "Fipe Table",
-      "Chassis Decoder",
+      "Chassi Decoder",
     ],
   },
   {
@@ -62,7 +62,7 @@ const multiPlans = [
     planNumber: "Pacote R$ 1.200,00",
     priceDesc: "Compre R$ 1.200,00 e pague",
     price: "R$900.00",
-    discount: "-25%",
+    discount: "25%",
     desc: "de economia",
   },
   {
@@ -71,7 +71,7 @@ const multiPlans = [
     planNumber: "Pacote R$ 700,00",
     priceDesc: "Compre R$ 700,00 e pague",
     price: "R$500.00",
-    discount: "-21%",
+    discount: "21%",
     desc: "de economia",
   },
   {
@@ -80,7 +80,7 @@ const multiPlans = [
     planNumber: "Pacote R$ 500,00",
     priceDesc: "Compre R$ 500,00 e pague",
     price: "R$410.00",
-    discount: "-18%",
+    discount: "18%",
     desc: "de economia",
   },
   {
@@ -89,7 +89,7 @@ const multiPlans = [
     planNumber: "Pacote R$ 300,00",
     priceDesc: "Compre R$ 300,00 e pague",
     price: "R$250.00",
-    discount: "-17%",
+    discount: "17%",
     desc: "de economia",
   },
   {
@@ -98,7 +98,7 @@ const multiPlans = [
     planNumber: "Pacote R$ 150,00",
     priceDesc: "Compre R$ 150,00 e pague",
     price: "R$140.00",
-    discount: "-7%",
+    discount: "7%",
   },
 ];
 

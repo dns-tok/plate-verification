@@ -7,6 +7,7 @@ const MultiConsultant = ({
   planName,
   planNumber,
   priceDescription,
+  price,
   discount,
   description,
   buttonText,
@@ -26,11 +27,14 @@ const MultiConsultant = ({
           Pacote R$ 150,00
         </h2>
         <p className="text-white text-sm md:text-[1rem] font-light">
-          Compre R$ 150,00 e pague R$140.00
+          Compre R$ 150,00 e pague
         </p>
-        <div className="flex flex-col  items-start  ">
-          <h2 className="text-white text-[2.2rem] md:text-[2.8rem] font-bold">
-            -7%
+        <div className="flex flex-col gap-2 items-start mt-2">
+          <p className="text-white text-[2.2rem] md:text-[2.8rem] leading-none">
+            R$ 140,00
+          </p>
+          <h2 className="text-white text-[2.2rem] md:text-[2.8rem] leading-none">
+            7%
           </h2>
           <p className="text-white text-sm md:text-[1rem] font-light">
             de economia
@@ -46,7 +50,7 @@ const MultiConsultant = ({
               : "bg-white text-black hover:bg-[#1AABFE] hover:text-white transition-all duration-500"
           }`}
         >
-          Compare Pacote
+          Comprar Pacote
         </button>
       </div>
     </div>
@@ -67,8 +71,12 @@ const MultiConsultant = ({
       <p className="text-white text-sm md:text-[1rem] font-light">
         {priceDescription}
       </p>
+
+      <p className="text-white text-[2.2rem] md:text-[2.8rem] leading-none mt-2">
+        {price}
+      </p>
       {discount && (
-        <h2 className="text-white text-[2.2rem] md:text-[2.8rem] font-bold">
+        <h2 className="text-white text-[2.2rem] md:text-[2.8rem]">
           {discount}
         </h2>
       )}
@@ -78,7 +86,7 @@ const MultiConsultant = ({
       <div className="w-[100%] my-2 text-center">
         <button
           onClick={onClick}
-          className={`rounded-full w-[80%] mx-auto px-8 py-2 cursor-pointer font-bold ${
+          className={`rounded-full w-[80%] mx-auto px-6 py-2 cursor-pointer font-bold ${
             isSelected
               ? "bg-[#1AABFE] text-white"
               : "bg-white text-black hover:bg-[#1AABFE] hover:text-white transition-all duration-500"

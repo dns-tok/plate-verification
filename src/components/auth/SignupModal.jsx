@@ -174,14 +174,14 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
           // Field not mapped, show generic error
           toast.error(
             errorResponse.error ||
-              "Registration failed. Please check your details."
+              "Cadastro falhou. Por favor, verifique seus detalhes."
           );
         }
       } else {
         // No field information, show generic error
         toast.error(
           errorResponse?.error ||
-            "Registration failed. Please check your details."
+            "Cadastro falhou. Por favor, verifique seus detalhes."
         );
       }
     } finally {
@@ -232,7 +232,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             form={step1Form}
             label="Email"
             name="email"
-            placeholder="voce@exemplo.com"
+            placeholder="voce@exemplo.com.br"
             required
           />
 
@@ -319,7 +319,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
             form={step2Form}
             label="Senha"
             name="password"
-            placeholder="Password"
+            placeholder="Senha"
             isPassword={true}
             required
           />
@@ -350,7 +350,10 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
 
           {/* Privacy Notice */}
           <p className="text-xs mb-3 leading-relaxed text-white">
-           Ao se cadastrar, Poderemos usar suas informações de contato para enviar promoções por e-mail e WhatsApp, além de informações semanais sobre o plano Placa Protegida. Para mais informações, consulte nossa Política de {" "}
+            Ao se cadastrar, Poderemos usar suas informações de contato para
+            enviar promoções por e-mail e WhatsApp, além de informações semanais
+            sobre o plano Placa Protegida. Para mais informações, consulte nossa
+            Política de{" "}
             <span className="text-[#1AABFE] cursor-pointer hover:underline">
               <Link to="/privacy-policy">Privacidade</Link>
             </span>
@@ -375,7 +378,7 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
                   : "bg-gray-400 text-gray-200 cursor-not-allowed"
               }`}
             >
-              {isLoading ? "Registering..." : "Cadastrar"}
+              {isLoading ? "Cadastrando..." : "Cadastrar"}
             </button>
           </div>
 

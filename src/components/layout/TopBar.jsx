@@ -13,7 +13,7 @@ export const TopBar = () => {
 
   return (
     <div className="bg-[url('/assets/topBarBg2.png')] bg-cover bg-center bg-no-repeat rounded-3xl flex justify-between  overflow-hidden relative z-20">
-      <div className="flex flex-col gap-2 p-6">
+      <div className="flex flex-col justify-between gap-2 p-6">
         <div className="flex items-center gap-1">
           <p className="text-white font-medium text-xl me-1">
             Olá, {user?.full_name || user?.nome_completo || "Usuário"}

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { BsStarFill } from "react-icons/bs";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import PlateSearchBar from "../../common/PlateSearchBar";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "../../../context/WalletContext";
+import { formatCurrency } from "../../../utils/currencyUtils";
 
 const PlanCard = ({
   plan,
@@ -39,11 +40,13 @@ const PlanCard = ({
         <p className="text-white text-[0.85rem] md:text-[0.5rem] ms-2">
           {plan.priceDesc}
         </p>
-        <p className="text-white text-[0.9rem] font-[500] ms-2">{plan.price}</p>
+        <p className="text-white text-[1.5rem] font-[600] leading-none ms-2">
+          {plan.price ? formatCurrency(plan.price) : "R$ 0,00"}
+        </p>
       </div>
       <div className="p-3 flex flex-col items-center gap-2 w-fit mx-auto">
         <p className="text-[1.5rem] font-[600] whitespace-nowrap ">
-          {plan.discount} savings
+          {plan.discount} de economia
         </p>
         <div
           className={`w-[100%] mb-2 text-center ${
@@ -52,7 +55,7 @@ const PlanCard = ({
         >
           {(showSearchPlateInput || showSearchInput) && isPurchased ? (
             <PlateSearchBar
-              buttonText="Check"
+              buttonText="Consultar"
               onConfirm={handleSearchConfirm}
               planCard={true}
               plan={plan}
@@ -72,17 +75,18 @@ const PlanCard = ({
   ) : (
     <div
       className={`relative flex flex-col  backdrop-blur-xl rounded-2xl  my-auto ${
-        plan.id === 2
-          ? `h-[25rem]`
-          : ` ${isMultiple ? "h-[18rem] justify-between" : "h-[23rem]"}`
-      } transition-all duration-300  shadow-[0px_0px_20px_0px_rgba(0,0,0,0.2)] bg-white`}
+        isMultiple
+          ? "h-[18rem] justify-between"
+          : !showSearchPlateInput
+          ? "min-h-[26.6rem]"
+          : "min-h-[29rem]"
+      }
+       transition-all duration-300  shadow-[0px_0px_20px_0px_rgba(0,0,0,0.2)] bg-white `}
     >
       <div
         className={`${
-          isMultiple ? "h-[40%] " : "h-[37%]"
-        } w-full bg-[#1AABFE] rounded-t-2xl z-0 flex flex-col items-center ${
-          plan.id === 2 ? "pt-5 gap-2" : "pt-4 gap-1"
-        }`}
+          isMultiple ? "h-[40%] " : "  pb-4"
+        } w-full bg-[#1AABFE] rounded-t-2xl z-0 flex flex-col items-center  pt-4 gap-1`}
         style={{ clipPath: "polygon(0 0, 100% 0, 100% 91%, 0% 100%)" }}
       >
         <p
@@ -92,13 +96,11 @@ const PlanCard = ({
         >
           {plan.name}
         </p>
-        <p
-          className={`${
-            isMultiple && "hidden"
-          } text-white text-[0.8rem] md:text-[0.7rem] line-through`}
-        >
-          Dê R$ 75,90 por:
-        </p>
+        {plan.apiData?.originalPriceFormatted && !isMultiple && (
+          <p className="text-white text-[0.8rem] md:text-[0.7rem] line-through opacity-75">
+            {plan.apiData.originalPriceFormatted}
+          </p>
+        )}
         <p
           className={`text-white ${
             isMultiple ? "text-[1rem]" : "text-[1.3rem]"
@@ -112,12 +114,16 @@ const PlanCard = ({
       </div>
       {isMultiple ? (
         <div className="p-3 flex flex-col items-center gap-2 w-fit mx-auto">
-          <p className="text-[0.9rem] font-[500]">{plan.price}</p>
-          <p className="text-[1.5rem] font-[600]  ">{plan.discount}</p>
+          <p className="text-[1.5rem] font-[600] leading-none">
+            {plan.price ? formatCurrency(plan.price) : "R$ 0,00"}
+          </p>
+          <p className="text-[1.5rem] font-[600] leading-none">
+            {plan.discount}
+          </p>
           <p className="text-[0.9rem] font-[500]">{plan.desc}</p>
         </div>
       ) : (
-        <div className="p-3 flex flex-col gap-2.5 ">
+        <div className="p-3 flex flex-col gap-2 ">
           {plan.features.map((feature, index) => (
             <div key={index} className="flex  gap-1 ">
               <IoIosCheckmarkCircle className="text-[#9672FF] !w-[0.8rem] !h-[0.8rem]" />
@@ -133,7 +139,7 @@ const PlanCard = ({
       >
         {showSearchPlateInput || showSearchInput ? (
           <PlateSearchBar
-            buttonText="Check"
+            buttonText="Consultar"
             onConfirm={handleSearchConfirm}
             planCard={true}
             plan={plan}
@@ -150,10 +156,10 @@ const PlanCard = ({
       </div>
       {/* Badge */}
       {plan.id === 2 && (
-        <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#F2DF33] rounded-xl px-5 py-2 text-center shadow-lg flex items-center gap-2">
-          <BsStarFill className="text-black mb-0.5 lg:text-[clamp(0.4rem,1vw,0.75rem)]!" />
-          <p className="text-black font-semibold whitespace-nowrap lg:text-[clamp(0.4rem,1vw,0.9rem)]!">
-           Mais vendido
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#F2DF33] rounded-xl px-5 py-2 text-center shadow-lg flex items-center gap-2">
+          <BsStarFill className="text-black mb-0.5 lg:text-[clamp(0.4rem,1vw,0.7rem)]!" />
+          <p className="text-black font-semibold whitespace-nowrap lg:text-[clamp(0.4rem,1vw,0.7rem)]!">
+            Mais vendido
           </p>
         </div>
       )}

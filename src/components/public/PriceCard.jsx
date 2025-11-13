@@ -9,14 +9,13 @@ const PriceCard = ({
   onClick,
   planName = "Relatório Premium",
   price = "R$ 58,00",
-  description = "Consulta única",
+  originalPrice = null,
   features = ["Vehicle registration details"],
   buttonText = "Comprar Relatório",
-  isUserChoice = false,
 }) => {
   return (
     <div
-      className={`relative flex flex-col justify-between backdrop-blur-xl rounded-lg py-4 px-5 border h-full w-[18rem] transition-all duration-300 ${
+      className={`relative flex flex-col justify-between backdrop-blur-xl rounded-lg py-4 px-5 h-full w-[18rem] transition-all duration-300 ${
         isSelected ? "bg-[#1AABFE]/20 border-[#1AABFE] border-2" : "border-none"
       }`}
     >
@@ -24,13 +23,18 @@ const PriceCard = ({
         <p className="text-white text-[0.8rem] md:text-[1.2rem] font-medium">
           {planName}
         </p>
-        <h2 className="text-white text-[1.5rem] md:text-[2.5rem] font-bold">
+        {originalPrice && (
+          <p className="text-white text-[0.7rem] md:text-[1rem] line-through opacity-75 pt-1">
+            {originalPrice}
+          </p>
+        )}
+        <h2 className="text-white text-[1.5rem] md:text-[2.5rem] font-bold leading-none pb-2">
           {price}
         </h2>
         <div className="w-[100%] my-2 text-center">
           <button
             onClick={onClick}
-            className={`rounded-full w-[80%] mx-auto px-8 py-2 cursor-pointer font-bold ${
+            className={`rounded-full w-[80%] mx-auto px-4 py-2 cursor-pointer font-bold ${
               isSelected ? "bg-[#1AABFE] text-white" : "bg-white text-black"
             }`}
           >
@@ -57,7 +61,7 @@ const PriceCard = ({
       {id === 2 && (
         <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#F2DF33] rounded-xl px-6 py-2 text-center shadow-lg flex items-center gap-2">
           <BsStarFill className="text-black mb-0.5 text-sm" />
-          <p className="text-black font-bold whitespace-nowrap">
+          <p className="text-black font-bold whitespace-nowrap text-sm">
             Mais Vendido
           </p>
         </div>

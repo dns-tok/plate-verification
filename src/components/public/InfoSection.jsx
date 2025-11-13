@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import InfoSectionCard from "./InfoSectionCard";
 import { scrollToSection } from "../../utils/scrollUtils";
-import { FaArrowRightLong } from "react-icons/fa6";
-import { RiAuctionFill } from "react-icons/ri";
+import { FaArrowRightLong, FaBan, FaHeadset } from "react-icons/fa6";
+import { RiAuctionFill, RiGovernmentFill } from "react-icons/ri";
 import { FaPhotoFilm } from "react-icons/fa6";
 import {
   MdAppRegistration,
@@ -12,9 +12,11 @@ import {
   MdOutlinePerson,
   MdOutlinePriceChange,
   MdOutlineSyncProblem,
+  MdPriceChange,
+  MdRestorePage,
   MdYoutubeSearchedFor,
 } from "react-icons/md";
-import { FaHistory } from "react-icons/fa";
+import { FaHeartbeat, FaHistory } from "react-icons/fa";
 import { PiNumberSevenFill } from "react-icons/pi";
 import { BiSolidSpreadsheet } from "react-icons/bi";
 import { AiFillDatabase } from "react-icons/ai";
@@ -44,7 +46,7 @@ const infoCards = [
   {
     id: 5,
     title: "Gravame",
-    img: "/recall.svg",
+    icon: <RiGovernmentFill />,
   },
   {
     id: 6,
@@ -53,8 +55,8 @@ const infoCards = [
   },
   {
     id: 7,
-    title: "Custo aproximado de manutenção",
-    img: "/maintenance.svg",
+    title: "Atendimento humanizado",
+    icon: <FaHeadset />,
   },
   {
     id: 8,
@@ -69,17 +71,17 @@ const infoCards = [
   {
     id: 10,
     title: "Restrições & Impedimentos​",
-    img: "/meter.svg",
+    icon: <FaBan />,
   },
   {
     id: 11,
     title: "Batidas",
-    img: "/secure.svg",
+    icon: <FaHeartbeat />,
   },
   {
     id: 12,
     title: "Histórico da tabela Fipe",
-    img: "/carCrash.svg",
+    icon: <MdRestorePage />,
   },
   {
     id: 13,
@@ -88,12 +90,12 @@ const infoCards = [
   },
   {
     id: 14,
-    title: "Fotos do veículo",
+    title: "Fotos do veículo remarketing (frota)",
     icon: <FaPhotoFilm className="text-[#1AABFE]" />,
   },
   {
     id: 15,
-    title: "Fotos do veículo",
+    title: "Fotos de anúncio",
     icon: <MdYoutubeSearchedFor className="text-[#1AABFE]" />,
   },
   {
@@ -128,7 +130,7 @@ const infoCards = [
   },
   {
     id: 22,
-    title: "Números de veículo (Chassi, Motor, vidros)",
+    title: "Números do veículo (Chassi, Motor, vidros)",
     icon: <PiNumberSevenFill className="text-[#1AABFE]" />,
   },
   {
@@ -143,7 +145,7 @@ const infoCards = [
   },
   {
     id: 25,
-    title: "Preço justo (Compra e Venda)",
+    title: "Valor FIPE",
     icon: <MdOutlinePriceChange className="text-[#1AABFE]" />,
   },
   {
@@ -184,7 +186,12 @@ const InfoSection = () => {
             Radiografia completa do veículo
           </h2>
           <p className="text-black text-[0.8rem] font-normal">
-            Vai comprar um veículo e não quer descobrir problemas ocultos mais tarde? A Placa Verificada garante tranquilidade ao adquirir a inspeção do histórico vericular completo para o carro dos seus sonhos. Ela oferece proteção contra fraudes e prejuízos, validando automaticamente as informações sobre o histórico, os riscos e o estado do veículo para todos os itens registrados.
+            Vai comprar um veículo e não quer descobrir problemas ocultos mais
+            tarde? A Placa Verificada garante tranquilidade ao oferecer a
+            inspeção completa do histórico veicular do carro dos seus sonhos.
+            Ela protege você contra fraudes e prejuízos, validando
+            automaticamente todas as informações sobre o histórico, os riscos e
+            o estado do veículo em cada item registrado.
           </p>
         </div>
         <div className="font-bold text-[1rem] md:text-[1.1rem]">
@@ -203,7 +210,8 @@ const InfoSection = () => {
         ))}
       </div>
       <p className="text-start w-full ms-2 mt-2 text-gray-600 text-[0.7rem] md:text-[0.8rem] font-normal">
-        *Informações disponíveis de acordo com as bases de dados públicas e privadas consultadas
+        *Informações disponíveis de acordo com as bases de dados públicas e
+        privadas consultadas
       </p>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mt-5 mb-4 md:mb-6">
         <button

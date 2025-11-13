@@ -107,7 +107,7 @@ const EditProfile = () => {
         <div className="w-full lg:w-[45%] ">
           <InputField
             form={form}
-            label="CEP"
+            label="CPF"
             name="id"
             required
             placeholder="_ _ _ _ _ - _ _"
@@ -145,7 +145,7 @@ const EditProfile = () => {
             label="E-mail"
             name="email"
             required
-            placeholder="you@example.com"
+            placeholder="voce@exemplo.com.br"
             inputClassName={inputClass}
             labelClassName={labelClass}
             inputContainerClassName={inputContainerClass}

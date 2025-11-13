@@ -4,9 +4,9 @@ import WhatsAppButton from "../common/WhatsAppButton";
 
 export default function PrivateLayout({ children }) {
   return (
-    <div className="flex h-dvh overflow-hidden">
+    <div className="flex h-dvh overflow-hidden ">
       <SideBar />
-      <div className="h-full w-full p-8 space-y-7 bg-[#F2F8FF] relative z-20">
+      <div className="h-full w-full p-4 md:p-6 lg:p-8 space-y-4 md:space-y-5 lg:space-y-7 bg-[#F2F8FF] relative z-20">
         <div className="relative max-w-[980px] mx-auto">
           <TopBar />
           {/* //topbar shadow div */}

@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import PriceCard from "./PriceCard";
 import MultiConsultant from "./MultiConsultant";
 import { FaArrowRightLong } from "react-icons/fa6";
+import {
+  fetchPublicPlans,
+  transformPublicPlans,
+} from "../../services/plansService";
 
 const singlePlans = [
   {
@@ -76,7 +80,7 @@ const singlePlans = [
       "Vehicle model and version",
       "Manufacturing year",
       "Fuel type",
-      "Chassis number verification",
+      "Chassi number verification",
     ],
   },
 ];
@@ -86,40 +90,45 @@ const multiPlans = [
     id: 5,
     name: "Sempre Presente",
     planNumber: "Pacote R$ 1.200,00",
-    priceDesc: "Compre R$ 1.200,00 e pague R$900.00",
-    discount: "-25%",
+    priceDesc: "Compre R$ 1.200,00 e pague",
+    price: "R$ 900,00",
+    discount: "25%",
     desc: "de economia",
   },
   {
     id: 6,
-    name: "Olho na segurança",
+    name: "Olho na Segurança",
     planNumber: "Pacote R$ 700,00",
-    priceDesc: "Buy R$ 700,00 and pay R$500.00",
-    discount: "-21%",
+    priceDesc: "Compre R$ 700,00 e pague",
+    price: "R$ 500,00",
+    discount: "21%",
     desc: "de economia",
   },
   {
     id: 7,
     name: "Profissional",
     planNumber: "Pacote R$ 500,00",
-    priceDesc: "Compre R$ 500,00 e pague R$410.00",
-    discount: "-18%",
+    priceDesc: "Compre R$ 500,00 e pague",
+    price: "R$ 410,00",
+    discount: "18%",
     desc: "de economia",
   },
   {
     id: 8,
     name: "Negociador",
     planNumber: "Pacote R$ 300,00",
-    priceDesc: "Compre R$ 300,00 e pague R$250.00",
-    discount: "-17%",
+    priceDesc: "Compre R$ 300,00 e pague",
+    price: "R$ 250,00",
+    discount: "17%",
     desc: "de economia",
   },
   {
     id: 9,
     name: "Test Drive",
     planNumber: "Pacote R$ 150,00",
-    priceDesc: "Compre R$ 150,00 e pague R$140.00",
-    discount: "-7%",
+    priceDesc: "Compre R$ 150,00 e pague",
+    price: "R$ 140,00",
+    discount: "7%",
     desc: "de economia",
   },
 ];
@@ -127,6 +136,32 @@ const multiPlans = [
 const PriceSection = () => {
   const [selectedCard, setSelectedCard] = useState(2);
   const [showMulti, setShowMulti] = useState(false);
+  const [apiSinglePlans, setApiSinglePlans] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadPublicPlans();
+  }, []);
+
+  const loadPublicPlans = async () => {
+    setLoading(true);
+    try {
+      const plans = await fetchPublicPlans();
+      const transformedPlans = transformPublicPlans(plans);
+      setApiSinglePlans(transformedPlans);
+    } catch (err) {
+      console.error("Failed to load public plans:", err);
+      // Keep empty array to fall back to static data
+      setApiSinglePlans([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use API data if available, otherwise fall back to static data
+  const getSinglePlans = () => {
+    return apiSinglePlans.length > 0 ? apiSinglePlans : singlePlans;
+  };
 
   const handleChoosePlan = (id) => {
     setSelectedCard(id);
@@ -143,30 +178,39 @@ const PriceSection = () => {
     <section className="text-white commonPadding bg-[url('/plansBg.svg')] bg-cover bg-center bg-no-repeat">
       {/* Header */}
       <div className="text-center mb-10 md:mb-12 lg:mb-20">
-        <h1 className="text-[2rem] md:text-[3rem] lg:text-[4rem] font-bold">
-         O melhor plano para você
+        <h1 className="text-[2rem] md:text-[3rem] lg:text-[4rem] font-bold leading-none mb-3">
+          O melhor relatório para você
         </h1>
         <p className="md:text-[1rem] lg:text-[1.3rem] font-normal">
-         Preços válidos por unidade. Em caso de dúvidas, entre em contato conosco.
+          Preços válidos por unidade. Em caso de dúvidas, entre em contato
+          conosco.
         </p>
       </div>
       {/* Plans */}
       {!showMulti ? (
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 w-fit mx-auto">
-          {singlePlans.map((plan) => (
-            <PriceCard
-              key={plan.id}
-              id={plan.id}
-              isSelected={selectedCard === plan.id}
-              onClick={() => handleChoosePlan(plan.id)}
-              planName={plan.name}
-              price={plan.price}
-              description={plan.desc}
-              features={plan.features}
-              buttonText="Comprar Relatório"
-              isUserChoice={plan.id === selectedCard}
-            />
-          ))}
+          {loading ? (
+            <div className="col-span-4 text-center text-white">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+              <p className="mt-2">Carregando planos...</p>
+            </div>
+          ) : (
+            getSinglePlans().map((plan) => (
+              <PriceCard
+                key={plan.id}
+                id={plan.id}
+                isSelected={selectedCard === plan.id}
+                onClick={() => handleChoosePlan(plan.id)}
+                planName={plan.name}
+                price={plan.price}
+                originalPrice={plan.apiData?.originalPriceFormatted}
+                description={plan.desc}
+                features={plan.features}
+                buttonText="Comprar Relatório"
+                isUserChoice={plan.id === selectedCard}
+              />
+            ))
+          )}
         </div>
       ) : (
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 w-fit mx-auto">
@@ -179,9 +223,10 @@ const PriceSection = () => {
               planName={plan.name}
               planNumber={plan.planNumber}
               priceDescription={plan.priceDesc}
+              price={plan.price}
               discount={plan.discount}
               description={plan.desc}
-              buttonText="Compare Pacote"
+              buttonText="Comprar Pacote"
               isUserChoice={plan.id === selectedCard}
             />
           ))}
@@ -194,9 +239,7 @@ const PriceSection = () => {
           onClick={() => setShowMulti(false)}
           className="bg-[#1AABFE] rounded-md flex items-center gap-3 py-3 px-8 w-fit cursor-pointer bg-[#1AABFE]hover:text-[#1AABFE] transition-all duration-300 border-[#1AABFE] group "
         >
-          <span className="md:text-[1.2rem] font-medium">
-            Consulta única
-          </span>
+          <span className="md:text-[1.2rem] font-medium">Consulta única</span>
           <FaArrowRightLong className=" md:text-[1.3rem] transition-all duration-300 -rotate-45" />
         </button>
         <button
@@ -208,10 +251,15 @@ const PriceSection = () => {
           </span>
           <FaArrowRightLong className="md:text-[1.3rem] transition-all duration-300 -rotate-45" />
         </button>
-       
       </div>
-       <p className="font-thin">* Essas informações dependem da disponibilidade nas bases de dados públicas.</p>
-        <p className="font-thin">** Essas informações dependem da disponibilidade na base de dados de nossos parceiros.</p>
+      <p className="font-extralight text-xs ms-1">
+        * Essas informações dependem da disponibilidade nas bases de dados
+        públicas.
+      </p>
+      <p className="font-extralight text-xs">
+        ** Essas informações dependem da disponibilidade na base de dados de
+        nossos parceiros.
+      </p>
     </section>
   );
 };
