@@ -23,7 +23,7 @@ const PlanCard = ({
   };
   return plan.id === 9 ? (
     <div
-      className={`col-span-4 w-[50%] relative flex items-center  backdrop-blur-xl rounded-2xl  mx-auto  justify-between transition-all duration-300 shadow-[0px_0px_20px_0px_rgba(0,0,0,0.2)] bg-white`}
+      className={`md:col-span-4 w-full md:w-[50%] relative flex items-center  backdrop-blur-xl rounded-2xl  mx-auto  justify-between transition-all duration-300 shadow-[0px_0px_20px_0px_rgba(0,0,0,0.2)] bg-white`}
     >
       <div
         className={`w-[52%] h-full bg-[#1AABFE] rounded-l-2xl z-0 flex flex-col items-start p-4 gap-1`}
@@ -45,8 +45,9 @@ const PlanCard = ({
         </p>
       </div>
       <div className="p-3 flex flex-col items-center gap-2 w-fit mx-auto">
-        <p className="text-[1.5rem] font-[600] whitespace-nowrap ">
-          {plan.discount} de economia
+        <p className="text-[1.5rem] font-[600] whitespace-nowrap  flex flex-col md:flex-row gap-1 items-center md:items-start">
+          {plan.discount}{" "}
+          <span className="text-[0.9rem] md:text-[0.5rem]">de economia</span>
         </p>
         <div
           className={`w-[100%] mb-2 text-center ${
@@ -74,7 +75,7 @@ const PlanCard = ({
     </div>
   ) : (
     <div
-      className={`relative flex flex-col  backdrop-blur-xl rounded-2xl  my-auto ${
+      className={`relative flex flex-col  backdrop-blur-xl rounded-2xl  my-auto  ${
         isMultiple
           ? "h-[18rem] justify-between"
           : !showSearchPlateInput
@@ -157,8 +158,8 @@ const PlanCard = ({
       {/* Badge */}
       {plan.id === 2 && (
         <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#F2DF33] rounded-xl px-5 py-2 text-center shadow-lg flex items-center gap-2">
-          <BsStarFill className="text-black mb-0.5 lg:text-[clamp(0.4rem,1vw,0.7rem)]!" />
-          <p className="text-black font-semibold whitespace-nowrap lg:text-[clamp(0.4rem,1vw,0.7rem)]!">
+          <BsStarFill className="text-black mb-0.5 text-xs lg:text-[clamp(0.4rem,1vw,0.7rem)]!" />
+          <p className="text-black font-semibold whitespace-nowrap text-xs lg:text-[clamp(0.4rem,1vw,0.7rem)]!">
             Mais vendido
           </p>
         </div>

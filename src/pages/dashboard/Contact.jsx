@@ -49,8 +49,8 @@ const ContactPage = () => {
             preferir, também pode falar conosco pelos outros canais disponíveis.
           </p>
         </div>
-        <div className="flex gap-4 justify-between items-center rounded-xl overflow-hidden">
-          <div className="w-[45%] h-[418px] relative bg-[#2D3134]">
+        <div className="flex gap-4 flex-col md:flex-row justify-between items-center rounded-xl overflow-hidden">
+          <div className="md:w-[45%] w-full h-[418px] relative bg-[#2D3134]">
             <img
               src="/contactVector.svg"
               alt=""
@@ -86,7 +86,7 @@ const ContactPage = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="w-[50%]">
+          <form onSubmit={handleSubmit} className="md:w-[50%] w-full">
             <label
               htmlFor="message"
               className="text-sm font-semibold mb-2 block text-black/70"
@@ -105,12 +105,12 @@ const ContactPage = () => {
             />
             <button
               type="submit"
-              className={`relative text-sm w-[140px] bg-[#194D9A] hover:bg-[#1AABFE] text-white font-medium px-4 py-3 rounded-md transition-all duration-300 shadow-lg mt-2  ${
+              className={`relative text-sm w-[140px] bg-[#194D9A] hover:bg-[#1AABFE]  text-white font-medium px-4 py-3 rounded-md transition-all duration-300 shadow-lg mt-2  ${
                 isSending ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
               }`}
               disabled={isSending}
             >
-              {isSending ? "Sending..." : "Enviar mensagem"}
+              {isSending ? "Enviando..." : "Enviar mensagem"}
               <img
                 src="/letterSend.svg"
                 alt=""

@@ -68,7 +68,7 @@ const Pagination = ({
   return (
     <div className="flex items-center justify-between ">
       {/* Rows per page section */}
-      <div className="flex items-center space-x-2">
+      <div className="flex space-x-2 flex-col md:flex-row gap-2 items-start md:items-center">
         <span className="text-gray-700 text-xs font-medium">
           Linhas por página
         </span>
@@ -119,8 +119,8 @@ const Pagination = ({
       </div>
 
       {/* Go to page section */}
-      <div className="flex items-center space-x-2">
-        <span className="text-gray-700 text-xs font-medium">
+      <div className="flex  space-x-2 flex-col md:flex-row gap-2 items-end text-end md:text-start md:items-center">
+        <span className="text-gray-700 text-xs font-medium ">
           Ir para a página
         </span>
         <form onSubmit={handleGoToPage} className="flex items-center space-x-1">

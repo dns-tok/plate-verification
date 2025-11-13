@@ -93,10 +93,18 @@ export const SideBar = () => {
 
   return (
     <div className="relative">
+      {/* Backdrop for mobile */}
+      <div
+        className={`fixed inset-0 bg-black/80 z-40 lg:hidden transition-opacity duration-300 ${
+          isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+        onClick={() => setIsCollapsed(true)}
+      />
       <div
         className={`fixed lg:relative top-0 left-0 h-full z-50 bg-[#09529C] flex flex-col transition-all duration-300 ease-in-out lg:w-[260px]  ${
           isCollapsed ? "w-0" : "w-[300px] "
         }`}
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -141,6 +149,10 @@ export const SideBar = () => {
                       toggleDropdown(item.id);
                     } else {
                       navigate(item.path);
+                      // Close sidebar on mobile when navigating
+                      if (window.innerWidth < 1024) {
+                        setIsCollapsed(true);
+                      }
                     }
                   }}
                 >
@@ -185,6 +197,12 @@ export const SideBar = () => {
                           key={subItem.id}
                           to={subItem.path}
                           className={`flex items-center gap-2 py-1 px-3 text-white  cursor-pointer rounded transition-colors group`}
+                          onClick={() => {
+                            // Close sidebar on mobile when navigating
+                            if (window.innerWidth < 1024) {
+                              setIsCollapsed(true);
+                            }
+                          }}
                         >
                           <img
                             src={subItem.icon}

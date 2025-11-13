@@ -3,15 +3,15 @@ import React from "react";
 export default function AboutSectionOne() {
   return (
     <>
-      <div className="flex gap-10 justify-between items-center w-full ">
-        <div className="flex flex-col relative w-[50%] ">
+      <div className="flex flex-col md:flex-row gap-10 justify-between items-center w-full ">
+        <div className="flex flex-col relative md:w-[50%] w-full ">
           <img
             src="/golden-car.svg"
             alt="About Us"
             className="w-full h-auto rounded-lg "
           />
         </div>
-        <div className="flex flex-col  w-[48%] p-4">
+        <div className="flex flex-col  md:w-[48%] w-full p-4">
           <h3
             className="text-2xl font-bold mb-4 text-center"
             style={{

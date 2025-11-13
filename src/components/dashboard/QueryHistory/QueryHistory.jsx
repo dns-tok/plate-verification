@@ -107,7 +107,9 @@ const History = () => {
                       {item.plan_name || item.plan_code || "N/A"}
                     </td>
                     <td>{item.license_plate || item.plate || "N/A"}</td>
-                    <td className="capitalize">{item.status || "Success"}</td>
+                    <td className="capitalize">
+                      {item.status === "completed" ? "Finalizado" : "Parcial"}
+                    </td>
                     <td>
                       <button
                         className="text-[#194D9A] hover:text-[#1AABFE] underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -120,7 +122,7 @@ const History = () => {
                         disabled={item.status !== "completed"}
                         title={
                           item.status !== "completed"
-                            ? "Report is not completed yet"
+                            ? "Relatório não concluído ainda"
                             : ""
                         }
                       >

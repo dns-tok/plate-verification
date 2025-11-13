@@ -10,6 +10,11 @@ import { useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import { parseCurrency } from "../../utils/currencyUtils";
 import { useWallet } from "../../context/WalletContext";
+import {
+  isMultiPlan,
+  getMultiPlanItemCode,
+  getMultiPlanCouponCode,
+} from "../../utils/multiPlanUtils";
 
 const GoBackButton = ({ onClick, className }) => {
   return (
@@ -39,7 +44,15 @@ const Payment = () => {
   const paymentCheckIntervalRef = useRef(null);
 
   // Map plan names to API codes
-  const getPlanCode = (planName) => {
+  const getPlanCode = (item) => {
+    // Check if it's a multi-plan first
+    if (isMultiPlan(item)) {
+      const itemCode = getMultiPlanItemCode(item);
+      if (itemCode) return itemCode;
+    }
+
+    // Fallback to name-based mapping for single plans
+    const planName = item.name;
     const codeMap = {
       "Premium Plan": "premium",
       "Ultra Plan": "ultra",
@@ -76,12 +89,24 @@ const Payment = () => {
     try {
       // Map cart items to API format
       const items = cartItems.map((item) => ({
-        code: item?.apiData?.code ? item.apiData.code : getPlanCode(item.name),
+        code: item?.apiData?.code ? item.apiData.code : getPlanCode(item),
         quantity: item.quantity || 1,
       }));
+
+      // Automatically apply coupon code for multi-plans if not already applied
+      // If multiple multi-plans exist, use the last one's coupon code
+      let couponCode = appliedCoupon?.code || "";
+
+      // Check if there are multi-plans in cart
+      const multiPlanCouponCode = getMultiPlanCouponCode(cartItems);
+      if (multiPlanCouponCode) {
+        // Use multi-plan coupon code (overrides manually applied coupon if any)
+        couponCode = multiPlanCouponCode;
+      }
+
       const payload = {
         items,
-        coupon_code: appliedCoupon?.code || "",
+        coupon_code: couponCode,
         transaction_type: "inbound",
         validation_only: false,
       };

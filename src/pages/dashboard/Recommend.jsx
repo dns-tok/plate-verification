@@ -24,9 +24,78 @@ const RecommendPage = () => {
     }
   };
 
-  const handleCopyCoupon = (coupon) => {
-    navigator.clipboard.writeText(coupon);
-    toast.success("Cupom copiado para a área de transferência!");
+  const handleCopyCoupon = async (coupon) => {
+    const copyToClipboard = (text) => {
+      return new Promise((resolve, reject) => {
+        // Create a temporary textarea element
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "0";
+        textArea.style.top = "0";
+        textArea.style.width = "2em";
+        textArea.style.height = "2em";
+        textArea.style.padding = "0";
+        textArea.style.border = "none";
+        textArea.style.outline = "none";
+        textArea.style.boxShadow = "none";
+        textArea.style.background = "transparent";
+        textArea.style.opacity = "0";
+        textArea.setAttribute("readonly", "");
+        textArea.setAttribute("contenteditable", "true");
+
+        document.body.appendChild(textArea);
+
+        // For mobile devices
+        if (navigator.userAgent.match(/ipad|iphone/i)) {
+          const range = document.createRange();
+          range.selectNodeContents(textArea);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          textArea.setSelectionRange(0, 999999);
+        } else {
+          textArea.select();
+        }
+
+        try {
+          const successful = document.execCommand("copy");
+          document.body.removeChild(textArea);
+          if (successful) {
+            resolve();
+          } else {
+            reject(new Error("Copy command failed"));
+          }
+        } catch (err) {
+          document.body.removeChild(textArea);
+          reject(err);
+        }
+      });
+    };
+
+    try {
+      // Try modern clipboard API first (works in secure contexts)
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(coupon);
+        toast.success("Cupom copiado para a área de transferência!");
+      } else {
+        // Fallback for mobile/older browsers
+        await copyToClipboard(coupon);
+        toast.success("Cupom copiado para a área de transferência!");
+      }
+    } catch (error) {
+      console.error("Copy failed:", error);
+      // Try fallback method
+      try {
+        await copyToClipboard(coupon);
+        toast.success("Cupom copiado para a área de transferência!");
+      } catch (fallbackError) {
+        console.error("Fallback copy also failed:", fallbackError);
+        toast.error(
+          "Não foi possível copiar o cupom. Tente selecionar e copiar manualmente."
+        );
+      }
+    }
   };
 
   return (
@@ -52,8 +121,22 @@ const RecommendPage = () => {
                 {coupon}
               </p>
               <button
-                onClick={() => handleCopyCoupon(coupon)}
-                className="bg-[#194D9A] text-white px-6 py-2 rounded-full cursor-pointer hover:bg-[#153d7a] transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCopyCoupon(coupon);
+                }}
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCopyCoupon(coupon);
+                }}
+                className="bg-[#194D9A] text-white px-6 py-2 rounded-full cursor-pointer hover:bg-[#153d7a] active:bg-[#153d7a] transition-colors touch-manipulation min-h-[44px] min-w-[120px]"
+                type="button"
               >
                 Copiar cupom
               </button>
