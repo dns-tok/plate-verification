@@ -94,7 +94,7 @@ const LoginModal = ({
             }}
             className="text-[#1AABFE] cursor-pointer hover:underline font-medium"
           >
-            cadatre-se
+            cadastre-se
           </span>
         </p>
       </form>
