@@ -43,15 +43,15 @@ const ResetPasswordModal = ({ isOpen, onClose, resetToken }) => {
 
     setIsSubmitting(true);
     try {
-      await resetPassword({ token: resetToken, newPassword: data.password });
-      toast.success("Senha redefinida com sucesso!");
+      const response = await resetPassword({ token: resetToken, newPassword: data.password });
+      toast.success(response?.message || "Senha redefinida com sucesso!");
       onClose();
     } catch (error) {
       console.log("Redefinição de senha falhou", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Link de redefinição inválido ou expirado. Por favor, solicite uma nova redefinição de senha."
-      );
+      const errorMessage = error?.response?.data?.message || 
+                          error?.response?.data?.error ||
+                          "Link de redefinição inválido ou expirado. Por favor, solicite uma nova redefinição de senha.";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

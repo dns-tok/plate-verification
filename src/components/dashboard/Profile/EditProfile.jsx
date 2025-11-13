@@ -83,13 +83,16 @@ const EditProfile = () => {
         phone: data.telephone,
       };
 
-      await updateProfile(updateData);
+      const response = await updateProfile(updateData);
       // Refresh user data to reflect changes in context
       await refreshUserProfile();
-      toast.success("Profile updated successfully!");
+      toast.success(response?.message || "Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile:", error);
-      toast.error("Failed to update profile. Please try again.");
+      const errorMessage = error?.response?.data?.message || 
+                          error?.response?.data?.error || 
+                          "Failed to update profile. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

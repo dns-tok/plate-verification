@@ -148,7 +148,7 @@ const Consultation = ({ activeMenu = "single", showSearchPlateInput }) => {
         <div
           className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${
             activeMenu === "multiple"
-              ? "gap-4"
+              ? "gap-4  mb-8"
               : "gap-10 lg:gap-2 p-4 md:p-0 mb-4 md:mb-0"
           } mx-auto`}
         >

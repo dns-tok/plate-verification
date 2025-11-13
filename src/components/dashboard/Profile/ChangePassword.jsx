@@ -34,20 +34,20 @@ const ChangePassword = () => {
   const handleSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await changePassword({
+      const response = await changePassword({
         new_password: data.password,
         current_password: data.currentPassword,
       });
       // Refresh user data to reflect changes in context
       await refreshUserProfile();
-      toast.success("Senha atualizada com sucesso!");
+      toast.success(response?.message || "Senha atualizada com sucesso!");
       form.reset();
     } catch (error) {
       console.error("Falha ao atualizar senha:", error);
-      toast.error(
-        error?.response?.data?.error ||
-          "Falha ao atualizar senha. Por favor, tente novamente."
-      );
+      const errorMessage = error?.response?.data?.message || 
+                          error?.response?.data?.error ||
+                          "Falha ao atualizar senha. Por favor, tente novamente.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

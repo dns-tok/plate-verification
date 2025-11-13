@@ -39,12 +39,19 @@ const LoginModal = ({
   const handleSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await login({ email: data.email, password: data.password });
-      toast.success("Login realizado com sucesso!");
+      const response = await login({
+        email: data.email,
+        password: data.password,
+      });
+      toast.success(response?.message || "Login realizado com sucesso!");
       onClose();
     } catch (err) {
       console.log(err);
-      toast.error("Login falhou. Por favor, verifique suas credenciais.");
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "Login falhou. Por favor, verifique suas credenciais.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

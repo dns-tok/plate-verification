@@ -64,10 +64,10 @@ export default function AboutSectionThree() {
       form.reset();
     } catch (error) {
       console.error("Failed to send message:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Erro ao enviar mensagem. Por favor, tente novamente."
-      );
+      const errorMessage = error?.response?.data?.message || 
+                          error?.response?.data?.error ||
+                          "Erro ao enviar mensagem. Por favor, tente novamente.";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

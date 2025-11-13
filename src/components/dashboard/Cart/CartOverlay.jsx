@@ -141,15 +141,21 @@ export default function CartOverlay() {
         setCouponDiscount(response.discount);
         // Reset ref so multi-plan coupons can re-apply if needed
         lastProcessedCouponRef.current = null;
-        toast.success("Coupon applied successfully!");
+        toast.success(response?.message || "Coupon applied successfully!");
       } else {
-        toast.error("Invalid or expired coupon code");
+        toast.error(
+          response?.message ||
+            response?.error ||
+            "Invalid or expired coupon code"
+        );
       }
     } catch (error) {
       console.error("Coupon validation failed:", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to validate coupon"
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to validate coupon";
+      toast.error(errorMessage);
     } finally {
       setIsValidatingCoupon(false);
     }

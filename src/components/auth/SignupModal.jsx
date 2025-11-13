@@ -112,8 +112,8 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
         numero_residencia: step2Form.getValues("houseNumber"),
         password: step2Form.getValues("password"),
       };
-      await register(payload);
-      toast.success("Registration successful!");
+      const response = await register(payload);
+      toast.success(response?.message || "Registration successful!");
       onClose();
       navigate("/");
     } catch (e) {

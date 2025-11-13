@@ -119,7 +119,7 @@ const PlateSearchBar = ({
         const response = await criarOrder(unmaskedPlate, planCode, "");
 
         // Order created successfully - redirect to query history
-        toast.success("Order created successfully!");
+        toast.success(response?.message || "Order created successfully!");
         setShowSearchPlatePopup(false);
         // Call onConfirm callback which redirects to history, or redirect directly
         if (onConfirm) {

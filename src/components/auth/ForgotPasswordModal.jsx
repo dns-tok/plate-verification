@@ -31,15 +31,22 @@ const ForgotPasswordModal = ({ isOpen, onClose, onNavigateToLogin }) => {
   const handleSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await requestPasswordReset(data.email);
+      const response = await requestPasswordReset(data.email);
       setSentEmail(data.email);
       setEmailSent(true);
-      toast.success("Password reset instructions sent to your email!");
+      toast.success(response?.message || "Password reset instructions sent to your email!");
     } catch (e) {
       console.log(e);
-      setSentEmail(data.email);
-      setEmailSent(true);
-      toast.success("Password reset instructions sent to your email!");
+      const errorMessage = e?.response?.data?.message || 
+                          e?.response?.data?.error;
+      if (errorMessage) {
+        toast.error(errorMessage);
+      } else {
+        // If no error message, assume success (some APIs return success even on error for security)
+        setSentEmail(data.email);
+        setEmailSent(true);
+        toast.success("Password reset instructions sent to your email!");
+      }
     } finally {
       setIsLoading(false);
     }

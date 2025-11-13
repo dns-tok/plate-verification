@@ -20,15 +20,15 @@ const ContactPage = () => {
 
     setIsSending(true);
     try {
-      await sendMessage(message);
-      toast.success("Message sent successfully! We'll get back to you soon.");
+      const response = await sendMessage(message);
+      toast.success(response?.message || "Message sent successfully! We'll get back to you soon.");
       setMessage(""); // Clear the message after successful send
     } catch (error) {
       console.error("Failed to send message:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to send message. Please try again."
-      );
+      const errorMessage = error?.response?.data?.message || 
+                          error?.response?.data?.error ||
+                          "Failed to send message. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsSending(false);
     }

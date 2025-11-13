@@ -31,16 +31,19 @@ const ConnectedPage = () => {
         contact_email: newValue,
       };
 
-      await updateProfile(updateData);
+      const response = await updateProfile(updateData);
       setIsEnabled(newValue);
 
       // Refresh user profile to get updated data
       await refreshUserProfile();
 
-      toast.success("Preferências atualizadas com sucesso!");
+      toast.success(response?.message || "Preferências atualizadas com sucesso!");
     } catch (error) {
       console.error("Failed to update contact preferences:", error);
-      toast.error("Erro ao atualizar preferências. Tente novamente.");
+      const errorMessage = error?.response?.data?.message || 
+                          error?.response?.data?.error ||
+                          "Erro ao atualizar preferências. Tente novamente.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

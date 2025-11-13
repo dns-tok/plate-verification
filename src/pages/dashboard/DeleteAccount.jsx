@@ -38,7 +38,7 @@ const DeleteAccountPage = () => {
 
       // Check if deletion was successful
       if (response) {
-        toast.success("Account deletion initiated successfully!");
+        toast.success(response?.message || "Account deletion initiated successfully!");
         // Logout and redirect after a short delay
         setTimeout(() => {
           logout();

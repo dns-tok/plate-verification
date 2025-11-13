@@ -47,7 +47,7 @@ const PlanCard = ({
       <div className="p-3 flex flex-col items-center gap-2 w-fit mx-auto">
         <p className="text-[1.5rem] font-[600] whitespace-nowrap  flex flex-col md:flex-row gap-1 items-center md:items-start">
           {plan.discount}{" "}
-          <span className="text-[0.9rem] md:text-[0.5rem]">de economia</span>
+          <span className="text-[0.9rem] md:text-[1.5rem]">de economia</span>
         </p>
         <div
           className={`w-[100%] mb-2 text-center ${

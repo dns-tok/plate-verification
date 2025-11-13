@@ -248,7 +248,7 @@ const Payment = () => {
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
-          toast.success("Pagamento concluído com sucesso!");
+          toast.success(response?.message || "Pagamento concluído com sucesso!");
           // Update wallet balance after successful payment
           fetchWalletInfo();
           clearCart();
@@ -265,7 +265,7 @@ const Payment = () => {
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
-          toast.error("Pagamento falhou. Por favor, tente novamente.");
+          toast.error(response?.message || response?.error || "Pagamento falhou. Por favor, tente novamente.");
           setSelectedPaymentMethod(null);
         } else {
           // Status is pending or unknown, continue polling

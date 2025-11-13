@@ -7,7 +7,7 @@ export default function WhatsAppButton({
 }) {
   const href = `https://wa.me/${phone}`;
   const baseClasses =
-    "fixed bottom-10 text-green-500 md:text-5xl text-4xl cursor-pointer z-[100] hover:scale-110 transition-all duration-300 whatsapp-icon";
+    "fixed bottom-20 md:bottom-10 text-green-500 md:text-5xl text-4xl cursor-pointer z-[100] hover:scale-110 transition-all duration-300 whatsapp-icon";
 
   return (
     <a
