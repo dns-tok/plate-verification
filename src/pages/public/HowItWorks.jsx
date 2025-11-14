@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PublicLayout from "../../components/layout/PublicLayout";
 import { FaCheck } from "react-icons/fa";
@@ -13,6 +13,27 @@ const HowItWorks = () => {
   };
 
   const handleBuy = (planName) => {
+    // Map plan names to plan codes
+    const planCodeMap = {
+      "Relatório Light": "light",
+      "Relatório Plus": "plus",
+      "Relatório Ultra": "ultra",
+      "Relatório Premium": "premium",
+    };
+
+    const planCode =
+      planCodeMap[planName] || planName.toLowerCase().replace("relatório ", "");
+
+    // Store the selected plan in localStorage to add to cart after login
+    localStorage.setItem(
+      "pendingPlanToAdd",
+      JSON.stringify({
+        planCode: planCode,
+        planName: planName,
+        timestamp: Date.now(),
+      })
+    );
+
     window.location.href = "/#showLogin";
   };
 
@@ -288,6 +309,10 @@ const HowItWorks = () => {
     { name: "Relatório Ultra", id: "ultra" },
     { name: "Relatório Premium", id: "premium" },
   ];
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <PublicLayout>

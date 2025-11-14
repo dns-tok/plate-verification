@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { MdEmail, MdLock } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../context/CartContext";
 import { z } from "zod";
 import Modal from "../common/Modal";
 import InputField from "../common/Form/InputField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
+import { fetchPublicPlans, transformPublicPlans } from "../../services/plansService";
+import { multiPlans } from "../dashboard/Consultation/plansData";
 
 const loginSchema = z.object({
   email: z
@@ -26,6 +29,7 @@ const LoginModal = ({
   onNavigateToForgotPassword,
 }) => {
   const { login } = useAuth();
+  const { addToCart, openCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
@@ -45,6 +49,57 @@ const LoginModal = ({
       });
       toast.success(response?.message || "Login realizado com sucesso!");
       onClose();
+      
+      // Check if there's a pending plan to add to cart
+      const pendingPlanData = localStorage.getItem("pendingPlanToAdd");
+      if (pendingPlanData) {
+        try {
+          const pendingPlan = JSON.parse(pendingPlanData);
+          
+          // Check if the pending plan is not too old (e.g., 1 hour)
+          const oneHour = 60 * 60 * 1000;
+          if (Date.now() - pendingPlan.timestamp > oneHour) {
+            localStorage.removeItem("pendingPlanToAdd");
+            return;
+          }
+          
+          let planToAdd = null;
+          
+          // Handle multi-plans (static data)
+          if (pendingPlan.isMultiPlan) {
+            planToAdd = multiPlans.find(
+              (plan) => plan.id === pendingPlan.planId || plan.name === pendingPlan.planName
+            );
+          } else {
+            // Handle single plans (from API)
+            const apiPlans = await fetchPublicPlans();
+            const transformedPlans = transformPublicPlans(apiPlans);
+            
+            // Find the matching plan by code
+            planToAdd = transformedPlans.find(
+              (plan) => plan.apiData?.code === pendingPlan.planCode
+            );
+          }
+          
+          if (planToAdd) {
+            // Add plan to cart
+            addToCart(planToAdd);
+            // Open cart
+            setTimeout(() => {
+              openCart();
+            }, 500); // Small delay to ensure modal is closed
+            toast.success(`${pendingPlan.planName} adicionado ao carrinho!`);
+          } else {
+            console.warn(`Plan with code/name '${pendingPlan.planCode || pendingPlan.planName}' not found`);
+          }
+          
+          // Clear pending plan from localStorage
+          localStorage.removeItem("pendingPlanToAdd");
+        } catch (error) {
+          console.error("Error adding pending plan to cart:", error);
+          // Don't show error to user, just log it
+        }
+      }
     } catch (err) {
       console.log(err);
       const errorMessage =

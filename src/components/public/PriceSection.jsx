@@ -163,9 +163,28 @@ const PriceSection = () => {
     return apiSinglePlans.length > 0 ? apiSinglePlans : singlePlans;
   };
 
-  const handleChoosePlan = (id) => {
-    setSelectedCard(id);
-    setShowMulti(false);
+  const handleChoosePlan = (plan) => {
+    // Handle both plan object and plan ID for backward compatibility
+    const planData = typeof plan === 'object' ? plan : 
+      (showMulti ? multiPlans.find(p => p.id === plan) : getSinglePlans().find(p => p.id === plan));
+    
+    if (planData) {
+      setSelectedCard(planData.id);
+      setShowMulti(false);
+      
+      // Store the selected plan in localStorage to add to cart after login
+      // For single plans, use the API code; for multi plans, use the plan name
+      const planCode = planData.apiData?.code || planData.name?.toLowerCase().replace(/\s+/g, '_');
+      
+      localStorage.setItem("pendingPlanToAdd", JSON.stringify({
+        planCode: planCode,
+        planName: planData.name,
+        planId: planData.id,
+        isMultiPlan: showMulti,
+        timestamp: Date.now()
+      }));
+    }
+    
     // Navigate to home with hash to trigger login modal
     window.location.href = "/#showLogin";
   };
@@ -200,7 +219,7 @@ const PriceSection = () => {
                 key={plan.id}
                 id={plan.id}
                 isSelected={selectedCard === plan.id}
-                onClick={() => handleChoosePlan(plan.id)}
+                onClick={() => handleChoosePlan(plan)}
                 planName={plan.name}
                 price={plan.price}
                 originalPrice={plan.apiData?.originalPriceFormatted}
@@ -219,7 +238,7 @@ const PriceSection = () => {
               key={plan.id}
               id={plan.id}
               isSelected={selectedCard === plan.id}
-              onClick={() => handleChoosePlan(plan.id)}
+              onClick={() => handleChoosePlan(plan)}
               planName={plan.name}
               planNumber={plan.planNumber}
               priceDescription={plan.priceDesc}
