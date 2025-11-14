@@ -9,7 +9,7 @@ const TwoColumnFieldSection = ({ fields, className = "" }) => {
     <div
       className={`border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white ${className}`}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+      <div className="grid grid-cols-2 gap-4 ">
         <div className="space-y-3">
           {fields.left?.map((field, index) => (
             <ReportField

@@ -105,3 +105,48 @@ body {
     border-radius: 6px;
   }
 }
+
+/* Rolling Images Animation - 5 images */
+/* 360 / 5 = 72deg per image.
+   Each image block = 20% of the animation.
+   Within each block: hold 70% of block (14% absolute),
+   quick jump 10% of block (2% abs), settle 20% of block (4% abs).
+*/
+
+@keyframes rollImageSynced {
+  0% {
+    transform: rotate(0deg);
+    
+  }
+
+  16.666% {
+    transform: rotate(60deg);
+  }
+
+  33.333% {
+    transform: rotate(120deg);
+  }
+
+  50% {
+    transform: rotate(180deg);
+  }
+
+  66.666% {
+    transform: rotate(240deg);
+  }
+
+  83.333% {
+    transform: rotate(300deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.roll-image {
+  transform-origin: 50% 50%;
+  animation: rollImageSynced 20s infinite ease-in-out;
+  backface-visibility: hidden;
+  will-change: transform;
+}

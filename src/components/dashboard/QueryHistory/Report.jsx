@@ -98,7 +98,7 @@ const Report = ({ data, onClose, loading }) => {
   const renderTwoColumnSection = (children) => {
     return (
       <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
+        <div className="grid grid-cols-2 gap-4">{children}</div>
       </div>
     );
   };
@@ -832,7 +832,7 @@ const Report = ({ data, onClose, loading }) => {
         <div
           ref={reportRef}
           data-pdf-content
-          className="bg-white space-y-6 custom-scrollbar"
+          className="bg-white space-y-6 custom-scrollbar  w-[1050px] mx-auto"
         >
           {/* Header Section */}
           <div className="bg-[#194D9A] border-b-6 border-yellow-300 flex justify-between items-center gap-2 h-[210px] text-white p-2 mb-6">
@@ -902,7 +902,7 @@ const Report = ({ data, onClose, loading }) => {
             {/* Resumo da consulta - Block 2 mapping */}
             <div className="space-y-4">
               {renderSectionTitle("Resumo da consulta")}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 gap-x-5">
+              <div className="grid grid-cols-3 gap-3 gap-x-5">
                 {isSummaryBoxVisible("Leilão", planName) &&
                   renderStatusBox("Leilão", hasLeilao, "/report/auction.png")}
                 {isSummaryBoxVisible("Sinistro", planName) &&
@@ -974,7 +974,7 @@ const Report = ({ data, onClose, loading }) => {
             {/* Insights do veículo - Block 3 mapping */}
             <div className="">
               {renderSectionTitle("Informacoes de Risco")}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-6">
                 {/* Nível de risco geral: response.body.data.leilao.score.aceitacao */}
                 {nivelRisco > 0 &&
                   renderGauge({
@@ -1266,7 +1266,7 @@ const Report = ({ data, onClose, loading }) => {
 
             {/* Block 9: Apontamentos em Bancos, Financeiras ou Seguradoras */}
             <ReportSection title="Apontamentos em Bancos, Financeiras ou Seguradoras">
-              <div className="flex flex-col md:flex-row gap-6 h-[215px]">
+              <div className="flex  gap-6 h-[215px]">
                 {riscoBancosFinanceiras || leilaoScorePercentualRef ? (
                   <div className="shrink-0 w-[30%] h-full">
                     {renderGauge({
@@ -1558,7 +1558,7 @@ const Report = ({ data, onClose, loading }) => {
 
                 if (uniqueFotos.length > 0) {
                   return (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-4 gap-4">
                       {uniqueFotos.map((foto, index) => {
                         const photoUrl = getPhotoUrl(foto);
                         return (
@@ -2876,7 +2876,7 @@ const Report = ({ data, onClose, loading }) => {
 
                 {/* Porcentagem sobre Tabela FIPE */}
                 <ReportSection title="Porcentagem sobre Tabela FIPE em caso de leilão">
-                  <div className="flex flex-col md:flex-row gap-6 ">
+                  <div className="flex  gap-6 ">
                     <div className="shrink-0 w-[30%]">
                       {/* Porcentagem sobre Tabela FIPE - Percentual Máximo de Oferta: response.body.data.leilao.score.aceitacao */}
                       {(() => {
@@ -2909,7 +2909,7 @@ const Report = ({ data, onClose, loading }) => {
 
                 {/* Exigência de Vistoria Especial */}
                 <ReportSection title="Exigência de Vistoria Especial">
-                  <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex  gap-6">
                     <div className="shrink-0 w-[30%]">
                       <BarGauge
                         value={
@@ -3587,7 +3587,7 @@ const Report = ({ data, onClose, loading }) => {
                               (Array.isArray(anuncio.fotos)
                                 ? anuncio.fotos.length > 0
                                 : true) ? (
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-4 gap-4">
                                   {(Array.isArray(anuncio.fotos)
                                     ? anuncio.fotos
                                     : [anuncio.fotos]
@@ -3653,7 +3653,7 @@ const Report = ({ data, onClose, loading }) => {
 
             {/* Footer with buttons */}
             <div className="border-t-2 border-gray-200 pt-6 mt-6 flex flex-col items-end justify-center">
-              <div className="flex flex-col md:flex-row gap-4 justify-center">
+              <div className="flex  gap-4 justify-center">
                 <button
                   disabled={downloading}
                   onClick={downloadPDF}
