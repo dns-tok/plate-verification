@@ -248,7 +248,9 @@ const Payment = () => {
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
-          toast.success(response?.message || "Pagamento concluído com sucesso!");
+          toast.success(
+            response?.message || "Pagamento concluído com sucesso!"
+          );
           // Update wallet balance after successful payment
           fetchWalletInfo();
           clearCart();
@@ -258,18 +260,32 @@ const Payment = () => {
         } else if (
           response.status === "failed" ||
           response.status === "cancelled" ||
-          response.paid === false
+          response.status === "rejected"
         ) {
-          // Payment failed
-          console.log("Payment failed");
+          // Payment failed - only treat as failure if status is explicitly failed/cancelled/rejected
+          console.log("Payment failed with status:", response.status);
           clearInterval(paymentCheckIntervalRef.current);
           paymentCheckIntervalRef.current = null;
           setIsCheckingPayment(false);
-          toast.error(response?.message || response?.error || "Pagamento falhou. Por favor, tente novamente.");
+          toast.error(
+            response?.message ||
+              response?.error ||
+              "Pagamento falhou. Por favor, tente novamente."
+          );
           setSelectedPaymentMethod(null);
-        } else {
+        } else if (response.status === "pending" || !response.status) {
           // Status is pending or unknown, continue polling
-          console.log("Payment status pending, continuing to poll...");
+          // Note: paid: false with status: "pending" means payment is still being processed
+          console.log("Payment status pending, continuing to poll...", {
+            status: response.status,
+            paid: response.paid,
+          });
+        } else {
+          // Unknown status, continue polling to be safe
+          console.log("Unknown payment status, continuing to poll...", {
+            status: response.status,
+            paid: response.paid,
+          });
         }
       } catch (error) {
         console.error("Error checking payment status:", error);

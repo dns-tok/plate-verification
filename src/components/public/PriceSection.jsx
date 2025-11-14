@@ -226,7 +226,7 @@ const PriceSection = () => {
               price={plan.price}
               discount={plan.discount}
               description={plan.desc}
-              buttonText="Comprar Pacote"
+              buttonText="Comprar"
               isUserChoice={plan.id === selectedCard}
             />
           ))}

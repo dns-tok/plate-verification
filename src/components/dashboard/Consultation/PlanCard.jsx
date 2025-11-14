@@ -45,9 +45,9 @@ const PlanCard = ({
         </p>
       </div>
       <div className="p-3 flex flex-col items-center gap-2 w-fit mx-auto">
-        <p className="text-[1.5rem] font-[600] whitespace-nowrap  flex flex-col md:flex-row gap-1 items-center md:items-start">
+        <p className="text-[1.5rem] font-[600] whitespace-nowrap  flex flex-col md:flex-row gap-1 items-center ">
           {plan.discount}{" "}
-          <span className="text-[0.9rem] md:text-[1.5rem]">de economia</span>
+          <span className="text-[0.9rem]  xl:text-[1rem]">de economia</span>
         </p>
         <div
           className={`w-[100%] mb-2 text-center ${
@@ -67,7 +67,7 @@ const PlanCard = ({
               onClick={onClick}
               className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] cursor-pointer font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md`}
             >
-              Comprar Pacotes
+              Comprar
             </button>
           )}
         </div>
@@ -151,7 +151,7 @@ const PlanCard = ({
             onClick={onClick}
             className={`rounded-full mx-auto px-6 py-[7px] bg-[#F2DF33] text-black font-bold text-[0.8rem] md:text-[0.65rem] min-w-[60%] shadow-md cursor-pointer`}
           >
-            Comprar Pacotes
+            Comprar
           </button>
         )}
       </div>

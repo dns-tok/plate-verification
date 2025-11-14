@@ -27,6 +27,7 @@ const Report = ({ data, onClose, loading }) => {
   const reportRef = useRef(null);
 
   const [downloading, setDownloading] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   // Extract plan name from data
   const planName = data?.planName || "light";
@@ -649,6 +650,16 @@ const Report = ({ data, onClose, loading }) => {
     riscoBancosFinanceiras = parseInt(leilaoScorePercentualRef) || null;
   }
 
+  const analiseRiscoScore = reportData?.analiseRisco?.indiceRisco || null;
+  const analiseRiscoScoreValue =
+    analiseRiscoScore === "1"
+      ? 0
+      : analiseRiscoScore === "2"
+      ? 50
+      : analiseRiscoScore === "3"
+      ? 90
+      : null;
+
   // Check apontamentosBancos field
   if (reportData.apontamentosBancos && !riscoBancosFinanceiras) {
     riscoBancosFinanceiras =
@@ -802,6 +813,87 @@ const Report = ({ data, onClose, loading }) => {
       toast.error("Error downloading PDF. Please try again.");
     } finally {
       setDownloading(false);
+    }
+  };
+
+  // Function to share report
+  const shareReport = async () => {
+    setSharing(true);
+    try {
+      // Always get queryId from the URL path (source of truth)
+      const pathParts = window.location.pathname.split("/").filter(Boolean);
+      let currentQueryId = null;
+
+      // Find the queryId in the path (should be after "/report/")
+      const reportIndex = pathParts.indexOf("report");
+      if (reportIndex !== -1 && pathParts.length > reportIndex + 1) {
+        currentQueryId = pathParts[reportIndex + 1];
+      }
+
+      // Fallback: try to get from the last path segment
+      if (!currentQueryId && pathParts.length > 0) {
+        const lastSegment = pathParts[pathParts.length - 1];
+        if (lastSegment && lastSegment !== "report") {
+          currentQueryId = lastSegment;
+        }
+      }
+
+      if (!currentQueryId) {
+        toast.error("Não foi possível gerar o link de compartilhamento.");
+        return;
+      }
+
+      // Generate shareable URL
+      const baseUrl = window.location.origin;
+      const shareUrl = `${baseUrl}/report/${currentQueryId}?planName=${planName}`;
+
+      // Check if Web Share API is available (mobile devices)
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: `Relatório Veicular - Placa ${plate || "N/A"}`,
+            text: `Confira o relatório completo do veículo.`,
+            url: shareUrl,
+          });
+          toast.success("Relatório compartilhado com sucesso!");
+          return;
+        } catch (error) {
+          // User cancelled or error occurred, fall back to clipboard
+          if (error.name !== "AbortError") {
+            console.error("Error sharing:", error);
+          }
+        }
+      }
+
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copiado para a área de transferência!");
+      } catch (error) {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand("copy");
+          toast.success("Link copiado para a área de transferência!");
+        } catch (err) {
+          toast.error(
+            "Não foi possível copiar o link. Por favor, copie manualmente."
+          );
+          // Show the URL in an alert as last resort
+          prompt("Copie o link do relatório:", shareUrl);
+        }
+        document.body.removeChild(textArea);
+      }
+    } catch (error) {
+      console.error("Error sharing report:", error);
+      toast.error("Erro ao compartilhar relatório. Tente novamente.");
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -1267,14 +1359,11 @@ const Report = ({ data, onClose, loading }) => {
             {/* Block 9: Apontamentos em Bancos, Financeiras ou Seguradoras */}
             <ReportSection title="Apontamentos em Bancos, Financeiras ou Seguradoras">
               <div className="flex  gap-6 h-[215px]">
-                {riscoBancosFinanceiras || leilaoScorePercentualRef ? (
+                {analiseRiscoScoreValue !== null ? (
                   <div className="shrink-0 w-[30%] h-full">
                     {renderGauge({
                       label: "",
-                      value:
-                        riscoBancosFinanceiras ||
-                        parseInt(leilaoScorePercentualRef) ||
-                        90,
+                      value: analiseRiscoScoreValue,
                     })}
                   </div>
                 ) : (
@@ -3491,15 +3580,13 @@ const Report = ({ data, onClose, loading }) => {
                 </ReportSection>
 
                 {/* Legenda */}
-                <div className="relative mb-6">
+                {/* <div className="relative mb-6">
                   <div className="mb-4">
                     <div className="bg-[#1AABFE] text-white px-4 py-2 rounded-full w-fit mb-2">
                       <h4 className="font-semibold px-8">Legenda</h4>
                     </div>
 
-                    {/* Legend content */}
                     <div className="space-y-3 border-2 border-[#1AABFE]/80 rounded-xl p-4 py-2 bg-white">
-                      {/* Aceitável sem restrições */}
                       <div className="flex items-center gap-3">
                         <div className="shrink-0 w-4 h-4 bg-green-500 rounded flex items-center justify-center">
                           <FaCheck className="text-white text-xs" />
@@ -3510,7 +3597,6 @@ const Report = ({ data, onClose, loading }) => {
                         </p>
                       </div>
 
-                      {/* Aceitável com restrições */}
                       <div className="flex items-center gap-3">
                         <div className="shrink-0 w-4 h-4 bg-orange-500 rounded flex items-center justify-center">
                           <IoIosWarning className="text-white text-xs " />
@@ -3521,7 +3607,6 @@ const Report = ({ data, onClose, loading }) => {
                         </p>
                       </div>
 
-                      {/* Aceitável mediante inspeção */}
                       <div className="flex items-center gap-3">
                         <div className="shrink-0 w-4 h-4 bg-orange-500 rounded flex items-center justify-center">
                           <FaCheck className="text-white text-xs" />
@@ -3533,7 +3618,6 @@ const Report = ({ data, onClose, loading }) => {
                         </p>
                       </div>
 
-                      {/* Recusável */}
                       <div className="flex items-center gap-3">
                         <div className="shrink-0 w-4 h-4 bg-red-500 rounded flex items-center justify-center">
                           <FaTimes className="text-white text-xs" />
@@ -3545,7 +3629,7 @@ const Report = ({ data, onClose, loading }) => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Histórico de Anúncios */}
                 <ReportSection title="Histórico de Anúncios">
@@ -3661,8 +3745,12 @@ const Report = ({ data, onClose, loading }) => {
                 >
                   {downloading ? "Baixando..." : "Baixar PDF"}
                 </button>
-                <button className="bg-[#1AABFE] hover:bg-[#1590d4] text-white font-semibold px-8 py-3 rounded-lg transition-colors">
-                  Compartilhar relatório
+                <button
+                  onClick={shareReport}
+                  disabled={sharing}
+                  className="bg-[#1AABFE] hover:bg-[#1590d4] text-white font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {sharing ? "Compartilhando..." : "Compartilhar relatório"}
                 </button>
               </div>
               <p className="text-center text-sm text-gray-500 mt-4">
