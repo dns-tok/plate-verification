@@ -709,14 +709,18 @@ const Report = ({ data, onClose, loading }) => {
     const element = reportRef.current;
 
     // 🔧 Ensure full content is visible
+    // Using scale: 1.2 for good quality while keeping file size reasonable
+    // Lower scale = smaller file, but scale 1.2 maintains good readability
     const canvas = await html2canvas(element, {
-      scale: 2, // higher quality
-      useCORS: true,
+      scale: 1.2,
       scrollX: 0,
       scrollY: 0,
       imageTimeout: 0,
       windowWidth: document.documentElement.scrollWidth,
       windowHeight: document.documentElement.scrollHeight,
+      useCORS: true,
+      logging: false, // Disable logging for better performance
+      backgroundColor: "#ffffff", // Ensure white background
     });
 
     const pdf = new jsPDF({
@@ -777,13 +781,14 @@ const Report = ({ data, onClose, loading }) => {
         sourceHeight
       );
 
-      const pageImgData = pageCanvas.toDataURL("image/png");
+      // Use JPEG format with compression to reduce file size (quality: 0.85 = 85% quality)
+      const pageImgData = pageCanvas.toDataURL("image/jpeg", 0.85);
       const pageImgHeight = contentHeightOnPage;
 
       // Add image to PDF with margins
       pdf.addImage(
         pageImgData,
-        "PNG",
+        "JPEG",
         leftMargin,
         topMargin,
         imgWidth,
@@ -872,24 +877,21 @@ const Report = ({ data, onClose, loading }) => {
             console.error("Error sharing file:", error);
             // Fall through to URL sharing fallback
           }
-        } else {
-          // Try sharing anyway - modern browsers (Safari, Chrome on desktop) support file sharing
-          // even if canShare is not available or returns false
+        } else if (!navigator.canShare) {
+          // If canShare is not available, try sharing anyway (some browsers support it but don't have canShare)
           try {
             await navigator.share(shareData);
             toast.success("Relatório compartilhado com sucesso!");
             return;
           } catch (error) {
             // If file sharing fails, fall through to URL sharing
-            if (error.name === "AbortError") {
-              // User cancelled, don't show error
-              return;
-            }
-            // Check if error is because files are not supported
-            if (error.message && error.message.includes("files")) {
-              console.warn("File sharing not supported, falling back to URL");
+            if (error.name !== "AbortError") {
+              console.warn(
+                "File sharing not supported, falling back to URL:",
+                error
+              );
             } else {
-              console.warn("Error sharing file, falling back to URL:", error);
+              return; // User cancelled
             }
           }
         }
@@ -3697,58 +3699,6 @@ const Report = ({ data, onClose, loading }) => {
                     </div>
                   )}
                 </ReportSection>
-
-                {/* Legenda */}
-                {/* <div className="relative mb-6">
-                  <div className="mb-4">
-                    <div className="bg-[#1AABFE] text-white px-4 py-2 rounded-full w-fit mb-2">
-                      <h4 className="font-semibold px-8">Legenda</h4>
-                    </div>
-
-                    <div className="space-y-3 border-2 border-[#1AABFE]/80 rounded-xl p-4 py-2 bg-white">
-                      <div className="flex items-center gap-3">
-                        <div className="shrink-0 w-4 h-4 bg-green-500 rounded flex items-center justify-center">
-                          <FaCheck className="text-white text-xs" />
-                        </div>
-                        <p className="text-xs text-[#1AABFE] font-medium">
-                          Aceitável sem restrições: Item aprovado para uso sem
-                          necessidade de ações corretivas.
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="shrink-0 w-4 h-4 bg-orange-500 rounded flex items-center justify-center">
-                          <IoIosWarning className="text-white text-xs " />
-                        </div>
-                        <p className="text-xs text-[#1AABFE] font-medium">
-                          Aceitável com restrições: Item aprovado, porém sujeito
-                          a limitações específicas previamente definidas.
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="shrink-0 w-4 h-4 bg-orange-500 rounded flex items-center justify-center">
-                          <FaCheck className="text-white text-xs" />
-                        </div>
-                        <p className="text-xs text-[#1AABFE] font-medium">
-                          Aceitável mediante inspeção: Item condicionado à
-                          realização de inspeção adicional para confirmação de
-                          sua conformidade.
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="shrink-0 w-4 h-4 bg-red-500 rounded flex items-center justify-center">
-                          <FaTimes className="text-white text-xs" />
-                        </div>
-                        <p className="text-xs text-[#1AABFE] font-medium">
-                          Recusável: Item reprovado devido a problemas críticos
-                          ou não viáveis.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
 
                 {/* Histórico de Anúncios */}
                 <ReportSection title="Histórico de Anúncios">
