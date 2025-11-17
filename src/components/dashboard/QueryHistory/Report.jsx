@@ -704,110 +704,126 @@ const Report = ({ data, onClose, loading }) => {
       "Veículo possui alerta de risco alto em Bancos, Financeiras ou Seguradoras. Essa restrição pode ocasionar em uma negativa de financiamento/seguro em sua totalidade ou com um percentual menor que 100% na tabela.";
   }
 
+  // Helper function to generate PDF and return as Blob
+  const generatePDFBlob = async () => {
+    const element = reportRef.current;
+
+    // 🔧 Ensure full content is visible
+    const canvas = await html2canvas(element, {
+      scale: 2, // higher quality
+      useCORS: true,
+      scrollX: 0,
+      scrollY: 0,
+      imageTimeout: 0,
+      windowWidth: document.documentElement.scrollWidth,
+      windowHeight: document.documentElement.scrollHeight,
+    });
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: "a4",
+    });
+
+    // Define margins (in pixels)
+    const topMargin = 20; // Top margin in pixels
+    const bottomMargin = 20; // Bottom margin in pixels
+    const leftMargin = 10; // Left margin in pixels
+    const rightMargin = 10; // Right margin in pixels
+
+    // Calculate page dimensions
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Calculate available space for content (page minus margins)
+    const availableWidth = pageWidth - leftMargin - rightMargin;
+    const availableHeight = pageHeight - topMargin - bottomMargin;
+
+    // Calculate image dimensions to fit available width
+    const imgWidth = availableWidth;
+    const imgHeight = (canvas.height * availableWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let sourceY = 0; // Track the source Y position in the original image
+
+    // 📄 Add multiple pages if needed
+    while (heightLeft > 0) {
+      // Calculate how much content fits on this page
+      const contentHeightOnPage = Math.min(availableHeight, heightLeft);
+
+      // Create a canvas slice for this page
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = (contentHeightOnPage * canvas.height) / imgHeight;
+      const pageCtx = pageCanvas.getContext("2d");
+
+      // Fill with white background
+      pageCtx.fillStyle = "#ffffff";
+      pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+      // Calculate source slice dimensions
+      const sourceHeight = (contentHeightOnPage * canvas.height) / imgHeight;
+
+      // Draw the slice from the original canvas
+      pageCtx.drawImage(
+        canvas,
+        0,
+        sourceY,
+        canvas.width,
+        sourceHeight,
+        0,
+        0,
+        canvas.width,
+        sourceHeight
+      );
+
+      const pageImgData = pageCanvas.toDataURL("image/png");
+      const pageImgHeight = contentHeightOnPage;
+
+      // Add image to PDF with margins
+      pdf.addImage(
+        pageImgData,
+        "PNG",
+        leftMargin,
+        topMargin,
+        imgWidth,
+        pageImgHeight
+      );
+
+      // Update tracking variables
+      heightLeft -= availableHeight;
+      sourceY += sourceHeight;
+
+      // Add new page if there's more content
+      if (heightLeft > 0) {
+        pdf.addPage();
+      }
+    }
+
+    // Return PDF as Blob
+    return pdf.output("blob");
+  };
+
   // Function to generate and download PDF
   const downloadPDF = async () => {
     setDownloading(true);
     try {
-      const element = reportRef.current;
-
-      // 🔧 Ensure full content is visible
-      const canvas = await html2canvas(element, {
-        scale: 2, // higher quality
-        useCORS: true,
-        scrollX: 0,
-        scrollY: 0,
-        imageTimeout: 0,
-        windowWidth: document.documentElement.scrollWidth,
-        windowHeight: document.documentElement.scrollHeight,
-      });
-
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: "a4",
-      });
-
-      // Define margins (in pixels)
-      const topMargin = 20; // Top margin in pixels
-      const bottomMargin = 20; // Bottom margin in pixels
-      const leftMargin = 10; // Left margin in pixels
-      const rightMargin = 10; // Right margin in pixels
-
-      // Calculate page dimensions
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      // Calculate available space for content (page minus margins)
-      const availableWidth = pageWidth - leftMargin - rightMargin;
-      const availableHeight = pageHeight - topMargin - bottomMargin;
-
-      // Calculate image dimensions to fit available width
-      const imgWidth = availableWidth;
-      const imgHeight = (canvas.height * availableWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let sourceY = 0; // Track the source Y position in the original image
-
-      // 📄 Add multiple pages if needed
-      while (heightLeft > 0) {
-        // Calculate how much content fits on this page
-        const contentHeightOnPage = Math.min(availableHeight, heightLeft);
-
-        // Create a canvas slice for this page
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = (contentHeightOnPage * canvas.height) / imgHeight;
-        const pageCtx = pageCanvas.getContext("2d");
-
-        // Fill with white background
-        pageCtx.fillStyle = "#ffffff";
-        pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-
-        // Calculate source slice dimensions
-        const sourceHeight = (contentHeightOnPage * canvas.height) / imgHeight;
-
-        // Draw the slice from the original canvas
-        pageCtx.drawImage(
-          canvas,
-          0,
-          sourceY,
-          canvas.width,
-          sourceHeight,
-          0,
-          0,
-          canvas.width,
-          sourceHeight
-        );
-
-        const pageImgData = pageCanvas.toDataURL("image/png");
-        const pageImgHeight = contentHeightOnPage;
-
-        // Add image to PDF with margins
-        pdf.addImage(
-          pageImgData,
-          "PNG",
-          leftMargin,
-          topMargin,
-          imgWidth,
-          pageImgHeight
-        );
-
-        // Update tracking variables
-        heightLeft -= availableHeight;
-        sourceY += sourceHeight;
-
-        // Add new page if there's more content
-        if (heightLeft > 0) {
-          pdf.addPage();
-        }
-      }
+      const pdfBlob = await generatePDFBlob();
 
       // Generate filename
       const fileName = `Relatorio_${plate || "Veiculo"}_${
         new Date().toISOString().split("T")[0]
       }.pdf`;
 
-      pdf.save(fileName);
+      // Create a download link
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading PDF:", error);
       toast.error("Error downloading PDF. Please try again.");
@@ -820,6 +836,63 @@ const Report = ({ data, onClose, loading }) => {
   const shareReport = async () => {
     setSharing(true);
     try {
+      // Generate PDF as Blob
+      const pdfBlob = await generatePDFBlob();
+
+      // Generate filename
+      const fileName = `Relatorio_${plate || "Veiculo"}_${
+        new Date().toISOString().split("T")[0]
+      }.pdf`;
+
+      // Create File object from Blob
+      const pdfFile = new File([pdfBlob], fileName, {
+        type: "application/pdf",
+      });
+
+      // Check if Web Share API is available and supports files
+      if (navigator.share) {
+        const shareData = {
+          title: `Relatório Veicular - Placa ${plate || "N/A"}`,
+          text: `Confira o relatório completo do veículo.`,
+          files: [pdfFile],
+        };
+
+        // Check if we can share files (if canShare is available)
+        if (navigator.canShare && navigator.canShare(shareData)) {
+          try {
+            await navigator.share(shareData);
+            toast.success("Relatório compartilhado com sucesso!");
+            return;
+          } catch (error) {
+            // User cancelled or error occurred
+            if (error.name === "AbortError") {
+              // User cancelled, don't show error
+              return;
+            }
+            console.error("Error sharing file:", error);
+            // Fall through to URL sharing fallback
+          }
+        } else if (!navigator.canShare) {
+          // If canShare is not available, try sharing anyway (some browsers support it but don't have canShare)
+          try {
+            await navigator.share(shareData);
+            toast.success("Relatório compartilhado com sucesso!");
+            return;
+          } catch (error) {
+            // If file sharing fails, fall through to URL sharing
+            if (error.name !== "AbortError") {
+              console.warn(
+                "File sharing not supported, falling back to URL:",
+                error
+              );
+            } else {
+              return; // User cancelled
+            }
+          }
+        }
+      }
+
+      // Fallback: Try sharing URL if file sharing is not supported
       // Always get queryId from the URL path (source of truth)
       const pathParts = window.location.pathname.split("/").filter(Boolean);
       let currentQueryId = null;
@@ -838,56 +911,66 @@ const Report = ({ data, onClose, loading }) => {
         }
       }
 
-      if (!currentQueryId) {
-        toast.error("Não foi possível gerar o link de compartilhamento.");
-        return;
-      }
+      if (currentQueryId) {
+        // Generate shareable URL
+        const baseUrl = window.location.origin;
+        const shareUrl = `${baseUrl}/report/${currentQueryId}?planName=${planName}`;
 
-      // Generate shareable URL
-      const baseUrl = window.location.origin;
-      const shareUrl = `${baseUrl}/report/${currentQueryId}?planName=${planName}`;
-
-      // Check if Web Share API is available (mobile devices)
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: `Relatório Veicular - Placa ${plate || "N/A"}`,
-            text: `Confira o relatório completo do veículo.`,
-            url: shareUrl,
-          });
-          toast.success("Relatório compartilhado com sucesso!");
-          return;
-        } catch (error) {
-          // User cancelled or error occurred, fall back to clipboard
-          if (error.name !== "AbortError") {
-            console.error("Error sharing:", error);
+        // Try Web Share API with URL
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: `Relatório Veicular - Placa ${plate || "N/A"}`,
+              text: `Confira o relatório completo do veículo.`,
+              url: shareUrl,
+            });
+            toast.success("Link compartilhado com sucesso!");
+            return;
+          } catch (error) {
+            // User cancelled or error occurred, fall back to clipboard
+            if (error.name !== "AbortError") {
+              console.error("Error sharing:", error);
+            }
           }
         }
-      }
 
-      // Fallback: Copy to clipboard
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        toast.success("Link copiado para a área de transferência!");
-      } catch (error) {
-        // Fallback for older browsers
-        const textArea = document.createElement("textarea");
-        textArea.value = shareUrl;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.select();
+        // Fallback: Copy to clipboard
         try {
-          document.execCommand("copy");
+          await navigator.clipboard.writeText(shareUrl);
           toast.success("Link copiado para a área de transferência!");
-        } catch (err) {
-          toast.error(
-            "Não foi possível copiar o link. Por favor, copie manualmente."
-          );
-          // Show the URL in an alert as last resort
-          prompt("Copie o link do relatório:", shareUrl);
+        } catch (error) {
+          // Fallback for older browsers
+          const textArea = document.createElement("textarea");
+          textArea.value = shareUrl;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999999px";
+          document.body.appendChild(textArea);
+          textArea.select();
+          try {
+            document.execCommand("copy");
+            toast.success("Link copiado para a área de transferência!");
+          } catch (err) {
+            toast.error(
+              "Não foi possível copiar o link. Por favor, copie manualmente."
+            );
+            // Show the URL in an alert as last resort
+            prompt("Copie o link do relatório:", shareUrl);
+          }
+          document.body.removeChild(textArea);
         }
-        document.body.removeChild(textArea);
+      } else {
+        // If we can't get queryId, trigger download as fallback
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.info(
+          "PDF baixado. Você pode compartilhar o arquivo manualmente."
+        );
       }
     } catch (error) {
       console.error("Error sharing report:", error);
@@ -969,7 +1052,10 @@ const Report = ({ data, onClose, loading }) => {
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <img
-                    src={reportData.logo || "/whiteLogo.svg"}
+                    src={
+                      reportData?.dadosBasicosDoVeiculo?.marca_logo ||
+                      "/whiteLogo.svg"
+                    }
                     alt={`${make} Logo`}
                     className="w-16 h-16 object-contain aspect-square "
                   />
@@ -3450,18 +3536,48 @@ const Report = ({ data, onClose, loading }) => {
                             Array.isArray(radarData.cias) &&
                             radarData.cias.length > 0 && (
                               <div className="border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-4 items-center justify-center">
                                   {/* seguradoras: response.body.data.radarSecuritario.cias */}
-                                  {radarData.cias.map((cia, index) => (
-                                    <span
-                                      key={index}
-                                      className="text-gray-800 text-sm"
-                                    >
-                                      {cia?.Nome || cia?.nome || "-"}
-                                      {index < radarData.cias.length - 1 &&
-                                        ", "}
-                                    </span>
-                                  ))}
+                                  {radarData.cias.map((cia, index) => {
+                                    const insurerName =
+                                      cia?.Nome || cia?.nome || "-";
+                                    return (
+                                      <div
+                                        key={index}
+                                        className="flex items-center justify-center p-4 "
+                                      >
+                                        {cia?.logo_link ? (
+                                          <img
+                                            src={cia.logo_link}
+                                            alt={insurerName}
+                                            className="max-h-12 max-w-32 object-contain"
+                                            onError={(e) => {
+                                              // Fallback to name if image fails to load
+                                              e.target.style.display = "none";
+                                              const fallback =
+                                                e.target.parentElement.querySelector(
+                                                  ".insurer-fallback"
+                                                );
+                                              if (fallback) {
+                                                fallback.style.display =
+                                                  "inline";
+                                              }
+                                            }}
+                                          />
+                                        ) : null}
+                                        <span
+                                          className="text-gray-800 text-sm insurer-fallback"
+                                          style={{
+                                            display: cia?.logo_link
+                                              ? "none"
+                                              : "inline",
+                                          }}
+                                        >
+                                          {insurerName}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             )}
