@@ -116,7 +116,6 @@ body {
 @keyframes rollImageSynced {
   0% {
     transform: rotate(0deg);
-    
   }
 
   16.666% {
@@ -149,4 +148,13 @@ body {
   animation: rollImageSynced 20s infinite ease-in-out;
   backface-visibility: hidden;
   will-change: transform;
+}
+
+@media print {
+  /* Force background colors & images to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
 }

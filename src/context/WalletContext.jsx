@@ -7,6 +7,7 @@ import React, {
   useRef,
   useCallback,
 } from "react";
+import { useLocation } from "react-router-dom";
 import { consultaSaldo } from "../services/plansService";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
@@ -17,10 +18,15 @@ const POLLING_INTERVAL = 2000; // 30 seconds
 
 export const WalletProvider = ({ children }) => {
   const { user } = useAuth();
+  const location = useLocation();
 
   const [balance, setBalance] = useState("0.00");
   const [loading, setLoading] = useState(true);
   const isInitialLoadRef = useRef(true);
+  const pollingTimeoutRef = useRef(null);
+
+  // Check if current page is a report page
+  const isReportPage = location.pathname.startsWith("/report/");
 
   const fetchWalletInfo = useCallback(async (isPolling = false) => {
     try {
@@ -43,14 +49,28 @@ export const WalletProvider = ({ children }) => {
     let isCancelled = false;
 
     const poll = async () => {
-      if (isCancelled || !user) return;
+      if (isCancelled || !user || isReportPage) return;
       await fetchWalletInfo(true);
-      setTimeout(poll, POLLING_INTERVAL);
+      if (!isCancelled && !isReportPage) {
+        pollingTimeoutRef.current = setTimeout(poll, POLLING_INTERVAL);
+      }
     };
 
-    if (user) {
+    // Clear any existing polling timeout
+    if (pollingTimeoutRef.current) {
+      clearTimeout(pollingTimeoutRef.current);
+      pollingTimeoutRef.current = null;
+    }
+
+    if (user && !isReportPage) {
       fetchWalletInfo(false); // initial fetch
       poll();
+    } else if (isReportPage) {
+      // Stop polling on report page
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+        pollingTimeoutRef.current = null;
+      }
     } else {
       // Reset on logout
       setBalance("0.00");
@@ -60,8 +80,12 @@ export const WalletProvider = ({ children }) => {
 
     return () => {
       isCancelled = true;
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+        pollingTimeoutRef.current = null;
+      }
     };
-  }, [user, fetchWalletInfo]);
+  }, [user, fetchWalletInfo, isReportPage]);
 
   return (
     <WalletContext.Provider value={{ balance, loading, fetchWalletInfo }}>

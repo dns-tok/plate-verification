@@ -255,7 +255,7 @@ const Payment = () => {
           fetchWalletInfo();
           clearCart();
           setTimeout(() => {
-            navigate("/buy-consultation");
+            navigate("/new-consultation");
           }, 2000);
         } else if (
           response.status === "failed" ||
@@ -322,7 +322,7 @@ const Payment = () => {
     toast.success("Pagamento concluído! Pedido está sendo processado.");
     clearCart();
     setTimeout(() => {
-      navigate("/buy-consultation");
+      navigate("/new-consultation");
     }, 2000);
   };
 
@@ -340,13 +340,20 @@ const Payment = () => {
         <div className="flex flex-col gap-2 md:gap-10 items-center justify-center relative">
           <GoBackButton
             onClick={() => {
-              // Stop payment check if in progress
-              if (paymentCheckIntervalRef.current) {
-                clearInterval(paymentCheckIntervalRef.current);
-                paymentCheckIntervalRef.current = null;
+              // If payment check is in progress, just reset state and show payment methods
+              if (isCheckingPayment) {
+                // Stop payment check if in progress
+                if (paymentCheckIntervalRef.current) {
+                  clearInterval(paymentCheckIntervalRef.current);
+                  paymentCheckIntervalRef.current = null;
+                }
                 setIsCheckingPayment(false);
+                setSelectedPaymentMethod(null);
+                setPaymentData(null);
+              } else {
+                // Otherwise, navigate back to buy page
+                navigate("/buy-consultation");
               }
-              navigate("/buy-consultation");
             }}
             className="absolute -top-10 left-0 me-auto"
           />
@@ -428,7 +435,17 @@ const Payment = () => {
         <div className=" h-full md:h-auto">
           <div className="flex flex-col  gap-2 w-[390px] py-4 ">
             <div className="flex  items-center gap-2 mb-4">
-              <GoBackButton onClick={() => setSelectedPaymentMethod(null)} />
+              <GoBackButton
+                onClick={() => {
+                  // Stop payment check if in progress
+                  if (paymentCheckIntervalRef.current) {
+                    clearInterval(paymentCheckIntervalRef.current);
+                    paymentCheckIntervalRef.current = null;
+                  }
+                  setIsCheckingPayment(false);
+                  setSelectedPaymentMethod(null);
+                }}
+              />
               <p className="bg-[#194D9A]  text-white px-4 py-1 rounded  text-center text-lg md:text-base">
                 PIX
               </p>

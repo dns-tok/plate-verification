@@ -355,13 +355,13 @@ const HowItWorks = () => {
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="border border-gray-300 p-4 text-left bg-gray-50 font-semibold text-gray-800">
+                    <th className="border  border-gray-300 p-4 text-left bg-gray-50 font-semibold text-gray-800 whitespace-nowrap">
                       Categoria / Recurso
                     </th>
                     {plans.map((plan) => (
                       <th
                         key={plan.id}
-                        className="border border-gray-300 p-4 text-center bg-gray-50 font-semibold text-[#194D9A] min-w-[150px]"
+                        className="border border-gray-300 p-4 text-center bg-gray-50 font-semibold text-[#194D9A]  whitespace-nowrap"
                       >
                         {plan.name}
                       </th>
@@ -418,7 +418,39 @@ const HowItWorks = () => {
                   ))}
                   {/* Action Buttons Row */}
                   <tr>
-                    <td className="border border-gray-300 p-4"></td>
+                    <td className="border border-gray-300 p-4 py-2">
+                      <div className="text-[0.5rem] md:text-[0.6rem] ">
+                        <p className=" text-gray-600">
+                          * Essas informações dependem da disponibilidade nas
+                          bases de dados públicas.
+                        </p>
+                        <p className=" text-gray-600">
+                          ** Essas informações dependem da disponibilidade na
+                          base de dados de nossos parceiros.
+                        </p>
+                        <table class="w-fit border border-gray-300 border-collapse mt-2">
+                          <tbody>
+                            <tr>
+                              <td class="border border-gray-300 p-2 w-[100px] leading-none font-medium">
+                                Item Incluso
+                              </td>
+                              <td class="border border-gray-300 p-2 w-[100px] text-center">
+                                <FaCheck className="text-[#1AABFE] mx-auto text-lg" />
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="border border-gray-300 p-2 w-[100px] leading-none font-medium">
+                                Não Incluso
+                              </td>
+                              <td class="border border-gray-300 p-2 w-[100px] text-center text-gray-400 text-xl leading-none">
+                                -
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
                     {plans.map((plan) => (
                       <td
                         key={plan.id}
@@ -427,7 +459,7 @@ const HowItWorks = () => {
                         <div className="flex flex-col gap-2 items-center">
                           <button
                             onClick={handleViewModel}
-                            className="bg-[#1AABFE] hover:bg-[#0F9AE8] text-white font-medium py-2.5 px-6 rounded transition-colors duration-200 text-sm w-full cursor-pointer"
+                            className="bg-[#1AABFE] hover:bg-[#0F9AE8] text-white font-medium py-2.5 px-6 rounded transition-colors duration-200 text-sm w-full cursor-pointer whitespace-nowrap"
                           >
                             Ver Modelo
                           </button>
@@ -445,14 +477,7 @@ const HowItWorks = () => {
               </table>
             </div>
 
-            {/* Disclaimer */}
-            <div className="mt-8 text-center">
-              <p className="text-xs text-gray-600">
-                Os dados fornecidos são de domínio público e/ou obtidos de
-                fontes oficiais, não havendo qualquer responsabilidade sobre a
-                veracidade dos mesmos.
-              </p>
-            </div>
+          
           </div>
         </div>
       </div>

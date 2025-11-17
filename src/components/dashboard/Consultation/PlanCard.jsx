@@ -30,7 +30,7 @@ const PlanCard = ({
         style={{ clipPath: "polygon(0 0, 90% 0%, 100% 100%,  0% 100%)" }}
       >
         <p
-          className={`text-white text-[0.6rem] font-medium bg-black/45 rounded-full px-4 py-2 min-w-[65%] text-center mb-2`}
+          className={`text-white text-[0.8rem] font-medium bg-black/45 rounded-full px-4 py-2 min-w-[65%] text-center mb-2`}
         >
           {plan.name}
         </p>
@@ -91,7 +91,7 @@ const PlanCard = ({
         style={{ clipPath: "polygon(0 0, 100% 0, 100% 91%, 0% 100%)" }}
       >
         <p
-          className={`text-white text-[0.55rem] font-medium bg-black/45 rounded-full px-4 py-2 min-w-[65%] text-center ${
+          className={`text-white text-[0.8rem] font-medium bg-black/45 rounded-full px-4 py-2 min-w-[65%] text-center ${
             isMultiple && "mb-2"
           }`}
         >
