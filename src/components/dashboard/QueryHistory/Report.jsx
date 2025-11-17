@@ -872,21 +872,24 @@ const Report = ({ data, onClose, loading }) => {
             console.error("Error sharing file:", error);
             // Fall through to URL sharing fallback
           }
-        } else if (!navigator.canShare) {
-          // If canShare is not available, try sharing anyway (some browsers support it but don't have canShare)
+        } else {
+          // Try sharing anyway - modern browsers (Safari, Chrome on desktop) support file sharing
+          // even if canShare is not available or returns false
           try {
             await navigator.share(shareData);
             toast.success("Relatório compartilhado com sucesso!");
             return;
           } catch (error) {
             // If file sharing fails, fall through to URL sharing
-            if (error.name !== "AbortError") {
-              console.warn(
-                "File sharing not supported, falling back to URL:",
-                error
-              );
+            if (error.name === "AbortError") {
+              // User cancelled, don't show error
+              return;
+            }
+            // Check if error is because files are not supported
+            if (error.message && error.message.includes("files")) {
+              console.warn("File sharing not supported, falling back to URL");
             } else {
-              return; // User cancelled
+              console.warn("Error sharing file, falling back to URL:", error);
             }
           }
         }
