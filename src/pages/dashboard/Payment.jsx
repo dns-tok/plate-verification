@@ -78,10 +78,11 @@ const Payment = () => {
 
   const totalAmount = calculateTotal();
 
-  // Create order when user clicks on payment method
-  const handlePaymentMethodSelect = async (method) => {
+  // Function to create order (can be called from multiple places)
+  const createOrder = async () => {
     if (cartItems.length === 0) {
       toast.error("Carrinho está vazio");
+      navigate("/buy-consultation");
       return;
     }
 
@@ -115,56 +116,97 @@ const Payment = () => {
 
       if (response && response.success) {
         setPaymentData(response);
-        setSelectedPaymentMethod(method);
-
-        // Get order_id from response (order.id is the correct location based on API response)
-        const orderId =
-          response.order?.id || response.order_id || response.data?.order_id;
-
-        if (method === "pix" && response.payment_options?.pix) {
-          // Initialize countdown timer
-          const expirationSeconds =
-            response.payment_options.pix.expiracao || 3600;
-          setTimeRemaining(expirationSeconds);
-          setIsExpired(false);
-          toast.success("Detalhes de pagamento PIX recuperados!");
-
-          // Start polling payment status for PIX
-          if (orderId) {
-            setIsCheckingPayment(true);
-            startPaymentStatusCheck(orderId);
-          } else {
-            console.error("Order ID not found in response for PIX payment");
-            toast.error(
-              "ID do pedido não encontrado. Por favor, tente novamente."
-            );
-          }
-        } else if (method === "card" && response.payment_options?.cartao) {
-          // Open payment URL in new tab
-          window.open(response.payment_options.cartao.payment_url, "_blank");
-
-          // Start checking payment status
-          if (orderId) {
-            setIsCheckingPayment(true);
-            startPaymentStatusCheck(orderId);
-          } else {
-            console.error("Order ID not found in response for card payment");
-            toast.error(
-              "ID do pedido não encontrado. A verificação do status do pagamento pode não funcionar."
-            );
-            // Still show loading state even if order_id is missing
-            setIsCheckingPayment(true);
-          }
-        }
+        toast.success(
+          "Pedido criado com sucesso! Escolha a forma de pagamento."
+        );
+      } else {
+        toast.error("Falha ao criar pedido. Por favor, tente novamente.");
       }
     } catch (error) {
       console.error("Failed to create order:", error);
       toast.error(
         error?.response?.data?.message ||
-          "Falha ao processar pagamento. Por favor, tente novamente."
+          "Falha ao criar pedido. Por favor, tente novamente."
       );
     } finally {
       setIsCreatingOrder(false);
+    }
+  };
+
+  // Create order when component mounts (when user navigates to payment page)
+  useEffect(() => {
+    // Reset state when component mounts
+    setSelectedPaymentMethod(null);
+    setPaymentData(null);
+    setIsCreatingOrder(false);
+    setIsCheckingPayment(false);
+    setTimeRemaining(null);
+    setIsExpired(false);
+
+    // Stop any existing payment check intervals
+    if (paymentCheckIntervalRef.current) {
+      clearInterval(paymentCheckIntervalRef.current);
+      paymentCheckIntervalRef.current = null;
+    }
+
+    createOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
+
+  // Handle payment method selection (use already created order data)
+  const handlePaymentMethodSelect = (method) => {
+    if (!paymentData) {
+      toast.error("Aguardando criação do pedido...");
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      toast.error("Carrinho está vazio");
+      return;
+    }
+
+    setSelectedPaymentMethod(method);
+
+    // Get order_id from response (order.id is the correct location based on API response)
+    const orderId =
+      paymentData.order?.id ||
+      paymentData.order_id ||
+      paymentData.data?.order_id;
+
+    if (method === "pix" && paymentData.payment_options?.pix) {
+      // Initialize countdown timer
+      const expirationSeconds =
+        paymentData.payment_options.pix.expiracao || 3600;
+      setTimeRemaining(expirationSeconds);
+      setIsExpired(false);
+      toast.success("Detalhes de pagamento PIX carregados!");
+
+      // Start polling payment status for PIX
+      if (orderId) {
+        setIsCheckingPayment(true);
+        startPaymentStatusCheck(orderId);
+      } else {
+        console.error("Order ID not found in response for PIX payment");
+        toast.error("ID do pedido não encontrado. Por favor, tente novamente.");
+      }
+    } else if (method === "card" && paymentData.payment_options?.cartao) {
+      // Open payment URL in new tab
+      window.open(paymentData.payment_options.cartao.payment_url, "_blank");
+
+      // Start checking payment status
+      if (orderId) {
+        setIsCheckingPayment(true);
+        startPaymentStatusCheck(orderId);
+      } else {
+        console.error("Order ID not found in response for card payment");
+        toast.error(
+          "ID do pedido não encontrado. A verificação do status do pagamento pode não funcionar."
+        );
+        // Still show loading state even if order_id is missing
+        setIsCheckingPayment(true);
+      }
+    } else {
+      toast.error(`Opção de pagamento ${method} não disponível`);
     }
   };
 
@@ -349,7 +391,8 @@ const Payment = () => {
                 }
                 setIsCheckingPayment(false);
                 setSelectedPaymentMethod(null);
-                setPaymentData(null);
+                // Keep paymentData so user can select payment method again
+                // Don't reset paymentData - the order is still valid
               } else {
                 // Otherwise, navigate back to buy page
                 navigate("/buy-consultation");
@@ -359,20 +402,24 @@ const Payment = () => {
           />
           <p className="text-xl font-medium">
             {isCreatingOrder
-              ? "Processando..."
+              ? "Criando pedido..."
               : isCheckingPayment
               ? "Aguardando confirmação de pagamento..."
-              : "Escolha a forma de pagamento:"}
+              : paymentData
+              ? "Escolha a forma de pagamento:"
+              : "Preparando pagamento..."}
           </p>
 
           <div
             className={`flex items-center gap-6 bg-[#F2F2F2] p-4 py-6 min-w-[380px] min-h-[93px] rounded-lg [&>*]:cursor-pointer [&>*]:w-20 [&>*]:rounded border-2 border-gray-400/20 hover:border-[#1AABFE] transition-all duration-300 ${
-              isCreatingOrder
+              isCreatingOrder || !paymentData
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer"
             }`}
             onClick={() =>
-              !isCreatingOrder && handlePaymentMethodSelect("card")
+              !isCreatingOrder &&
+              paymentData &&
+              handlePaymentMethodSelect("card")
             }
           >
             <img
@@ -396,12 +443,12 @@ const Payment = () => {
           </div>
           <button
             className={`relative flex items-center gap-6 bg-[#F2F2F2] p-3 min-w-[380px] min-h-[93px] rounded-lg border-2 border-gray-400/20 hover:border-[#1AABFE] transition-all duration-300 ${
-              isCreatingOrder
+              isCreatingOrder || !paymentData
                 ? "opacity-50 cursor-not-allowed"
                 : " cursor-pointer"
             }`}
             onClick={() => handlePaymentMethodSelect("pix")}
-            disabled={isCreatingOrder}
+            disabled={isCreatingOrder || !paymentData}
           >
             <div className="flex flex-col items-center gap-2 w-full">
               <img src="/assets/pix.svg" alt="" className="w-30" />
