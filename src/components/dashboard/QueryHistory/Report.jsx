@@ -304,7 +304,7 @@ const Report = ({ data, onClose, loading }) => {
   // Valor FIPE: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
   const valorFipe = reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
     ?.valorAtual
-    ? reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
+    ? formatCurrency(parseCurrency(reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual))
     : "Nada Consta";
   const valorAtual = precificadorII?.valor
     ? formatCurrency(parseCurrency(precificadorII.valor))
@@ -1050,7 +1050,7 @@ const Report = ({ data, onClose, loading }) => {
                         <AiFillDollarCircle />
                       </span>
                       <span className="flex flex-col text-sm whitespace-nowrap">
-                        Valor FIPE <strong>R$ {valorFipe}</strong>
+                        Valor FIPE <strong>{valorFipe}</strong>
                       </span>
                     </div>
                   )}
@@ -1412,7 +1412,7 @@ const Report = ({ data, onClose, loading }) => {
                 />
               ) : (
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                  <p className="text-gray-800">
+                  <p className="text-[#1AABFE]">
                     {reportData?.leilao?.descricao || "Nada Consta"}
                   </p>
                 </div>
@@ -1459,7 +1459,7 @@ const Report = ({ data, onClose, loading }) => {
                   </div>
                 ) : (
                   <div className="shrink-0 w-[30%] h-full flex items-center justify-center border-2 border-[#1AABFE]/80 rounded-xl bg-white">
-                    <p className="text-gray-800">Nada Consta</p>
+                    <p className="text-[#1AABFE]">Nada Consta</p>
                   </div>
                 )}
                 <div className="w-[70%] h-full flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
@@ -1947,19 +1947,19 @@ const Report = ({ data, onClose, loading }) => {
                               reportData.codigoMarcaModelo || "Nada Consta",
                           },
                           // Valor atual: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].historicoPreco[0].valor
-                          {
-                            label: "Valor atual",
-                            value: reportData.dadosBasicosDoVeiculo
-                              ?.informacoesFipe?.[0]?.historicoPreco?.[0]?.valor
-                              ? formatCurrency(
-                                  parseCurrency(
-                                    reportData.dadosBasicosDoVeiculo
-                                      .informacoesFipe[0].historicoPreco[0]
-                                      .valor
-                                  )
-                                )
-                              : valorAtual || "Nada Consta",
-                          },
+                          // {
+                          //   label: "Valor atual",
+                          //   value: reportData.dadosBasicosDoVeiculo
+                          //     ?.informacoesFipe?.[0]?.historicoPreco?.[0]?.valor
+                          //     ? formatCurrency(
+                          //         parseCurrency(
+                          //           reportData.dadosBasicosDoVeiculo
+                          //             .informacoesFipe[0].historicoPreco[0]
+                          //             .valor
+                          //         )
+                          //       )
+                          //     : valorAtual || "Nada Consta",
+                          // },
                           {
                             label: "Tipo de Carroceria",
                             value:
@@ -2906,7 +2906,7 @@ const Report = ({ data, onClose, loading }) => {
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-full p-4 py-2 bg-white">
+                    <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#1AABFE] rounded-full p-4 py-2 bg-white">
                       Nada Consta
                     </div>
                   )}
@@ -2931,7 +2931,7 @@ const Report = ({ data, onClose, loading }) => {
                           return (
                             <div
                               key={actualIndex}
-                              className="text-sm text-[#194D9A]"
+                              className="text-sm text-[#1AABFE]"
                             >
                               {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
                               {typeof opcional === "string"
@@ -2953,7 +2953,7 @@ const Report = ({ data, onClose, loading }) => {
                           return (
                             <div
                               key={actualIndex}
-                              className="text-sm text-[#194D9A]"
+                              className="text-sm text-[#1AABFE]"
                             >
                               {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
                               {typeof opcional === "string"
@@ -2967,7 +2967,7 @@ const Report = ({ data, onClose, loading }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-full p-4 py-2 bg-white">
+                  <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#1AABFE] rounded-full p-4 py-2 bg-white">
                     Nada Consta
                   </div>
                 )}
@@ -3211,7 +3211,7 @@ const Report = ({ data, onClose, loading }) => {
                           return (
                             <p
                               key={index}
-                              className="text-sm text-[#194D9A] leading-relaxed"
+                              className="text-sm text-[#1AABFE] leading-relaxed"
                             >
                               {descricao}
                             </p>
@@ -3447,9 +3447,9 @@ const Report = ({ data, onClose, loading }) => {
                       </div>
                     ))
                   ) : (
-                    <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white">
-                      <p className="text-sm text-gray-800 leading-relaxed ">
-                        Nada Consta
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
+                      <p className=" text-[#1AABFE] leading-relaxed ">
+                        Informação não encontrada nas bases consultadas
                       </p>
                     </div>
                   )}
