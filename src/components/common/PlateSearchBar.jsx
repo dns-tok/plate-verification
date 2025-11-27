@@ -28,6 +28,8 @@ const PlateSearchBar = ({
     licensePlate: z.string(),
     chassis: z.string(),
     logo: z.string(),
+    anoModelo: z.string().optional(),
+    cor: z.string().optional(),
   });
 
   const form = useForm({
@@ -37,6 +39,8 @@ const PlateSearchBar = ({
       licensePlate: "",
       chassis: "",
       logo: "",
+      anoModelo: "",
+      cor: "",
     },
   });
 
@@ -45,11 +49,30 @@ const PlateSearchBar = ({
       toast.error("Please enter a valid license plate");
       return;
     }
+
+    // Meta Pixel - Search event
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'Search', {
+        search_string: licensePlate,
+        content_category: 'Consulta Placa'
+      });
+    }
+
     setIsSearchingPlate(true);
     try {
       const result = await searchPlate(unmaskPlate(licensePlate));
       setPlateSearchResult(result);
       onSuccess && onSuccess(result, unmaskPlate(licensePlate));
+      
+      // Meta Pixel - Lead event for successful search
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('track', 'Lead', {
+          content_name: 'Consulta de Placa',
+          content_category: 'Formulario',
+          value: licensePlate
+        });
+      }
+
       if (openModalOnSuccess) {
         setShowSearchPlatePopup(true);
       }
@@ -76,6 +99,8 @@ const PlateSearchBar = ({
         licensePlate: formatPlateDisplay(plateSearchResult.Placa) || "",
         chassis: plateSearchResult.Chassi || "",
         logo: plateSearchResult.logo || "",
+        anoModelo: plateSearchResult.anoModelo || plateSearchResult.AnoModelo || "",
+        cor: plateSearchResult.cor || plateSearchResult.Cor || "",
       });
     }
     // eslint-disable-next-line
@@ -89,6 +114,8 @@ const PlateSearchBar = ({
       licensePlate: "",
       chassis: "",
       logo: "",
+      anoModelo: "",
+      cor: "",
     });
   };
 
@@ -208,7 +235,7 @@ const PlateSearchBar = ({
       )}
       {showSearchPlatePopup && (
         <Modal
-          title={!plateSearchResult ? "Search Plate" : "Confirmar informações"}
+          title={!plateSearchResult ? "Search Plate" : "Resumo do veículo"}
           onClose={handleModalClose}
           className="!bg-[#194D9A] !text-white !rounded-3xl !p-8"
         >

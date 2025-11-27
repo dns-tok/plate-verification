@@ -87,7 +87,7 @@ const FaqSection = () => {
         {/* Left Image */}
         <div className="md:w-[50%] max-h-[40rem]">
           <img
-            src="/faqSideImg.svg"
+            src="/faqSideImg.webp"
             alt="FAQ Illustration"
             loading="lazy"
             className=" object-cover w-full h-full"

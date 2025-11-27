@@ -185,8 +185,8 @@ const PriceSection = () => {
       }));
     }
     
-    // Navigate to home with hash to trigger login modal
-    window.location.href = "/#showLogin";
+    // Navigate to home with hash to trigger signup modal (not login)
+    window.location.href = "/#showSignup";
   };
 
   useEffect(() => {
@@ -194,7 +194,7 @@ const PriceSection = () => {
   }, [showMulti]);
 
   return (
-    <section className="text-white commonPadding bg-[url('/plansBg.svg')] bg-cover bg-center bg-no-repeat">
+    <section className="text-white commonPadding bg-[url('/plansBg.webp')] bg-cover bg-center bg-no-repeat">
       {/* Header */}
       <div className="text-center mb-10 md:mb-12 lg:mb-20">
         <h1 className="text-[2rem] md:text-[3rem] lg:text-[4rem] font-bold leading-none mb-3">

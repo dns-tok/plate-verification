@@ -7,7 +7,7 @@ const RollingCards = () => {
         {/* Rolling Images Container */}
         <div className="relative w-full  flex items-center justify-center">
           <img
-            src="/rollingImages.svg"
+            src="/rollingImages.webp"
             alt="Rolling car images"
             className="w-full h-full object-contain roll-image"
           />

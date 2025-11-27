@@ -179,12 +179,24 @@ export async function getHistoryDetails(queryId) {
   return data;
 }
 
-export async function validateCoupon(couponCode, orderValue) {
-  const { data } = await apiClient.post("/validate-coupon", {
+export async function validateCoupon(couponCode, orderValue, items) {
+  const payload = {
+    items: items || [],
     coupon_code: couponCode,
-    order_value: orderValue,
-  });
-  return data;
+    transaction_type: "inbound",
+    validation_only: true,
+  };
+  console.log("validateCoupon payload:", payload);
+  
+  try {
+    const { data } = await apiClient.post("/orders/create-or-validate", payload);
+    console.log("validateCoupon API response data:", data);
+    return data;
+  } catch (error) {
+    console.error("validateCoupon API error:", error);
+    console.error("validateCoupon error response:", error.response?.data);
+    throw error;
+  }
 }
 
 export async function criarOrder(placa, plano, cupom = "") {

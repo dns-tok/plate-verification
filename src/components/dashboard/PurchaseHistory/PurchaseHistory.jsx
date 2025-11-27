@@ -71,7 +71,9 @@ const Purchases = () => {
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No transactions found.
+            Você ainda não realizou nenhuma compra.
+            <br />
+            Que tal verificar seu primeiro veículo agora?
           </div>
         ) : (
           <div className="overflow-x-auto">

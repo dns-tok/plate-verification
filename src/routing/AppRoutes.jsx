@@ -9,6 +9,7 @@ import TermsOfUse from "../pages/public/TermsOfUse";
 import ResetPasswordRedirect from "../components/auth/ResetPasswordRedirect";
 import AboutUs from "../pages/public/AboutUs";
 import HowItWorks from "../pages/public/HowItWorks";
+import Blog from "../pages/public/Blog";
 
 // Dashboard pages (from user-panel)
 import Consultation from "../pages/dashboard/Consultation";
@@ -91,6 +92,15 @@ export default function AppRoutes() {
         element={
           <PublicRoute>
             <AboutUs />
+          </PublicRoute>
+        }
+      />
+      
+      <Route
+        path="/blog"
+        element={
+          <PublicRoute>
+            <Blog />
           </PublicRoute>
         }
       />

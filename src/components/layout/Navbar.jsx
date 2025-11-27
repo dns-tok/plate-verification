@@ -26,8 +26,7 @@ const navLinks = [
   },
   {
     name: "Blog",
-    href: "https://www.placaverificada.com.br/blog",
-    isExternal: true,
+    href: "/blog",
   },
   {
     name: "Sobre Nós",
@@ -89,6 +88,14 @@ const Navbar = () => {
 
           <button
             onClick={() => {
+              // Meta Pixel - Lead event for login button click
+              if (typeof window !== 'undefined' && window.fbq) {
+                window.fbq('track', 'Lead', {
+                  content_name: 'Botão Entrar Navbar',
+                  content_category: 'Login'
+                });
+              }
+
               if (window.location.pathname === "/") {
                 window.dispatchEvent(new Event("showLoginModal"));
               } else {
@@ -128,6 +135,14 @@ const Navbar = () => {
           <button
             className={`text-lg bg-[#1AABFE] hover:bg-[#1590d4] font-semibold w-fit whitespace-nowrap text-white  transition-colors duration-300 px-8 py-2  cursor-pointer rounded-full`}
             onClick={() => {
+              // Meta Pixel - Lead event for mobile login button click
+              if (typeof window !== 'undefined' && window.fbq) {
+                window.fbq('track', 'Lead', {
+                  content_name: 'Botão Entrar Mobile',
+                  content_category: 'Login'
+                });
+              }
+
               setIsMenuOpen(false);
               if (window.location.pathname === "/") {
                 window.dispatchEvent(new Event("showLoginModal"));

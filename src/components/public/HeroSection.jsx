@@ -8,17 +8,17 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="min-h-[36rem] bg-[url('/heroBg.svg')] bg-cover bg-center bg-no-repeat overflow-hidden relative commonPadding flex flex-col lg:flex-row gap-10 lg:gap-0 items-end py-8">
+    <div className="min-h-[36rem] bg-[url('/heroBg.webp')] bg-cover bg-center bg-no-repeat overflow-hidden relative commonPadding flex flex-col lg:flex-row gap-10 lg:gap-0 items-end py-8">
       {/* Left Content */}
       <div className="w-full flex flex-col z-10 text-center md:text-start">
-        <h1 className="text-white text-[2rem] md:text-[3.5rem] font-bold md:pb-[3rem] md:max-w-[70vw]">
-          Antes de comprar um carro semi-novo, consulte.
+        <h1 className="text-white text-[1.5rem] md:text-[2.5rem] font-bold md:pb-[3rem] md:max-w-[70vw]">
+          <span className="text-[#1AABFE]">Veja débitos, multas, leilão e histórico completo.</span>
           <br />
-          <span className="text-[#1AABFE]">Proteja o seu sonho.</span>
+          Digite a placa e confira.
         </h1>
         <div className="md:hidden w-full  h-[60%]  flex items-end justify-center lg:justify-end z-0 p-6">
           <img
-            src="/car.png"
+            src="/car.webp"
             alt="Car"
             className="w-auto h-full object-contain object-bottom transform scale-110 lg:scale-100"
           />
@@ -30,9 +30,9 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className="text-white text-[1rem] md:text-[1.2rem] pt-4 md:pt-[1rem] leading-relaxed">
-            Consulte tudo o que você precisa de um veículo semi-novo, afinal, o
-            que você quer é comprar um carro e não ter uma história para contar.
-            Temos o relatório mais completo.
+            Consulte tudo o que você precisa, afinal, o que você quer é comprar
+            um veículo e não ter uma história ruim para contar.
+            Temos o relatório veicular mais completo.
           </p>
         </div>
 
@@ -65,8 +65,9 @@ const HeroSection = () => {
       {/* Car Image */}
       <div className="hidden md:flex lg:absolute bottom-0 right-0 w-full lg:w-[55%] h-[60%] lg:h-full  items-end justify-center lg:justify-end z-0 p-8 md:p-0">
         <img
-          src="/car.png"
+          src="/car.webp"
           alt="Car"
+          fetchpriority="high"
           className="w-auto h-full object-contain object-bottom transform scale-110 lg:scale-100"
         />
       </div>

@@ -226,8 +226,8 @@ const Report = ({ data, onClose, loading }) => {
       : formatDate(responseItem.requested_at || new Date().toISOString());
     // ID da consulta: response.body._id
     queryId = responseItem._id || "Nada Consta";
-    // Status da consulta: response.status → "Parcial" if status_code !== 200
-    status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
+    // Status da consulta: response.status → "Em processamento" if status_code !== 200
+    status = responseItem.status_code === 200 ? "Sucesso" : "Em processamento";
   } else if (responseItem?.body?.data) {
     reportData = responseItem.body.data;
     consultationDate = responseItem.body.headerInfos?.date
@@ -235,20 +235,20 @@ const Report = ({ data, onClose, loading }) => {
       : formatDate(new Date().toISOString());
     // ID da consulta: response.body._id
     queryId = responseItem._id || "Nada Consta";
-    // Status da consulta: response.status → "Parcial" if status_code !== 200
-    status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
+    // Status da consulta: response.status → "Em processamento" if status_code !== 200
+    status = responseItem.status_code === 200 ? "Sucesso" : "Em processamento";
   } else if (responseItem?.data) {
     reportData = responseItem.data;
     queryId = responseItem._id || "Nada Consta";
-    status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
+    status = responseItem.status_code === 200 ? "Sucesso" : "Em processamento";
   } else if (responseItem?.response?.body) {
     reportData = responseItem.response.body;
     queryId = responseItem._id || "Nada Consta";
-    status = responseItem.status_code === 200 ? "Sucesso" : "Parcial";
+    status = responseItem.status_code === 200 ? "Sucesso" : "Em processamento";
   } else {
     reportData = responseItem;
     queryId = responseItem?._id || "Nada Consta";
-    status = responseItem?.status_code === 200 ? "Sucesso" : "Parcial";
+    status = responseItem?.status_code === 200 ? "Sucesso" : "Em processamento";
   }
 
   if (!reportData || typeof reportData !== "object") {
@@ -301,11 +301,16 @@ const Report = ({ data, onClose, loading }) => {
     precificadorI?.codigo ||
     "Nada Consta";
 
-  // Valor FIPE: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
-  const valorFipe = reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
-    ?.valorAtual
-    ? formatCurrency(parseCurrency(reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual))
-    : "Nada Consta";
+    // Valor FIPE: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
+    const valorFipe = reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
+      ?.valorAtual
+      ? reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
+      : "Nada Consta";
+    // Formatted for display in BRL (R$ XX.XXX,XX)
+    const valorFipeFormatted =
+      valorFipe && valorFipe !== "Nada Consta"
+        ? formatCurrency(parseCurrency(valorFipe))
+        : "Nada Consta";
   const valorAtual = precificadorII?.valor
     ? formatCurrency(parseCurrency(precificadorII.valor))
     : "Nada Consta";
@@ -485,6 +490,7 @@ const Report = ({ data, onClose, loading }) => {
       const trimmed = value.trim().toLowerCase();
       if (
         trimmed === "" ||
+        trimmed === "0,00" ||
         trimmed === "n/a" ||
         trimmed === "nao" ||
         trimmed === "não" ||
@@ -528,10 +534,52 @@ const Report = ({ data, onClose, loading }) => {
   })();
   // Bancos, Financeiras ou seguradoras: response.body.data.baseEstadual.restricaoFinanceira
   const hasBancosFinanceiras = checkSimNao(baseEstadual.restricaoFinanceira);
+  
   // Restrições nacionais: response.body.data.restricoes
-  const hasRestricoesNacionais = checkSimNao(reportData.restricoes);
+  //const hasRestricoesNacionais = checkSimNao(reportData.restricoes);
+
+  const comunicacaovnac = baseNacional.indicadorComunicacaoVendas?.toUpperCase().trim();
+  const restricaofnac = baseNacional.restricaoFinanciadora?.toUpperCase().trim();
+  const restricao1nac = baseNacional.restricao1?.toUpperCase().trim();
+
+  const hasRestricoesNacionais =
+  comunicacaovnac === "CONSTA COMUNICACAO DE VENDAS" ||
+  restricao1nac === "ALIENACAO FIDUCIARIA" ||
+  restricao1nac === "ALTERACAO DOC" ||
+  restricao1nac === "RENAINF" ||
+  restricao1nac === "RESTRICAO ADMINISTRATIVA" ||
+  restricaofnac === "CONSTA RESTRICAO ADMINISTRATIVA" ||
+  restricaofnac === "ALIENACAO FIDUCIARIA"
+    ? "Sim"
+    : !comunicacaovnac || comunicacaovnac === "NAO" || comunicacaovnac === "NADA CONSTA" 
+    ? "Não"
+    : !restricao1nac || restricao1nac === "NADA CONSTA" 
+    ? "Não"
+    : !restricaofnac || restricaofnac === "NADA CONSTA" 
+    ? "Não"
+    : "Não"; 
+  
   // Restrições estaduais: response.body.data.baseEstadual.existeDebitoMulta
-  const hasRestricoesEstaduais = checkSimNao(baseEstadual.existeDebitoMulta);
+  //const hasRestricoesEstaduais = checkSimNao(baseEstadual.existeDebitoMulta)  || checkSimNao(baseEstadual.comunicacaoVenda);
+  
+  // Estava o parâmetro anterior, entretanto, temos N condições que o atual fornecedor não traz em uma única variável, sendo assim, a condição abaixo foi criada
+  const comunicacaov = baseEstadual.comunicacaoVenda?.toUpperCase().trim();
+  const restricaof = baseEstadual.restricaoFinanceira?.toUpperCase().trim();
+  const resadministrativa = baseEstadual.restricaoAdminisrativa?.toUpperCase().trim();
+
+  const hasRestricoesEstaduais =
+  comunicacaov === "CONSTA COMUNICACAO DE VENDAS" ||
+  resadministrativa === "CONSTA RESTRICAO ADMINISTRATIVA" ||
+  restricaof === "ALIENACAO FIDUCIARIA"
+    ? "Sim"
+    : !comunicacaov || comunicacaov === "NAO CONSTA COMUNICACAO DE VENDAS"
+    ? "Não"
+    : !resadministrativa || resadministrativa === "NADA CONSTA"
+    ? "Não"
+    : !restricaof || restricaof === "NADA CONSTA"
+    ? "Não"
+    : "Não"; 
+  
   // motor alterado: response.body.data.baseEstadual.dataAlteracaoMotor
   const hasMotorAlterado = checkSimNao(baseEstadual.dataAlteracaoMotor);
   // Chassi remarcado: response.body.data.baseEstadual.tipoMarcacaoChassi
@@ -1050,7 +1098,7 @@ const Report = ({ data, onClose, loading }) => {
                         <AiFillDollarCircle />
                       </span>
                       <span className="flex flex-col text-sm whitespace-nowrap">
-                        Valor FIPE <strong>{valorFipe}</strong>
+                        Valor FIPE <strong>{valorFipeFormatted}</strong>
                       </span>
                     </div>
                   )}
@@ -1077,6 +1125,27 @@ const Report = ({ data, onClose, loading }) => {
               </div>
             </div>
           </div>
+
+            {/* Botões de compartilhamento no cabeçalho do relatório */}
+            <div className="border-t-2 border-transparent pt-6 mt-6 flex flex-col items-end justify-center">
+              <div className="flex  gap-4 justify-center">
+                <button
+                  disabled={downloading}
+                  onClick={downloadPDF}
+                  className="bg-[#194D9A] hover:bg-[#1AABFE] text-white font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {downloading ? "Baixando..." : "Baixar PDF"}
+                </button>
+                <button
+                  onClick={shareReport}
+                  disabled={sharing}
+                  className="bg-[#1AABFE] hover:bg-[#1590d4] text-white font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {sharing ? "Compartilhando..." : "Compartilhar relatório"}
+                </button>
+              </div>
+            </div>
+
           <div className="space-y-6 max-w-[88%] mx-auto">
             {/* Resumo IA - Only for Ultra and Premium */}
             {reportData.ia &&
@@ -1085,6 +1154,7 @@ const Report = ({ data, onClose, loading }) => {
             {/* Resumo da consulta - Block 2 mapping */}
             <div className="space-y-4">
               {renderSectionTitle("Resumo da consulta")}
+           
               <div className="grid grid-cols-3 gap-3 gap-x-5">
                 {isSummaryBoxVisible("Leilão", planName) &&
                   renderStatusBox("Leilão", hasLeilao, "/report/auction.png")}
@@ -1156,7 +1226,7 @@ const Report = ({ data, onClose, loading }) => {
             </div>
             {/* Insights do veículo - Block 3 mapping */}
             <div className="">
-              {renderSectionTitle("Informacoes de Risco")}
+              {renderSectionTitle("Informações de Risco")}
               <div className="grid grid-cols-3 gap-6">
                 {/* Nível de risco geral: response.body.data.leilao.score.aceitacao */}
                 {nivelRisco > 0 &&
@@ -1412,7 +1482,7 @@ const Report = ({ data, onClose, loading }) => {
                 />
               ) : (
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                  <p className="text-[#1AABFE]">
+                  <p className="text-gray-800">
                     {reportData?.leilao?.descricao || "Nada Consta"}
                   </p>
                 </div>
@@ -1459,7 +1529,7 @@ const Report = ({ data, onClose, loading }) => {
                   </div>
                 ) : (
                   <div className="shrink-0 w-[30%] h-full flex items-center justify-center border-2 border-[#1AABFE]/80 rounded-xl bg-white">
-                    <p className="text-[#1AABFE]">Nada Consta</p>
+                    <p className="text-gray-800">Nada Consta</p>
                   </div>
                 )}
                 <div className="w-[70%] h-full flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
@@ -1946,20 +2016,18 @@ const Report = ({ data, onClose, loading }) => {
                             value:
                               reportData.codigoMarcaModelo || "Nada Consta",
                           },
-                          // Valor atual: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].historicoPreco[0].valor
-                          // {
-                          //   label: "Valor atual",
-                          //   value: reportData.dadosBasicosDoVeiculo
-                          //     ?.informacoesFipe?.[0]?.historicoPreco?.[0]?.valor
-                          //     ? formatCurrency(
-                          //         parseCurrency(
-                          //           reportData.dadosBasicosDoVeiculo
-                          //             .informacoesFipe[0].historicoPreco[0]
-                          //             .valor
-                          //         )
-                          //       )
-                          //     : valorAtual || "Nada Consta",
-                          // },
+                          // Valor atual: response.body.data.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
+                          {
+                            label: "Valor atual",
+                            value: reportData.dadosBasicosDoVeiculo
+                              ?.informacoesFipe?.[0]?.valorAtual
+                              ? formatCurrency(
+                                  parseCurrency(
+                                    reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
+                                  )
+                                )
+                              : valorAtual || "Nada Consta",
+                          },
                           {
                             label: "Tipo de Carroceria",
                             value:
@@ -2477,11 +2545,13 @@ const Report = ({ data, onClose, loading }) => {
                         )}
                         {/* Restrição 1: response.body.data.baseEstadual.debitoRenainf */}
                         {renderField(
-                          "Restrição 1",
-                          baseEstadual.debitoRenainf || "Nada consta",
+                        "Restrição 1",
+                        !baseEstadual.debitoRenainf || baseEstadual.debitoRenainf.trim() === "0,00"
+                            ? "Nada Consta"
+                          : baseEstadual.debitoRenainf,
                           baseEstadual.debitoRenainf &&
-                            baseEstadual.debitoRenainf.toLowerCase().trim() !==
-                              "nada consta"
+                          baseEstadual.debitoRenainf.trim() !== "0,00" &&
+                          baseEstadual.debitoRenainf.toLowerCase().trim() !== "nada consta"
                         )}
                         {/* Restrição 2: response.body.data.baseEstadual.restricao2 */}
                         {renderField(
@@ -2906,7 +2976,7 @@ const Report = ({ data, onClose, loading }) => {
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#1AABFE] rounded-full p-4 py-2 bg-white">
+                    <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-full p-4 py-2 bg-white">
                       Nada Consta
                     </div>
                   )}
@@ -2931,7 +3001,7 @@ const Report = ({ data, onClose, loading }) => {
                           return (
                             <div
                               key={actualIndex}
-                              className="text-sm text-[#1AABFE]"
+                              className="text-sm text-[#194D9A]"
                             >
                               {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
                               {typeof opcional === "string"
@@ -2953,7 +3023,7 @@ const Report = ({ data, onClose, loading }) => {
                           return (
                             <div
                               key={actualIndex}
-                              className="text-sm text-[#1AABFE]"
+                              className="text-sm text-[#194D9A]"
                             >
                               {/* Opcional {actualIndex + 1}: response.body.data.anuncio.opcionais[{actualIndex}] */}
                               {typeof opcional === "string"
@@ -2967,7 +3037,7 @@ const Report = ({ data, onClose, loading }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#1AABFE] rounded-full p-4 py-2 bg-white">
+                  <div className="grid grid-cols-2 gap-4 border-2 border-[#1AABFE]/80 text-[#194D9A] rounded-full p-4 py-2 bg-white">
                     Nada Consta
                   </div>
                 )}
@@ -3211,7 +3281,7 @@ const Report = ({ data, onClose, loading }) => {
                           return (
                             <p
                               key={index}
-                              className="text-sm text-[#1AABFE] leading-relaxed"
+                              className="text-sm text-[#194D9A] leading-relaxed"
                             >
                               {descricao}
                             </p>
@@ -3447,9 +3517,9 @@ const Report = ({ data, onClose, loading }) => {
                       </div>
                     ))
                   ) : (
-                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                      <p className=" text-[#1AABFE] leading-relaxed ">
-                        Informação não encontrada nas bases consultadas
+                    <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white">
+                      <p className="text-sm text-gray-800 leading-relaxed ">
+                        Nada Consta
                       </p>
                     </div>
                   )}

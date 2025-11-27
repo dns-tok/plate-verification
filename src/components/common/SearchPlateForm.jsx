@@ -76,6 +76,24 @@ const SearchPlateForm = ({
         inputContainerClassName={containerClass}
         disabled
       />
+      <InputField
+        form={form}
+        label="Ano Modelo"
+        name="anoModelo"
+        labelClassName={labelClass}
+        inputClassName={inputClass}
+        inputContainerClassName={containerClass}
+        disabled
+      />
+      <InputField
+        form={form}
+        label="Cor"
+        name="cor"
+        labelClassName={labelClass}
+        inputClassName={inputClass}
+        inputContainerClassName={containerClass}
+        disabled
+      />
       <div className="W-full">
         <div className="bg-white rounded-md w-[100px] h-[100px] aspect-square mx-auto">
           <img

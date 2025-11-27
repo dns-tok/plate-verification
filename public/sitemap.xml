@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Página inicial -->
+  <url>
+    <loc>https://www.placaverificada.com.br/</loc>
+    <lastmod>2025-11-24</lastmod>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Seção Planos -->
+  <url>
+    <loc>https://www.placaverificada.com.br/#plans</loc>
+    <lastmod>2025-11-24</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Página de Como Funciona -->
+  <url>
+    <loc>https://www.placaverificada.com.br/how-it-works</loc>
+    <lastmod>2025-11-24</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+
+  <!-- Página de Vantagens -->
+  <url>
+    <loc>http://www.placaverificada.com.br/#advantages</loc>
+    <lastmod>2025-11-24</lastmod>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Página de contato -->
+  <url>
+    <loc>https://www.placaverificada.com.br/#contact</loc>
+    <lastmod>2025-11-24</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Página de Blog-->
+  <url>
+    <loc>https://www.placaverificada.com.br/blog</loc>
+    <lastmod>2025-11-24</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>
+
+

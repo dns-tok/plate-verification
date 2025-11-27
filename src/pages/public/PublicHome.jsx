@@ -63,6 +63,10 @@ const PublicHome = () => {
       setShowLoginModal(true);
     };
 
+    const handleShowSignup = () => {
+      setShowSignupModal(true);
+    };
+
     const checkHashForLogin = () => {
       if (window.location.hash === "#showLogin") {
         setShowLoginModal(true);
@@ -70,15 +74,27 @@ const PublicHome = () => {
       }
     };
 
+    const checkHashForSignup = () => {
+      if (window.location.hash === "#showSignup") {
+        setShowSignupModal(true);
+        window.history.replaceState(null, "", "/");
+      }
+    };
+
     window.addEventListener("showLoginModal", handleShowLogin);
+    window.addEventListener("showSignupModal", handleShowSignup);
     window.addEventListener("hashchange", checkHashForLogin);
+    window.addEventListener("hashchange", checkHashForSignup);
 
     // Check on mount
     checkHashForLogin();
+    checkHashForSignup();
 
     return () => {
       window.removeEventListener("showLoginModal", handleShowLogin);
+      window.removeEventListener("showSignupModal", handleShowSignup);
       window.removeEventListener("hashchange", checkHashForLogin);
+      window.removeEventListener("hashchange", checkHashForSignup);
     };
   }, []);
 

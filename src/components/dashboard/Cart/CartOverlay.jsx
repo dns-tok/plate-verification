@@ -8,7 +8,11 @@ import { FaSpinner } from "react-icons/fa6";
 import { BiArrowBack } from "react-icons/bi";
 import { BsCartX } from "react-icons/bs";
 import { formatCurrency, parseCurrency } from "../../../utils/currencyUtils";
-import { getMultiPlanCouponCode } from "../../../utils/multiPlanUtils";
+import { 
+  getMultiPlanCouponCode, 
+  isMultiPlan, 
+  getMultiPlanItemCode 
+} from "../../../utils/multiPlanUtils";
 
 export default function CartOverlay() {
   const navigate = useNavigate();
@@ -30,6 +34,44 @@ export default function CartOverlay() {
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [isAutoApplyingCoupon, setIsAutoApplyingCoupon] = useState(false);
   const lastProcessedCouponRef = useRef(null);
+
+  // Helper function to handle quantity changes and remove coupon
+  const handleQuantityChange = () => {
+    if (appliedCoupon && appliedCoupon.code) {
+      setAppliedCoupon(null);
+      setCouponDiscount(0);
+      setCouponCode("");
+      lastProcessedCouponRef.current = null;
+      toast.info("Quantidade alterada! Por favor, informe o cupom novamente após definir as quantidades desejadas.");
+    }
+  };
+
+  // Helper function to map cart items to API format
+  const mapCartItemsToApiFormat = () => {
+    return cartItems.map((item) => {
+      // Check if it's a multi-plan first
+      if (isMultiPlan(item)) {
+        const itemCode = getMultiPlanItemCode(item);
+        if (itemCode) return { code: itemCode, quantity: item.quantity || 1 };
+      }
+
+      // Fallback to name-based mapping for single plans
+      const planName = item.name;
+      const codeMap = {
+        "Premium Plan": "premium",
+        "Ultra Plan": "ultra",
+        "Plus Plan": "plus",
+        "Light Plan": "light",
+        "Always Present": "always_present",
+        "Eye on security": "eye_on_security",
+        Professional: "professional",
+        Negotiator: "negotiator",
+        "Test Drive": "test_drive",
+      };
+      const code = item?.apiData?.code || codeMap[planName] || planName.toLowerCase().replace(" ", "_");
+      return { code, quantity: item.quantity || 1 };
+    });
+  };
 
   // Calculate order value
   const orderValue = cartItems.reduce(
@@ -63,17 +105,26 @@ export default function CartOverlay() {
         setIsAutoApplyingCoupon(true);
 
         // Validate and apply the coupon
-        validateCoupon(multiPlanCoupon, orderValue)
+        validateCoupon(multiPlanCoupon, orderValue, mapCartItemsToApiFormat())
           .then((response) => {
-            if (response && response.discount) {
+            console.log("Multi-plan coupon validation response:", response);
+            console.log("Multi-plan response valid:", response?.valid);
+            console.log("Multi-plan response success:", response?.success);
+            console.log("Multi-plan response discount:", response?.discount);
+            console.log("Multi-plan response validation_result:", response?.validation_result);
+            console.log("Multi-plan response data.discount:", response?.data?.discount);
+            
+            if (response && (response.valid || response.success) && (response.discount || response.data?.discount || response.validation_result?.discount_amount)) {
+              const discount = response.discount || response.data?.discount || response.validation_result?.discount_amount || 0;
               setAppliedCoupon({
                 code: multiPlanCoupon,
-                discount: response.discount,
+                discount: discount,
               });
-              setCouponDiscount(response.discount);
+              setCouponDiscount(discount);
               // Ensure coupon code stays visible
               setCouponCode(multiPlanCoupon);
             } else {
+              console.log("Multi-plan coupon validation failed");
               // Validation failed, but keep coupon code visible
               setCouponCode(multiPlanCoupon);
               setAppliedCoupon(null);
@@ -83,6 +134,9 @@ export default function CartOverlay() {
           })
           .catch((error) => {
             console.error("Failed to auto-apply multi-plan coupon:", error);
+            console.error("Multi-plan error response:", error.response);
+            console.error("Multi-plan error response data:", error.response?.data);
+            console.error("Multi-plan error status:", error.response?.status);
             // On error, keep coupon code visible but clear applied state
             setCouponCode(multiPlanCoupon);
             setAppliedCoupon(null);
@@ -131,26 +185,38 @@ export default function CartOverlay() {
 
     setIsValidatingCoupon(true);
     try {
-      const response = await validateCoupon(couponCode, orderValue);
+      const response = await validateCoupon(couponCode, orderValue, mapCartItemsToApiFormat());
+      
+      console.log("Coupon validation response:", response);
+      console.log("Response valid:", response?.valid);
+      console.log("Response success:", response?.success);
+      console.log("Response discount:", response?.discount);
+      console.log("Response validation_result:", response?.validation_result);
+      console.log("Response data.discount:", response?.data?.discount);
 
-      if (response && response.discount) {
+      if (response && (response.valid || response.success) && (response.discount || response.data?.discount || response.validation_result?.discount_amount)) {
+        const discount = response.discount || response.data?.discount || response.validation_result?.discount_amount || 0;
         setAppliedCoupon({
           code: couponCode,
-          discount: response.discount,
+          discount: discount,
         });
-        setCouponDiscount(response.discount);
+        setCouponDiscount(discount);
         // Reset ref so multi-plan coupons can re-apply if needed
         lastProcessedCouponRef.current = null;
-        toast.success(response?.message || "Coupon applied successfully!");
+        toast.success(response?.message || "Cupom validado com sucesso!");
       } else {
+        console.log("Coupon validation failed - showing error message");
         toast.error(
-          response?.message ||
-            response?.error ||
+          response?.error ||
+            response?.message ||
             "Invalid or expired coupon code"
         );
       }
     } catch (error) {
       console.error("Coupon validation failed:", error);
+      console.error("Error response:", error.response);
+      console.error("Error response data:", error.response?.data);
+      console.error("Error status:", error.response?.status);
       const errorMessage =
         error?.response?.data?.message ||
         error?.response?.data?.error ||
@@ -166,7 +232,7 @@ export default function CartOverlay() {
     setCouponDiscount(0);
     setCouponCode("");
     lastProcessedCouponRef.current = null;
-    toast.info("Coupon removed");
+    toast.info("Cupom removido");
   };
 
   const calculateTotal = () => {
@@ -184,11 +250,12 @@ export default function CartOverlay() {
 
       {/* Cart Overlay */}
       <div
-        className={`fixed top-0 right-0 h-dvh w-full md:max-w-[400px] bg-white z-[9999] transform transition-transform duration-300 ease-in-out  ${
+        //className={`fixed top-0 right-0 h-dvh w-full md:max-w-[400px] bg-white z-[9999] transform transition-transform duration-300 ease-in-out  ${
+        className={`fixed top-0 right-0 min-h-screen w-full md:max-w-[400px] bg-white z-[9999] transform transition-transform duration-300 ease-in-out  ${  
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col justify-between h-full  overflow-hidden relative ">
+        <div className="flex flex-col justify-between h-full  overflow-y-auto relative ">
           {/* Header */}
           <div className=" top-0 left-0 w-full z-10 bg-white flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center justify-between w-full gap-2">
@@ -216,14 +283,18 @@ export default function CartOverlay() {
           <div className="relative ">
             {cartItems.length > 0 ? (
               <div
-                className="px-6 py-4 space-y-4 w-full overflow-y-auto"
+                className="px-6 py-4 space-y-4 w-full overflow-y-auto flex-1"
+                
+                /* 
+                // Retire essa linha para que o carrinho fique dinâmico nas telas mobiles não comendo os botões de pagamento. 
                 style={{
                   height: `calc(100vh - ${
                     (cartOverlayRef.current?.clientHeight >= 260
                       ? cartOverlayRef.current?.clientHeight
                       : 260) + 100
                   }px)`,
-                }}
+                }} */
+
               >
                 {cartItems.map((item) => {
                   const itemPrice = parseCurrency(item.price);
@@ -257,7 +328,10 @@ export default function CartOverlay() {
                         {item.quantity > 1 ? (
                           <>
                             <button
-                              onClick={() => decreaseQuantity(item)}
+                              onClick={() => {
+                                decreaseQuantity(item);
+                                handleQuantityChange();
+                              }}
                               className="text-gray-600 hover:text-gray-800 cursor-pointer text-2xl"
                             >
                               -
@@ -265,7 +339,10 @@ export default function CartOverlay() {
                           </>
                         ) : (
                           <button
-                            onClick={() => removeFromCart(item)}
+                            onClick={() => {
+                              removeFromCart(item);
+                              handleQuantityChange();
+                            }}
                             className="text-red-600 hover:text-red-800 cursor-pointer text-lg"
                           >
                             <MdDelete />
@@ -275,7 +352,10 @@ export default function CartOverlay() {
                           {item.quantity}
                         </p>
                         <button
-                          onClick={() => increaseQuantity(item)}
+                          onClick={() => {
+                            increaseQuantity(item);
+                            handleQuantityChange();
+                          }}
                           className="text-gray-600 hover:text-gray-800 cursor-pointer text-2xl "
                         >
                           +
@@ -310,7 +390,7 @@ export default function CartOverlay() {
                       <div className="w-full flex items-center justify-between bg-green-50 border border-green-200 rounded-md p-2">
                         <div className="text-sm">
                           <span className="font-medium text-green-800">
-                            Coupon: {appliedCoupon.code}
+                            Cupom: {appliedCoupon.code}
                           </span>
                           <span className="ml-2 text-green-600">
                             {formatCurrency(-couponDiscount)}
@@ -320,7 +400,7 @@ export default function CartOverlay() {
                           onClick={handleRemoveCoupon}
                           className="text-xs text-red-600 hover:text-red-800 cursor-pointer"
                         >
-                          Remove
+                          Remover
                         </button>
                       </div>
                     ) : (
@@ -390,7 +470,9 @@ export default function CartOverlay() {
                   </div>
                 </div>
                 <div className="border-t border-[#194D9A]" />
-                <div className="px-6 py-4 mb-2">
+                
+                <div className="px-6 py-4 mb-2 pb-[env(safe-area-inset-bottom)]">
+                                
                   <div className="flex flex-col items-end mb-3">
                     {appliedCoupon && (
                       <>
@@ -398,7 +480,7 @@ export default function CartOverlay() {
                           Subtotal: {formatCurrency(orderValue)}
                         </p>
                         <p className="text-sm text-green-600 mb-1">
-                          Discount: {formatCurrency(-couponDiscount)}
+                          Desconto: {formatCurrency(-couponDiscount)}
                         </p>
                       </>
                     )}
@@ -411,6 +493,16 @@ export default function CartOverlay() {
                     <button
                       className="w-full bg-[#1AABFE] hover:bg-[#1AABFE]/80 text-white font-medium py-3 px-6 rounded-full transition-colors cursor-pointer mt-auto"
                       onClick={() => {
+                        // Meta Pixel - Purchase event
+                        if (typeof window !== 'undefined' && window.fbq) {
+                          window.fbq('track', 'Purchase', {
+                            content_name: 'Cart Checkout',
+                            content_category: 'Pagamento',
+                            value: calculateTotal(),
+                            currency: 'BRL'
+                          });
+                        }
+
                         closeCart();
                         navigate("/payment");
                       }}
@@ -420,6 +512,14 @@ export default function CartOverlay() {
                     <button
                       className="w-full bg-[#1AABFE] hover:bg-[#1AABFE]/80 text-white font-medium py-3 px-6 rounded-full transition-colors cursor-pointer mt-auto"
                       onClick={() => {
+                        // Meta Pixel - ViewContent event
+                        if (typeof window !== 'undefined' && window.fbq) {
+                          window.fbq('track', 'ViewContent', {
+                            content_name: 'Adicionar Mais Itens',
+                            content_category: 'Navegacao'
+                          });
+                        }
+
                         closeCart();
                         navigate("/buy-consultation");
                       }}

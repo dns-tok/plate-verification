@@ -41,6 +41,14 @@ const LoginModal = ({
   });
 
   const handleSubmit = async (data) => {
+    // Meta Pixel - Lead event for login attempt
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'Lead', {
+        content_name: 'Login Form',
+        content_category: 'Login'
+      });
+    }
+
     setIsLoading(true);
     try {
       const response = await login({

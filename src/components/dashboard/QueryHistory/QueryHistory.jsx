@@ -17,6 +17,16 @@ const History = () => {
     loadSearchHistory();
   }, [currentPage, itemsPerPage]);
 
+  // Auto refresh every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadSearchHistory();
+    }, 5000); // 5 seconds
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, [currentPage, itemsPerPage]);
+
   const loadSearchHistory = async () => {
     setLoading(true);
     try {
@@ -80,7 +90,9 @@ const History = () => {
           </div>
         ) : searches.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No Fotos do veículo found.
+            Você ainda não tem relatórios veiculares.
+            <br />
+            Que tal gerar o primeiro agora mesmo?
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -108,7 +120,7 @@ const History = () => {
                     </td>
                     <td>{item.license_plate || item.plate || "N/A"}</td>
                     <td className="capitalize">
-                      {item.status === "completed" ? "Finalizado" : "Parcial"}
+                      {item.status === "completed" ? "Finalizado" : "Em processamento"}
                     </td>
                     <td>
                       <button

@@ -16,6 +16,16 @@ export default function WhatsAppButton({
       rel="noopener noreferrer"
       aria-label={title}
       title={title}
+      onClick={() => {
+        // Meta Pixel - Contact event
+        if (typeof window !== 'undefined' && window.fbq) {
+          window.fbq('track', 'Contact', {
+            content_name: 'WhatsApp Button',
+            content_category: 'Contato',
+            method: 'whatsapp'
+          });
+        }
+      }}
     >
       <IoLogoWhatsapp className={`${baseClasses} ${className}`} />
     </a>

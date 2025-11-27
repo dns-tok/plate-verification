@@ -33,7 +33,18 @@ const PriceCard = ({
         </h2>
         <div className="w-[100%] my-2 text-center">
           <button
-            onClick={onClick}
+            onClick={() => {
+              // Meta Pixel - InitiateCheckout event
+              if (typeof window !== 'undefined' && window.fbq) {
+                window.fbq('track', 'InitiateCheckout', {
+                  content_name: planName,
+                  content_category: 'Plano',
+                  value: parseFloat(price.replace('R$', '').replace(',', '.').trim()),
+                  currency: 'BRL'
+                });
+              }
+              onClick && onClick();
+            }}
             className={`rounded-full w-[80%] mx-auto px-4 py-2 cursor-pointer font-bold ${
               isSelected ? "bg-[#1AABFE] text-white" : "bg-white text-black"
             }`}

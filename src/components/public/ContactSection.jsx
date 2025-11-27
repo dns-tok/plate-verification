@@ -9,7 +9,7 @@ const ContactSection = () => {
       <div className="flex flex-col md:flex-row gap-4  md:gap-10 md:my-[4rem] my-[2rem]  md:w-[80%] lg:w-[70%] ">
         <div className="flex justify-center  md:w-[45%] rounded-2xl overflow-hidden">
           <img
-            src="/contactGuy.svg"
+            src="/contactGuy.webp"
             alt=""
             className=" h-full object-cover my-auto"
           />
@@ -58,6 +58,16 @@ const ContactSection = () => {
             </div>
             <button
               type="submit"
+              onClick={() => {
+                // Meta Pixel - Contact event
+                if (typeof window !== 'undefined' && window.fbq) {
+                  window.fbq('track', 'Contact', {
+                    content_name: 'Formulário de Contato',
+                    content_category: 'Contato',
+                    method: 'form'
+                  });
+                }
+              }}
               className="bg-white rounded-full ms-auto md:ms-0 me-auto font-bold px-6 py-2 text-[1rem] md:text-[0.9rem] mt-4 text-[#1AABFE] whitespace-nowrap"
             >
               Enviar

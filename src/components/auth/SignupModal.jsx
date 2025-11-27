@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Modal from "../common/Modal";
 import InputField from "../common/Form/InputField";
+import CpfInputField from "../common/Form/CpfInputField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../hooks/useAuth";
@@ -11,10 +12,18 @@ import { toast } from "react-toastify";
 import DateInputField from "../common/Form/DateInputField";
 import { fetchPublicPlans, transformPublicPlans } from "../../services/plansService";
 import { multiPlans } from "../dashboard/Consultation/plansData";
+import { removeCpfMask, validateCpf } from "../../utils/cpfUtils";
 
 // Step 1 Schema
 const step1Schema = z.object({
-  id: z.string().nonempty("ID is required"),
+  id: z.string().nonempty("CPF é obrigatório")
+    .refine((cpf) => {
+      const cleanCpf = removeCpfMask(cpf);
+      return cleanCpf.length === 11;
+    }, "CPF deve ter 11 dígitos")
+    .refine((cpf) => {
+      return validateCpf(cpf);
+    }, "CPF inválido"),
   fullName: z
     .string()
     .nonempty("Nome completo is required")
@@ -105,11 +114,20 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
     }
     setTermsError("");
     setIsLoading(true);
+    
+    // Meta Pixel - Lead event for signup attempt
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'Lead', {
+        content_name: 'Signup Form',
+        content_category: 'Cadastro'
+      });
+    }
+
     try {
       const payload = {
         celular: step1Form.getValues("telephone"),
         cep: step2Form.getValues("zipCode"),
-        cpf: step1Form.getValues("id"),
+        cpf: removeCpfMask(step1Form.getValues("id")),
         data_nascimento: step1Form.getValues("dateOfBirth"),
         email: step1Form.getValues("email"),
         nome_completo: step1Form.getValues("fullName"),
@@ -254,11 +272,11 @@ const SignupModal = ({ isOpen, onClose, onNavigateToLogin }) => {
     <Modal title="Cadastrar-se" onClose={onClose} isAuthModal={true}>
       {step === 1 && (
         <form onSubmit={step1Form.handleSubmit(handleStep1Submit)}>
-          <InputField
+          <CpfInputField
             form={step1Form}
             label="CPF"
             name="id"
-            placeholder="_ _ _ _ _ - _ _"
+            placeholder="000.000.000-00"
             required
           />
 

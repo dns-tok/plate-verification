@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from "react";
 import InputField from "../../common/Form/InputField";
+import CpfInputField from "../../common/Form/CpfInputField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "../../../hooks/useAuth";
 import { updateProfile } from "../../../services/authService";
 import { toast } from "react-toastify";
+import { removeCpfMask, validateCpf, applyCpfMask } from "../../../utils/cpfUtils";
 
 // Edit Profile Schema
 const editProfileSchema = z.object({
-  id: z.string().nonempty("ID is required"),
+  id: z.string().nonempty("CPF é obrigatório")
+    .refine((cpf) => {
+      const cleanCpf = removeCpfMask(cpf);
+      return cleanCpf.length === 11;
+    }, "CPF deve ter 11 dígitos")
+    .refine((cpf) => {
+      return validateCpf(cpf);
+    }, "CPF inválido"),
   fullName: z
     .string()
     .nonempty("Nome completo is required")
@@ -58,7 +67,7 @@ const EditProfile = () => {
         : "";
 
       form.reset({
-        id: user.cpf || "",
+        id: user.cpf ? applyCpfMask(user.cpf) : "",
         fullName: user.full_name || "",
         dateOfBirth: formattedDate,
         email: user.email || "",
@@ -74,7 +83,7 @@ const EditProfile = () => {
     try {
       // Map form data to API format
       const updateData = {
-        cpf: data.id,
+        cpf: removeCpfMask(data.id),
         full_name: data.fullName,
         birth_date: data.dateOfBirth,
         email: data.email,
@@ -108,12 +117,11 @@ const EditProfile = () => {
     <form onSubmit={form.handleSubmit(handleSubmit)}>
       <div className="lg:space-y-4 flex justify-between flex-col lg:flex-row">
         <div className="w-full lg:w-[45%] ">
-          <InputField
+          <CpfInputField
             form={form}
             label="CPF"
             name="id"
-            required
-            placeholder="_ _ _ _ _ - _ _"
+            placeholder="000.000.000-00"
             inputClassName={inputClass}
             labelClassName={labelClass}
             inputContainerClassName={inputContainerClass}
