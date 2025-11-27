@@ -17,7 +17,7 @@ const Modal = ({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex text-center justify-between items-center w-full">
-            <h2 className="text-[1.5rem] md:text-[1.8rem] font-medium">
+            <h2 className="text-[1.3rem] md:text-[1.8rem] font-medium">
               {title}
             </h2>
             <button className="text-3xl cursor-pointer" onClick={onClose}>

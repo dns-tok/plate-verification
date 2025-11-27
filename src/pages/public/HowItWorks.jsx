@@ -1,18 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PublicLayout from "../../components/layout/PublicLayout";
 import { FaCheck } from "react-icons/fa";
 import FaqSection from "../../components/public/FaqSection";
 import RollingCards from "../../components/public/RollingCards";
+import Modal from "../../components/common/Modal";
+import PdfViewer from "../../components/pdfViewer/PdfViewer";
 
 const HowItWorks = () => {
   const navigate = useNavigate();
+  const [selectedPdf, setSelectedPdf] = useState(null);
 
   const handleViewModel = () => {
     navigate("/#plans");
   };
 
-  const handleBuy = (planName) => {
+  const handleBuy = (planName, e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+
     // Map plan names to plan codes
     const planCodeMap = {
       "Relatório Light": "light",
@@ -24,6 +30,9 @@ const HowItWorks = () => {
     const planCode =
       planCodeMap[planName] || planName.toLowerCase().replace("relatório ", "");
 
+    // Show sample PDF popup
+    setSelectedPdf(planCode);
+
     // Store the selected plan in localStorage to add to cart after login
     localStorage.setItem(
       "pendingPlanToAdd",
@@ -33,8 +42,10 @@ const HowItWorks = () => {
         timestamp: Date.now(),
       })
     );
+  };
 
-    window.location.href = "/#showLogin";
+  const handleClosePdfModal = () => {
+    setSelectedPdf(null);
   };
 
   // Plan comparison data based on the image
@@ -458,13 +469,15 @@ const HowItWorks = () => {
                       >
                         <div className="flex flex-col gap-2 items-center">
                           <button
+                            type="button"
                             onClick={handleViewModel}
                             className="bg-[#1AABFE] hover:bg-[#0F9AE8] text-white font-medium py-2.5 px-6 rounded transition-colors duration-200 text-sm w-full cursor-pointer whitespace-nowrap"
                           >
                             Ver Modelo
                           </button>
                           <button
-                            onClick={() => handleBuy(plan.name)}
+                            type="button"
+                            onClick={(e) => handleBuy(plan.name, e)}
                             className="bg-[#194D9A] hover:bg-[#0F9AE8] text-white font-medium py-2.5 px-6 rounded transition-colors duration-200 text-sm w-full cursor-pointer"
                           >
                             Comprar
@@ -476,12 +489,27 @@ const HowItWorks = () => {
                 </tbody>
               </table>
             </div>
-
-          
           </div>
         </div>
       </div>
       <FaqSection />
+
+      {/* PDF Sample Modal */}
+      {selectedPdf && (
+        <Modal
+          title={`Relatório ${
+            selectedPdf.charAt(0).toUpperCase() + selectedPdf.slice(1)
+          } - Amostra`}
+          onClose={handleClosePdfModal}
+          className="!max-w-6xl !w-[95%] md:!w-[60%] !p-3 md:!p-6"
+        >
+          <div className="w-full h-[80vh] md:h-[85vh]">
+            <div className="w-full h-full overflow-hidden rounded-lg border border-gray-300 bg-gray-100">
+              <PdfViewer url={`/report/${selectedPdf}-sample.pdf`} />
+            </div>
+          </div>
+        </Modal>
+      )}
     </PublicLayout>
   );
 };
