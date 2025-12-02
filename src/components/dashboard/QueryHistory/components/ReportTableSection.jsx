@@ -57,13 +57,20 @@ const ReportTableSection = ({ title, headers, rows, desc, className = "" }) => {
   // If title is provided, wrap in ReportSection, otherwise return just the table
   if (title) {
     return (
-      <ReportSection title={title} className={className}>
+      <ReportSection
+        title={title}
+        className={`${className} w-fit min-w-full md:w-auto`}
+      >
         {tableContent}
       </ReportSection>
     );
   }
 
-  return <div className={className}>{tableContent}</div>;
+  return (
+    <div className={`${className} w-fit min-w-[600px] md:w-auto`}>
+      {tableContent}
+    </div>
+  );
 };
 
 export default ReportTableSection;

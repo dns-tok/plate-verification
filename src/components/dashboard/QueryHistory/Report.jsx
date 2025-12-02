@@ -22,6 +22,7 @@ import {
   isSummaryBoxVisible,
   filterTwoColumnFields,
 } from "../../../utils/reportFieldFilter";
+import ReportMobile from "./ReportMobile";
 
 const Report = ({ data, onClose, loading }) => {
   const reportRef = useRef(null);
@@ -301,16 +302,16 @@ const Report = ({ data, onClose, loading }) => {
     precificadorI?.codigo ||
     "Nada Consta";
 
-    // Valor FIPE: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
-    const valorFipe = reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
-      ?.valorAtual
-      ? reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
+  // Valor FIPE: response.body.data.dadosBasicosDoVeiculo.informacoesFipe.0.valorAtual
+  const valorFipe = reportData.dadosBasicosDoVeiculo?.informacoesFipe?.[0]
+    ?.valorAtual
+    ? reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
+    : "Nada Consta";
+  // Formatted for display in BRL (R$ XX.XXX,XX)
+  const valorFipeFormatted =
+    valorFipe && valorFipe !== "Nada Consta"
+      ? formatCurrency(parseCurrency(valorFipe))
       : "Nada Consta";
-    // Formatted for display in BRL (R$ XX.XXX,XX)
-    const valorFipeFormatted =
-      valorFipe && valorFipe !== "Nada Consta"
-        ? formatCurrency(parseCurrency(valorFipe))
-        : "Nada Consta";
   const valorAtual = precificadorII?.valor
     ? formatCurrency(parseCurrency(precificadorII.valor))
     : "Nada Consta";
@@ -534,52 +535,60 @@ const Report = ({ data, onClose, loading }) => {
   })();
   // Bancos, Financeiras ou seguradoras: response.body.data.baseEstadual.restricaoFinanceira
   const hasBancosFinanceiras = checkSimNao(baseEstadual.restricaoFinanceira);
-  
+
   // Restrições nacionais: response.body.data.restricoes
   //const hasRestricoesNacionais = checkSimNao(reportData.restricoes);
 
-  const comunicacaovnac = baseNacional.indicadorComunicacaoVendas?.toUpperCase().trim();
-  const restricaofnac = baseNacional.restricaoFinanciadora?.toUpperCase().trim();
+  const comunicacaovnac = baseNacional.indicadorComunicacaoVendas
+    ?.toUpperCase()
+    .trim();
+  const restricaofnac = baseNacional.restricaoFinanciadora
+    ?.toUpperCase()
+    .trim();
   const restricao1nac = baseNacional.restricao1?.toUpperCase().trim();
 
   const hasRestricoesNacionais =
-  comunicacaovnac === "CONSTA COMUNICACAO DE VENDAS" ||
-  restricao1nac === "ALIENACAO FIDUCIARIA" ||
-  restricao1nac === "ALTERACAO DOC" ||
-  restricao1nac === "RENAINF" ||
-  restricao1nac === "RESTRICAO ADMINISTRATIVA" ||
-  restricaofnac === "CONSTA RESTRICAO ADMINISTRATIVA" ||
-  restricaofnac === "ALIENACAO FIDUCIARIA"
-    ? "Sim"
-    : !comunicacaovnac || comunicacaovnac === "NAO" || comunicacaovnac === "NADA CONSTA" 
-    ? "Não"
-    : !restricao1nac || restricao1nac === "NADA CONSTA" 
-    ? "Não"
-    : !restricaofnac || restricaofnac === "NADA CONSTA" 
-    ? "Não"
-    : "Não"; 
-  
+    comunicacaovnac === "CONSTA COMUNICACAO DE VENDAS" ||
+    restricao1nac === "ALIENACAO FIDUCIARIA" ||
+    restricao1nac === "ALTERACAO DOC" ||
+    restricao1nac === "RENAINF" ||
+    restricao1nac === "RESTRICAO ADMINISTRATIVA" ||
+    restricaofnac === "CONSTA RESTRICAO ADMINISTRATIVA" ||
+    restricaofnac === "ALIENACAO FIDUCIARIA"
+      ? "Sim"
+      : !comunicacaovnac ||
+        comunicacaovnac === "NAO" ||
+        comunicacaovnac === "NADA CONSTA"
+      ? "Não"
+      : !restricao1nac || restricao1nac === "NADA CONSTA"
+      ? "Não"
+      : !restricaofnac || restricaofnac === "NADA CONSTA"
+      ? "Não"
+      : "Não";
+
   // Restrições estaduais: response.body.data.baseEstadual.existeDebitoMulta
   //const hasRestricoesEstaduais = checkSimNao(baseEstadual.existeDebitoMulta)  || checkSimNao(baseEstadual.comunicacaoVenda);
-  
+
   // Estava o parâmetro anterior, entretanto, temos N condições que o atual fornecedor não traz em uma única variável, sendo assim, a condição abaixo foi criada
   const comunicacaov = baseEstadual.comunicacaoVenda?.toUpperCase().trim();
   const restricaof = baseEstadual.restricaoFinanceira?.toUpperCase().trim();
-  const resadministrativa = baseEstadual.restricaoAdminisrativa?.toUpperCase().trim();
+  const resadministrativa = baseEstadual.restricaoAdminisrativa
+    ?.toUpperCase()
+    .trim();
 
   const hasRestricoesEstaduais =
-  comunicacaov === "CONSTA COMUNICACAO DE VENDAS" ||
-  resadministrativa === "CONSTA RESTRICAO ADMINISTRATIVA" ||
-  restricaof === "ALIENACAO FIDUCIARIA"
-    ? "Sim"
-    : !comunicacaov || comunicacaov === "NAO CONSTA COMUNICACAO DE VENDAS"
-    ? "Não"
-    : !resadministrativa || resadministrativa === "NADA CONSTA"
-    ? "Não"
-    : !restricaof || restricaof === "NADA CONSTA"
-    ? "Não"
-    : "Não"; 
-  
+    comunicacaov === "CONSTA COMUNICACAO DE VENDAS" ||
+    resadministrativa === "CONSTA RESTRICAO ADMINISTRATIVA" ||
+    restricaof === "ALIENACAO FIDUCIARIA"
+      ? "Sim"
+      : !comunicacaov || comunicacaov === "NAO CONSTA COMUNICACAO DE VENDAS"
+      ? "Não"
+      : !resadministrativa || resadministrativa === "NADA CONSTA"
+      ? "Não"
+      : !restricaof || restricaof === "NADA CONSTA"
+      ? "Não"
+      : "Não";
+
   // motor alterado: response.body.data.baseEstadual.dataAlteracaoMotor
   const hasMotorAlterado = checkSimNao(baseEstadual.dataAlteracaoMotor);
   // Chassi remarcado: response.body.data.baseEstadual.tipoMarcacaoChassi
@@ -755,106 +764,168 @@ const Report = ({ data, onClose, loading }) => {
   // Helper function to generate PDF and return as Blob
   const generatePDFBlob = async () => {
     const element = reportRef.current;
+    const pdfContainer = element?.parentElement;
 
-    // 🔧 Ensure full content is visible
-    // Using scale: 1.2 for good quality while keeping file size reasonable
-    // Lower scale = smaller file, but scale 1.2 maintains good readability
-    const canvas = await html2canvas(element, {
-      scale: 1.2,
-      scrollX: 0,
-      scrollY: 0,
-      imageTimeout: 0,
-      windowWidth: document.documentElement.scrollWidth,
-      windowHeight: document.documentElement.scrollHeight,
-      useCORS: true,
-      logging: false, // Disable logging for better performance
-      backgroundColor: "#ffffff", // Ensure white background
-    });
+    // Store original styles to restore later (only if we modify them)
+    let originalStyles = {};
+    let originalClasses = "";
+    let wasModified = false;
 
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "px",
-      format: "a4",
-    });
+    if (pdfContainer) {
+      // Check if we're on mobile by checking if container is hidden
+      // On desktop, container should be visible (md:opacity-100, md:relative)
+      const isMobile =
+        (pdfContainer.classList.contains("opacity-0") &&
+          !pdfContainer.classList.contains("md:opacity-100")) ||
+        pdfContainer.classList.contains("left-[-9999px]");
 
-    // Define margins (in pixels)
-    const topMargin = 20; // Top margin in pixels
-    const bottomMargin = 20; // Bottom margin in pixels
-    const leftMargin = 10; // Left margin in pixels
-    const rightMargin = 10; // Right margin in pixels
+      // Only modify styles on mobile - desktop should remain completely untouched
+      if (isMobile) {
+        wasModified = true;
+        originalClasses = pdfContainer.className;
+        // Store original inline styles
+        originalStyles = {
+          zIndex: pdfContainer.style.zIndex || "",
+          top: pdfContainer.style.top || "",
+          left: pdfContainer.style.left || "",
+          width: pdfContainer.style.width || "",
+          height: pdfContainer.style.height || "",
+          position: pdfContainer.style.position || "",
+          opacity: pdfContainer.style.opacity || "",
+          pointerEvents: pdfContainer.style.pointerEvents || "",
+        };
 
-    // Calculate page dimensions
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+        // Position it off-screen but keep it renderable for html2canvas
+        pdfContainer.style.position = "fixed";
+        pdfContainer.style.left = "-10000px";
+        pdfContainer.style.top = "0";
+        pdfContainer.style.width = "1050px";
+        pdfContainer.style.height = "auto";
+        pdfContainer.style.zIndex = "-1";
+        pdfContainer.style.opacity = "1"; // html2canvas needs opacity 1 to capture properly
+        pdfContainer.style.pointerEvents = "none";
 
-    // Calculate available space for content (page minus margins)
-    const availableWidth = pageWidth - leftMargin - rightMargin;
-    const availableHeight = pageHeight - topMargin - bottomMargin;
-
-    // Calculate image dimensions to fit available width
-    const imgWidth = availableWidth;
-    const imgHeight = (canvas.height * availableWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let sourceY = 0; // Track the source Y position in the original image
-
-    // 📄 Add multiple pages if needed
-    while (heightLeft > 0) {
-      // Calculate how much content fits on this page
-      const contentHeightOnPage = Math.min(availableHeight, heightLeft);
-
-      // Create a canvas slice for this page
-      const pageCanvas = document.createElement("canvas");
-      pageCanvas.width = canvas.width;
-      pageCanvas.height = (contentHeightOnPage * canvas.height) / imgHeight;
-      const pageCtx = pageCanvas.getContext("2d");
-
-      // Fill with white background
-      pageCtx.fillStyle = "#ffffff";
-      pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-
-      // Calculate source slice dimensions
-      const sourceHeight = (contentHeightOnPage * canvas.height) / imgHeight;
-
-      // Draw the slice from the original canvas
-      pageCtx.drawImage(
-        canvas,
-        0,
-        sourceY,
-        canvas.width,
-        sourceHeight,
-        0,
-        0,
-        canvas.width,
-        sourceHeight
-      );
-
-      // Use JPEG format with compression to reduce file size (quality: 0.85 = 85% quality)
-      const pageImgData = pageCanvas.toDataURL("image/jpeg", 0.85);
-      const pageImgHeight = contentHeightOnPage;
-
-      // Add image to PDF with margins
-      pdf.addImage(
-        pageImgData,
-        "JPEG",
-        leftMargin,
-        topMargin,
-        imgWidth,
-        pageImgHeight
-      );
-
-      // Update tracking variables
-      heightLeft -= availableHeight;
-      sourceY += sourceHeight;
-
-      // Add new page if there's more content
-      if (heightLeft > 0) {
-        pdf.addPage();
+        // Small delay to ensure DOM updates are applied
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
 
-    // Return PDF as Blob
-    return pdf.output("blob");
+    try {
+      // 🔧 Ensure full content is visible
+      // Using scale: 1.2 for good quality while keeping file size reasonable
+      // Lower scale = smaller file, but scale 1.2 maintains good readability
+      const canvas = await html2canvas(element, {
+        scale: 1.2,
+        scrollX: 0,
+        scrollY: 0,
+        imageTimeout: 0,
+        windowWidth: wasModified ? 1050 : document.documentElement.scrollWidth,
+        windowHeight:
+          element.scrollHeight || document.documentElement.scrollHeight,
+        useCORS: true,
+        logging: false, // Disable logging for better performance
+        backgroundColor: "#ffffff", // Ensure white background
+        allowTaint: true,
+      });
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: "a4",
+      });
+
+      // Define margins (in pixels)
+      const topMargin = 20; // Top margin in pixels
+      const bottomMargin = 20; // Bottom margin in pixels
+      const leftMargin = 10; // Left margin in pixels
+      const rightMargin = 10; // Right margin in pixels
+
+      // Calculate page dimensions
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Calculate available space for content (page minus margins)
+      const availableWidth = pageWidth - leftMargin - rightMargin;
+      const availableHeight = pageHeight - topMargin - bottomMargin;
+
+      // Calculate image dimensions to fit available width
+      const imgWidth = availableWidth;
+      const imgHeight = (canvas.height * availableWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let sourceY = 0; // Track the source Y position in the original image
+
+      // 📄 Add multiple pages if needed
+      while (heightLeft > 0) {
+        // Calculate how much content fits on this page
+        const contentHeightOnPage = Math.min(availableHeight, heightLeft);
+
+        // Create a canvas slice for this page
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = (contentHeightOnPage * canvas.height) / imgHeight;
+        const pageCtx = pageCanvas.getContext("2d");
+
+        // Fill with white background
+        pageCtx.fillStyle = "#ffffff";
+        pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+        // Calculate source slice dimensions
+        const sourceHeight = (contentHeightOnPage * canvas.height) / imgHeight;
+
+        // Draw the slice from the original canvas
+        pageCtx.drawImage(
+          canvas,
+          0,
+          sourceY,
+          canvas.width,
+          sourceHeight,
+          0,
+          0,
+          canvas.width,
+          sourceHeight
+        );
+
+        // Use JPEG format with compression to reduce file size (quality: 0.85 = 85% quality)
+        const pageImgData = pageCanvas.toDataURL("image/jpeg", 0.85);
+        const pageImgHeight = contentHeightOnPage;
+
+        // Add image to PDF with margins
+        pdf.addImage(
+          pageImgData,
+          "JPEG",
+          leftMargin,
+          topMargin,
+          imgWidth,
+          pageImgHeight
+        );
+
+        // Update tracking variables
+        heightLeft -= availableHeight;
+        sourceY += sourceHeight;
+
+        // Add new page if there's more content
+        if (heightLeft > 0) {
+          pdf.addPage();
+        }
+      }
+
+      // Return PDF as Blob
+      return pdf.output("blob");
+    } finally {
+      // Restore original styles and classes only if we modified them (mobile only)
+      if (wasModified && pdfContainer && originalClasses) {
+        pdfContainer.className = originalClasses;
+        // Restore all original inline styles
+        Object.keys(originalStyles).forEach((key) => {
+          if (originalStyles[key]) {
+            pdfContainer.style[key] = originalStyles[key];
+          } else {
+            pdfContainer.style[key] = "";
+          }
+        });
+      }
+    }
   };
 
   // Function to generate and download PDF
@@ -1055,8 +1126,22 @@ const Report = ({ data, onClose, loading }) => {
   }
 
   return (
-    <div className="h-screen overflow-auto rounded-xl py-4 ">
-      <div className=" mx-auto max-w-[1080px] ">
+    <div className="h-screen overflow-auto rounded-xl py-4 relative">
+      {/* Loading Overlay */}
+      {(downloading || sharing) && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-8 shadow-2xl flex flex-col items-center gap-4 min-w-[300px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#194D9A]"></div>
+            <p className="text-[#194D9A] font-semibold text-lg">
+              {downloading ? "Gerando PDF..." : "Compartilhando relatório..."}
+            </p>
+            <p className="text-gray-500 text-sm">Por favor, aguarde...</p>
+          </div>
+        </div>
+      )}
+
+      {/* PDF Version - Always rendered for PDF generation, visible on desktop, invisible on mobile */}
+      <div className="mx-auto max-w-[1080px] opacity-0 md:opacity-100 pointer-events-none md:pointer-events-auto absolute md:relative md:top-auto left-[-9999px] md:left-auto">
         <div
           ref={reportRef}
           data-pdf-content
@@ -1126,25 +1211,25 @@ const Report = ({ data, onClose, loading }) => {
             </div>
           </div>
 
-            {/* Botões de compartilhamento no cabeçalho do relatório */}
-            <div className="border-t-2 border-transparent pt-6 mt-6 flex flex-col items-end justify-center">
-              <div className="flex  gap-4 justify-center">
-                <button
-                  disabled={downloading}
-                  onClick={downloadPDF}
-                  className="bg-[#194D9A] hover:bg-[#1AABFE] text-white font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  {downloading ? "Baixando..." : "Baixar PDF"}
-                </button>
-                <button
-                  onClick={shareReport}
-                  disabled={sharing}
-                  className="bg-[#1AABFE] hover:bg-[#1590d4] text-white font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  {sharing ? "Compartilhando..." : "Compartilhar relatório"}
-                </button>
-              </div>
+          {/* Botões de compartilhamento no cabeçalho do relatório */}
+          <div className="border-t-2 border-transparent pt-6 mt-6 flex flex-col items-end justify-center">
+            <div className="flex  gap-4 justify-center">
+              <button
+                disabled={downloading}
+                onClick={downloadPDF}
+                className="bg-[#194D9A] hover:bg-[#1AABFE] text-white font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {downloading ? "Baixando..." : "Baixar PDF"}
+              </button>
+              <button
+                onClick={shareReport}
+                disabled={sharing}
+                className="bg-[#1AABFE] hover:bg-[#1590d4] text-white font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {sharing ? "Compartilhando..." : "Compartilhar relatório"}
+              </button>
             </div>
+          </div>
 
           <div className="space-y-6 max-w-[88%] mx-auto">
             {/* Resumo IA - Only for Ultra and Premium */}
@@ -1154,7 +1239,7 @@ const Report = ({ data, onClose, loading }) => {
             {/* Resumo da consulta - Block 2 mapping */}
             <div className="space-y-4">
               {renderSectionTitle("Resumo da consulta")}
-           
+
               <div className="grid grid-cols-3 gap-3 gap-x-5">
                 {isSummaryBoxVisible("Leilão", planName) &&
                   renderStatusBox("Leilão", hasLeilao, "/report/auction.png")}
@@ -1482,8 +1567,9 @@ const Report = ({ data, onClose, loading }) => {
                 />
               ) : (
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                  <p className="text-gray-800">
-                    {reportData?.leilao?.descricao || "Nada Consta"}
+                  <p className=" text-[#1AABFE]">
+                    {reportData?.leilao?.descricao ||
+                      "Não Consta informações nas bases consultadas"}
                   </p>
                 </div>
               )}
@@ -1502,7 +1588,9 @@ const Report = ({ data, onClose, loading }) => {
                 </>
               ) : (
                 <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
-                  <p className="text-[#194D9A]">Nada Consta</p>
+                  <p className=" text-[#1AABFE]">
+                    Não Consta informações nas bases consultadas
+                  </p>
                 </div>
               )}
             </ReportSection>
@@ -1511,8 +1599,9 @@ const Report = ({ data, onClose, loading }) => {
             <ReportSection title="Indício de Sinistro">
               <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
                 {/* inside the box: response.body.data.indicioSinistro.descricao */}
-                <p className="text-[#194D9A] ">
-                  {reportData?.indicioSinistro?.descricao || "Nada Consta"}
+                <p className=" text-[#1AABFE] ">
+                  {reportData?.indicioSinistro?.descricao ||
+                    "Não Consta informações nas bases consultadas"}
                 </p>
               </div>
             </ReportSection>
@@ -1529,7 +1618,9 @@ const Report = ({ data, onClose, loading }) => {
                   </div>
                 ) : (
                   <div className="shrink-0 w-[30%] h-full flex items-center justify-center border-2 border-[#1AABFE]/80 rounded-xl bg-white">
-                    <p className="text-gray-800">Nada Consta</p>
+                    <p className="text-[#1AABFE]">
+                      Não Consta informações nas bases consultadas
+                    </p>
                   </div>
                 )}
                 <div className="w-[70%] h-full flex-1 border-2 border-[#1AABFE]/80 rounded-xl p-4 bg-white">
@@ -1603,7 +1694,7 @@ const Report = ({ data, onClose, loading }) => {
                 if (!r) {
                   return (
                     <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white flex items-center">
-                      <p className="text-gray-500">
+                      <p className=" text-[#1AABFE]">
                         Informações não encontradas nas bases consultadas
                       </p>
                     </div>
@@ -1638,7 +1729,7 @@ const Report = ({ data, onClose, loading }) => {
 
                 return allEmpty ? (
                   <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white flex items-center">
-                    <p className="text-gray-500">
+                    <p className=" text-[#1AABFE]">
                       Informações não encontradas nas bases consultadas
                     </p>
                   </div>
@@ -1829,7 +1920,7 @@ const Report = ({ data, onClose, loading }) => {
                 } else {
                   return (
                     <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white flex items-center ">
-                      <p className="text-gray-500">
+                      <p className=" text-[#1AABFE]">
                         Informações não encontradas nas bases consultadas
                       </p>
                     </div>
@@ -2023,7 +2114,8 @@ const Report = ({ data, onClose, loading }) => {
                               ?.informacoesFipe?.[0]?.valorAtual
                               ? formatCurrency(
                                   parseCurrency(
-                                    reportData.dadosBasicosDoVeiculo.informacoesFipe[0].valorAtual
+                                    reportData.dadosBasicosDoVeiculo
+                                      .informacoesFipe[0].valorAtual
                                   )
                                 )
                               : valorAtual || "Nada Consta",
@@ -2545,13 +2637,15 @@ const Report = ({ data, onClose, loading }) => {
                         )}
                         {/* Restrição 1: response.body.data.baseEstadual.debitoRenainf */}
                         {renderField(
-                        "Restrição 1",
-                        !baseEstadual.debitoRenainf || baseEstadual.debitoRenainf.trim() === "0,00"
+                          "Restrição 1",
+                          !baseEstadual.debitoRenainf ||
+                            baseEstadual.debitoRenainf.trim() === "0,00"
                             ? "Nada Consta"
-                          : baseEstadual.debitoRenainf,
+                            : baseEstadual.debitoRenainf,
                           baseEstadual.debitoRenainf &&
-                          baseEstadual.debitoRenainf.trim() !== "0,00" &&
-                          baseEstadual.debitoRenainf.toLowerCase().trim() !== "nada consta"
+                            baseEstadual.debitoRenainf.trim() !== "0,00" &&
+                            baseEstadual.debitoRenainf.toLowerCase().trim() !==
+                              "nada consta"
                         )}
                         {/* Restrição 2: response.body.data.baseEstadual.restricao2 */}
                         {renderField(
@@ -3517,9 +3611,9 @@ const Report = ({ data, onClose, loading }) => {
                       </div>
                     ))
                   ) : (
-                    <div className="border-2 border-[#1AABFE]/80 rounded-lg p-4 bg-white">
-                      <p className="text-sm text-gray-800 leading-relaxed ">
-                        Nada Consta
+                    <div className="border-2 border-[#1AABFE]/80 rounded-full p-4 py-2 bg-white">
+                      <p className=" text-[#1AABFE] leading-relaxed ">
+                        Não Consta informações nas bases consultadas
                       </p>
                     </div>
                   )}
@@ -3750,7 +3844,7 @@ const Report = ({ data, onClose, loading }) => {
                                   <div
                                     className={`space-y-3 border-2 border-[#1AABFE]/80 text-[#194D9A] p-4  bg-white rounded-xl`}
                                   >
-                                    <div className="whitespace-pre-line text-sm leading-relaxed">
+                                    <div className="whitespace-pre-line text-sm text-[#194D9A] leading-relaxed">
                                       {conclusionText}
                                     </div>
                                   </div>
@@ -3899,6 +3993,62 @@ const Report = ({ data, onClose, loading }) => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Responsive Version */}
+      <ReportMobile
+        data={data}
+        reportData={reportData}
+        responseItem={responseItem}
+        plate={plate}
+        make={make}
+        model={model}
+        chassis={chassis}
+        consultationDate={consultationDate}
+        queryId={queryId}
+        vehicleAge={vehicleAge}
+        valorFipeFormatted={valorFipeFormatted}
+        valorFipe={valorFipe}
+        planName={planName}
+        baseEstadual={baseEstadual}
+        baseNacional={baseNacional}
+        decodificador={decodificador}
+        precificadorI={precificadorI}
+        precificadorII={precificadorII}
+        codigoFipe={codigoFipe}
+        valorAtual={valorAtual}
+        valuations={valuations}
+        hasLeilao={hasLeilao}
+        hasSinistro={hasSinistro}
+        hasBancosFinanceiras={hasBancosFinanceiras}
+        hasRestricoesNacionais={hasRestricoesNacionais}
+        hasRestricoesEstaduais={hasRestricoesEstaduais}
+        hasMotorAlterado={hasMotorAlterado}
+        hasChassiRemarcado={hasChassiRemarcado}
+        hasRecall={hasRecall}
+        hasAlertaGravame={hasAlertaGravame}
+        hasHistoricoRoubo={hasHistoricoRoubo}
+        hasCSV={hasCSV}
+        hasRENAJUD={hasRENAJUD}
+        hasMultasRENAINF={hasMultasRENAINF}
+        hasIssues={hasIssues}
+        nivelRisco={nivelRisco}
+        exigenciaVistoriaEspecial={exigenciaVistoriaEspecial}
+        percentualSobreRef={percentualSobreRef}
+        leilaoScoreValue={leilaoScoreValue}
+        analiseRiscoScoreValue={analiseRiscoScoreValue}
+        downloading={downloading}
+        sharing={sharing}
+        downloadPDF={downloadPDF}
+        shareReport={shareReport}
+        formatDate={formatDate}
+        renderSectionTitle={renderSectionTitle}
+        renderStatusBox={renderStatusBox}
+        renderWarningBox={renderWarningBox}
+        renderGauge={renderGauge}
+        renderAiSummary={renderAiSummary}
+        renderField={renderField}
+        renderTwoColumnSection={renderTwoColumnSection}
+      />
     </div>
   );
 };
