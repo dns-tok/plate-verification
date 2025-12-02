@@ -706,7 +706,7 @@ const ReportMobile = ({
               title="Remarketing"
               isVisible={isRemarketingVisible}
               setIsVisible={setIsRemarketingVisible}
-              hasData={!!reportData?.remarketing?.leilao}
+              hasData={true}
             >
               <ReportTableSection
                 headers={[

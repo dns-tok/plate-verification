@@ -12,7 +12,11 @@ const ReportField = ({ label, value, hasWarning = false }) => {
         )}
         <span className="text-[0.875rem] font-semibold">{label}:</span>
       </div>
-      <span className={`text-[0.95rem] text-[#194D9A]`}>
+      <span
+        className={`text-[0.95rem] ${
+          hasWarning ? "text-red-600" : "text-[#194D9A]"
+        }`}
+      >
         {value || "Nada Consta"}
       </span>
     </div>
